@@ -1,0 +1,36 @@
+% FROM math1.tex
+\newcommand{\powerset}[1]{\mathbb{P}(#1)}
+
+\newcommand{\effectedExpression}[0]{ \sum_{N_t \in P} Q(\{1\},N_t) \land \lnot Q(\{\},N_t) }
+\newcommand{\affectDenomExpression}[0]{ 2^{n-1} }
+\newcommand{\requireDenomExpression}[0]{ \sum_{N_t \in P} Q(\{a\},N_t) }
+\newcommand{\influenceDenomExpression}[0]{ \sum_{N_t \in P} \lnot Q(\{\},N_t) }
+% END FROM math1.tex
+
+\newcommand{\effectedCombinationsExpression}[0]{ \binom{n-1}{r-1} }
+
+
+
+
+\textbf{Simple Quorum:}\\\par
+$Q_{simple}(r,n,n_t)$ is a QuorumSet that does not contain inner quorum sets:
+\begin{itemize}
+  \item $r$ is threshold for $Q_{simple}$ to be true
+  \item $n$ is number of nodes referenced by QuorumSet
+  \item $n_t$ is the number of nodes that are $true$
+\end{itemize}
+\begin{equation}
+    Q_{simple}(r,n,n_t) = (n_t>=r)
+\end{equation}
+\\
+
+Then the following metrics can be computed directly:
+\begin{equation}
+	Affect(a,Q_{simple}(r,n,n_t)) = \frac{ \effectedCombinationsExpression{} }{ \affectDenomExpression{} }
+\end{equation}
+\begin{equation}
+	Required(a,Q_{simple}(r,n,n_t)) = \frac{ \effectedCombinationsExpression{} }{ \sum_{i=(r-1)}^{n-1} \binom{n-1}{i} }
+\end{equation}
+\begin{equation}
+	Influence(a,Q_{simple}(r,n,n_t)) = \frac{ \effectedCombinationsExpression{} }{ \sum_{i=0}^{r-1} \binom{n-1}{i} }
+\end{equation}
