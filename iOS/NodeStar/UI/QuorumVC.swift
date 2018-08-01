@@ -2,7 +2,7 @@
 //  QuorumVC.swift
 //  NodeStar
 //
-//  Created by jeff on 7/30/18.
+//  Created by Jeff DiTullio on 7/30/18.
 //  Copyright © 2018 Foundero Inc. All rights reserved.
 //
 
@@ -12,7 +12,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     
     @IBOutlet var verticalStackView: UIStackView?
     var rowStackViews: [UIStackView] = []
-    var pathView: PathView!
+    var nodeLinesOverlayView: NodeLinesOverlayView!
     var nodeViews: [NodeView] = []
     
     @IBOutlet weak var cityLabel: UILabel?
@@ -34,20 +34,12 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         self.title = "QuorumSet - " + QuorumManager.handleForNodeId(id: self.validator.publicKey)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
         
+        // Draw all the nodes within horizontal stack views
         self.showNodes(quorumNode: self.validator.quorumSet, depth: 0, parentNodeView: nil)
 
         // Setup the view to draw lines on
-        self.pathView = PathView()
-        self.pathView.isUserInteractionEnabled = false
-        pathView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(pathView)
-        NSLayoutConstraint.activate([
-            pathView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            pathView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            pathView.topAnchor.constraint(equalTo: view.topAnchor),
-            pathView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            ])
-        pathView.backgroundColor = .clear
+        self.nodeLinesOverlayView = NodeLinesOverlayView()
+        self.nodeLinesOverlayView.overlayOnView(self.view)
     }
     override var prefersStatusBarHidden: Bool {
         return true
@@ -58,6 +50,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     func createRow(row: Int) {
         let padding: CGFloat = 10.0
         
+        // Create a stackView For the row
         let stackView = UIStackView(frame: CGRect.null)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.distribution = UIStackViewDistribution.fillEqually
@@ -67,15 +60,18 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         stackView.layoutMargins = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
         stackView.isLayoutMarginsRelativeArrangement = true
         
+        // Give it a background that changes color based on row
         let background = UIView(frame: CGRect.null)
         background.translatesAutoresizingMaskIntoConstraints = false
-        background.backgroundColor = UIColor.brown.withAlphaComponent( (CGFloat(self.validator.quorumSet.maxDepth + 1) - CGFloat(row)) / CGFloat(self.validator.quorumSet.maxDepth + 1) )
+        let backgroundAlpha: CGFloat = (CGFloat(self.validator.quorumSet.maxDepth + 1) - CGFloat(row)) / CGFloat(self.validator.quorumSet.maxDepth + 1)
+        background.backgroundColor = UIColor.brown.withAlphaComponent(backgroundAlpha)
         stackView.addSubview(background)
         stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .top, relatedBy: .equal, toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
         stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .leading, relatedBy: .equal, toItem: stackView, attribute: .leading, multiplier: 1.0, constant: 0.0))
         stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .trailing, relatedBy: .equal, toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
         stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .bottom, relatedBy: .equal, toItem: stackView, attribute: .bottom, multiplier: 1.0, constant: 0.0))
         
+        // Give the row a label
         let rowLabel = UILabel(frame: CGRect.null)
         rowLabel.translatesAutoresizingMaskIntoConstraints = false
         let rowLabels: [String] = [" Root ", " Quorum Set ", " Inner Quorum Set "]
@@ -91,6 +87,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         stackView.addConstraint(NSLayoutConstraint(item: rowLabel, attribute: .top, relatedBy: .equal, toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
         stackView.addConstraint(NSLayoutConstraint(item: rowLabel, attribute: .trailing, relatedBy: .equal, toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
         
+        // Add the row to the view
         self.rowStackViews.append(stackView)
     }
     
@@ -100,18 +97,17 @@ class QuorumVC: UIViewController, NodeViewDelegate {
             self.createRow(row: depth)
         }
         
-        // Show this one
-        let nv: NodeView = NodeView(frame: CGRect.null)
+        // Show this node in the row stack view
+        let nv: NodeView = NodeView()
         nv.quorumNode = quorumNode
         nv.parentNodeView = parentNodeView
         nv.update()
         if depth == 0 {
+            // If it's the root - style it specially and make it initial selection for node info
             nv.updateAsRoot(validator: self.validator)
             self.nodeViewTapped(nodeView: nv)
         }
         nv.delegate = self
-        
-        
         self.rowStackViews[depth].addArrangedSubview(nv)
         self.nodeViews.append(nv)
         
@@ -127,24 +123,16 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     }
     
     override func viewDidLayoutSubviews() {
-        // Draw the lines
-        self.view.layoutIfNeeded()
-        var paths: [UIBezierPath] = []
+        // Draw the lines between nodes
+        self.nodeLinesOverlayView.clearLines()
         for nv in self.nodeViews {
             if let pnv: NodeView = nv.parentNodeView {
                 // Draw from pnv to nv
-                let path = UIBezierPath()
-                let pnvBottom = CGPoint(x: pnv.bounds.size.width/2.0, y: pnv.bounds.size.height)
-                let nvTop = CGPoint(x: nv.bounds.size.width/2.0, y: (max(0, (nv.bounds.size.height - nv.bounds.size.width))) / 2.0)
-                let controlPoint = CGPoint(x: pnvBottom.x, y: pnvBottom.y + 30)
-                path.move(to: self.view.convert(pnvBottom, from: pnv))
-                path.addQuadCurve(to: self.view.convert(nvTop, from: nv), controlPoint: self.view.convert(controlPoint, from: pnv))
-                path.lineWidth = 0.5
-                paths.append(path)
+                self.nodeLinesOverlayView.addLine(from: pnv, to: nv)
             }
         }
-        self.pathView.paths = paths
     }
+    
     
     // MARK -- NodeViewDelegate
     func nodeViewTapped(nodeView: NodeView) {
@@ -170,14 +158,16 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     private func showNodeInfo(quorumNode: QuorumNode) {
         self.clearInfo()
         
-        // Root node show both validator and quorum...
         if quorumNode.identifier == self.validator.quorumSet.identifier {
+            // Root node let - show Validator (because the QuorumNode is a QuorumSetNode in this case)
             self.showValidatorInfo(validator: self.validator)
         }
         else if let validator: Validator = QuorumManager.validatorForId(id: quorumNode.identifier) {
+            // Leaf validator where we have it's fulll Validator info
             self.showValidatorInfo(validator: validator)
         }
         else {
+            // Either a QuorumSetNode or QuorumValidatorNode - either way we don't have much info on it
             self.showQuorumNodeInfo(node: quorumNode)
         }
     }
@@ -218,16 +208,6 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         }
         else {
             self.rootThresholdLabel?.text = thresholdString
-        }
-    }
-}
-
-class PathView: UIView {
-    var paths: [UIBezierPath] = [] { didSet { setNeedsDisplay() } }
-    override func draw(_ rect: CGRect) {
-        UIColor.darkGray.setStroke()
-        for path in paths {
-            path.stroke()
         }
     }
 }

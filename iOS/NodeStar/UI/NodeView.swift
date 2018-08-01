@@ -2,7 +2,7 @@
 //  NodeView.swift
 //  NodeStar
 //
-//  Created by jeff on 7/30/18.
+//  Created by Jeff DiTullio on 7/30/18.
 //  Copyright © 2018 Foundero Inc. All rights reserved.
 //
 
@@ -24,16 +24,18 @@ class NodeView: UIView {
     private var borderColor: UIColor = UIColor.blue
     private var fillColor: UIColor = UIColor.white
     
+    init() {
+        super.init(frame: CGRect.null)
+        sharedInit()
+    }
     override init(frame: CGRect) {
         super.init(frame: frame)
         sharedInit()
     }
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         sharedInit()
     }
-    
     private func sharedInit() {
         self.backgroundColor = UIColor.clear
         self.contentMode = UIViewContentMode.redraw
@@ -68,6 +70,8 @@ class NodeView: UIView {
         return CGSize(width: 40.0, height: 40.0)
     }
     
+    
+    // MARK: Public Methods
     func update() {
         if self.quorumNode is QuorumValidator {
             // Leaf
@@ -89,7 +93,6 @@ class NodeView: UIView {
         }
         self.setNeedsDisplay()
     }
-    
     func updateAsRoot(validator: Validator) {
         self.nameLabel.text = QuorumManager.handleForNodeId(id: validator.publicKey)
         if validator.verified == true {
@@ -99,12 +102,19 @@ class NodeView: UIView {
     }
     
     
-    // MARK: Drawing
+    // MARK: Gestures
+    @objc func tap(recognizer : UITapGestureRecognizer) {
+        self.delegate?.nodeViewTapped(nodeView: self)
+    }
+    @objc func doubleTap(recognizer : UITapGestureRecognizer) {
+        self.delegate?.nodeViewDoubleTapped(nodeView: self)
+    }
     
+    
+    // MARK: Drawing
     override func draw(_ rect: CGRect) {
         drawRingFittingInsideView()
     }
-    
     // https://stackoverflow.com/questions/29616992/how-do-i-draw-a-circle-in-ios-swift
     internal func drawRingFittingInsideView()->() {
         let halfSize:CGFloat = min( bounds.size.width/2, bounds.size.height/2)
@@ -123,16 +133,4 @@ class NodeView: UIView {
         circlePath.stroke()
         circlePath.fill()
     }
-    
-    
-    // MARK: Gestures
-    
-    @objc func tap(recognizer : UITapGestureRecognizer) {
-        self.delegate?.nodeViewTapped(nodeView: self)
-    }
-    
-    @objc func doubleTap(recognizer : UITapGestureRecognizer) {
-        self.delegate?.nodeViewDoubleTapped(nodeView: self)
-    }
-    
 }

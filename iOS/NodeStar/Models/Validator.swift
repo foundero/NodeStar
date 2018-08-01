@@ -2,7 +2,7 @@
 //  Validator.swift
 //  NodeStar
 //
-//  Created by jeff on 7/26/18.
+//  Created by Jeff DiTullio on 7/26/18.
 //  Copyright © 2018 Foundero Inc. All rights reserved.
 //
 
@@ -20,9 +20,9 @@ class Validator {
     var verified: Bool! = false
     
     var quorumSet: QuorumSet!
-    // TODO: is safe quorum set
-    
-    init() {}
+
+    // TODO: Computed Metrics from QuorumSet
+    // Is it safe? stellar core has some way of computing this
     
     class func nodeFromDictionary(dict: [String: AnyObject]) -> Validator? {
         let node: Validator = Validator()
@@ -43,13 +43,10 @@ class Validator {
         if node.name == "" { node.name = nil }
         if node.host == "" { node.host = nil }
         
+        // recursively parse the QuorumSet as QuorumNodes (QuorumSet, QuorumValidator)
         let parsedQuorumSet = QuorumSet.nodeFromDictionary(dict: dict["quorumSet"] as? [String: AnyObject])
         node.quorumSet = parsedQuorumSet ?? QuorumSet()
         
         return node
-    }
-    
-    func logMe() {
-        print("PubKey: \(self.publicKey)")
     }
 }

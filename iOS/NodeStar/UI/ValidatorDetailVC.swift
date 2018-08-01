@@ -2,7 +2,7 @@
 //  ValidatorDetailVC.swift
 //  NodeStar
 //
-//  Created by jeff on 7/26/18.
+//  Created by Jeff DiTullio on 7/26/18.
 //  Copyright © 2018 Foundero Inc. All rights reserved.
 //
 

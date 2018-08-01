@@ -1,4 +1,11 @@
+\documentclass[10pt]{article}
+\usepackage[usenames]{color} %used for font color
+\usepackage{amssymb} %maths
+\usepackage{amsmath} %maths
+\usepackage[utf8]{inputenc} %useful to type directly diacritic characters
+\begin{document}
 % FROM math1.tex
+% Export: fontsize=18, mode=auto, type=png
 \newcommand{\powerset}[1]{\mathbb{P}(#1)}
 
 \newcommand{\effectedExpression}[0]{ \sum_{N_t \in P} Q(\{1\},N_t) \land \lnot Q(\{\},N_t) }
@@ -6,6 +13,10 @@
 \newcommand{\requireDenomExpression}[0]{ \sum_{N_t \in P} Q(\{a\},N_t) }
 \newcommand{\influenceDenomExpression}[0]{ \sum_{N_t \in P} \lnot Q(\{\},N_t) }
 % END FROM math1.tex
+
+% FROM math1.tex uses 5 equations
+\setcounter{equation}{5}
+%
 
 \newcommand{\effectedCombinationsExpression}[0]{ \binom{n-1}{r-1} }
 
@@ -34,3 +45,5 @@ Then the following metrics can be computed directly:
 \begin{equation}
 	Influence(a,Q_{simple}(r,n,n_t)) = \frac{ \effectedCombinationsExpression{} }{ \sum_{i=0}^{r-1} \binom{n-1}{i} }
 \end{equation}
+
+\end{document}

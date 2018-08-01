@@ -18,6 +18,8 @@
 		1FB8D061210FB04700B75F04 /* QuorumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D060210FB04700B75F04 /* QuorumVC.swift */; };
 		1FB8D063210FB15700B75F04 /* QuorumVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */; };
 		1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D064210FB2F600B75F04 /* NodeView.swift */; };
+		1FDD6B3221122CDB00F1FB9C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDD6B3121122CDB00F1FB9C /* Extensions.swift */; };
+		1FDD6B3421122E2A00F1FB9C /* NodeLinesOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */; };
 		1FEC7E12210A93FF00BB2758 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEC7E11210A93FF00BB2758 /* Validator.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +37,8 @@
 		1FB8D060210FB04700B75F04 /* QuorumVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumVC.swift; sourceTree = "<group>"; };
 		1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumVC.storyboard; sourceTree = "<group>"; };
 		1FB8D064210FB2F600B75F04 /* NodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeView.swift; sourceTree = "<group>"; };
+		1FDD6B3121122CDB00F1FB9C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeLinesOverlayView.swift; sourceTree = "<group>"; };
 		1FEC7E11210A93FF00BB2758 /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -89,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				1F42FE5D210A4E7A000050AA /* AppDelegate.swift */,
+				1FDD6B3121122CDB00F1FB9C /* Extensions.swift */,
 				1F42FE66210A4E7A000050AA /* Assets.xcassets */,
 				1F42FE68210A4E7A000050AA /* LaunchScreen.storyboard */,
 			);
@@ -105,6 +110,7 @@
 				1FB8D060210FB04700B75F04 /* QuorumVC.swift */,
 				1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */,
 				1FB8D064210FB2F600B75F04 /* NodeView.swift */,
+				1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -183,11 +189,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FEC7E12210A93FF00BB2758 /* Validator.swift in Sources */,
+				1FDD6B3221122CDB00F1FB9C /* Extensions.swift in Sources */,
 				1F42FE74210A5DF4000050AA /* QuorumNode.swift in Sources */,
 				1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */,
 				1F42FE72210A5176000050AA /* HomeVC.swift in Sources */,
 				1F42FE5E210A4E7A000050AA /* AppDelegate.swift in Sources */,
 				1F42FE7B210A83E3000050AA /* ValidatorDetailVC.swift in Sources */,
+				1FDD6B3421122E2A00F1FB9C /* NodeLinesOverlayView.swift in Sources */,
 				1FB8D061210FB04700B75F04 /* QuorumVC.swift in Sources */,
 				1F42FE79210A7EB6000050AA /* ValidatorCell.swift in Sources */,
 			);

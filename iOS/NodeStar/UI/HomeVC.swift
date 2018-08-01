@@ -2,7 +2,7 @@
 //  HomeVC.swift
 //  NodeStar
 //
-//  Created by jeff on 7/26/18.
+//  Created by Jeff DiTullio on 7/26/18.
 //  Copyright © 2018 Foundero Inc. All rights reserved.
 //
 
@@ -24,16 +24,10 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         reloadDataFromStellarBeat()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
-    }
-    
-    
     // MARK: Network Load Data
     func reloadDataFromStellarBeat() {
+        //TODO: decouple this from the VC
         let url: URL = URL(string: stellarbeatURLPath)!
-        
         print("Updating \(stellarbeatURLPath)")
         URLSession.shared.dataTask(with: url) { [stellarbeatURLPath] (data: Data?, urlResponse: URLResponse?, error: Error?) in
             if error != nil {
@@ -68,7 +62,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     // MARK: Table View
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -83,7 +76,6 @@ class HomeVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return ValidatorCell.desiredHieght
     }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView?.deselectRow(at: indexPath, animated: true)
         

@@ -2,7 +2,7 @@
 //  QuorumNode.swift
 //  NodeStar
 //
-//  Created by jeff on 7/26/18.
+//  Created by Jeff DiTullio on 7/26/18.
 //  Copyright © 2018 Foundero Inc. All rights reserved.
 //
 
@@ -35,7 +35,15 @@ protocol QuorumNode {
     var threshold: Int { get }
     var quorumNodes: [QuorumNode] { get }
     
-    // Info about Quorum from here through all subtrees
+    // TODO: Computed metrics of this node relative to root QuorumSet
+    // Affect()
+    // Required()
+    // Influence()
+    // do we need rootNode reference?
+    // do we need parentNode reference?
+    // is it helpful to have current depth?
+    
+    // Info about Quorum from this node through all children & subtrees
     var maxDepth: Int { get }
     var eventualValidators: Set<String> { get } // using public key for now -- later use object itself
     var leafValidators: Int { get } // count of all leaf validator nodes
@@ -45,7 +53,7 @@ protocol QuorumNode {
 class QuorumSet : QuorumNode {
     var hashKey: String!
     
-    // MARK: QuorumNode
+    // MARK: QuorumNode Protocol
     var quorumNodes: [QuorumNode] = []
     var threshold: Int = 0
     var identifier: String {
@@ -77,7 +85,6 @@ class QuorumSet : QuorumNode {
     }
     
     // MARK: Parsing
-    init() {}
     class func nodeFromDictionary(dict: [String: AnyObject]?) -> QuorumSet? {
         let node: QuorumSet = QuorumSet()
         if dict == nil { return node }
@@ -105,7 +112,7 @@ class QuorumSet : QuorumNode {
 class QuorumValidator : QuorumNode {
     var publicKey: String!
     
-    // MARK: QuorumNode
+    // MARK: QuorumNode Protocol
     let quorumNodes: [QuorumNode] = []
     let threshold: Int = 0
     var identifier: String {
@@ -122,7 +129,6 @@ class QuorumValidator : QuorumNode {
     }
     
     // MARK: Parsing
-    init() {}
     class func nodeFromPublicKey(publicKey: String) -> QuorumValidator? {
         let node: QuorumValidator = QuorumValidator()
         node.publicKey = publicKey
