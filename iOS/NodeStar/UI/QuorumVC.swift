@@ -14,6 +14,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     var rowStackViews: [UIStackView] = []
     var nodeLinesOverlayView: NodeLinesOverlayView!
     var nodeViews: [NodeView] = []
+    var selectedNodeView: NodeView! { didSet { redrawSelectNodeView() } }
     
     @IBOutlet weak var cityLabel: UILabel?
     @IBOutlet weak var nameLabel: UILabel?
@@ -27,15 +28,21 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     
     var validator: Validator!
     
-    // MARK -- View Controller Stuff
+    // MARK: -- View Controller Stuff
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "QuorumSet - " + QuorumManager.handleForNodeId(id: self.validator.publicKey)
+        self.title = "Quorum Set - " + QuorumManager.handleForNodeId(id: self.validator.publicKey)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "info", style:.plain, target: self, action: #selector(tappedInfoButton))
         
         // Draw all the nodes within horizontal stack views
         self.showNodes(quorumNode: self.validator.quorumSet, depth: 0, parentNodeView: nil)
+        
+        // Select root
+        let rootNodeView = self.nodeViews[0]
+        rootNodeView.updateAsRoot(validator: self.validator)
+        selectedNodeView = rootNodeView
 
         // Setup the view to draw lines on
         self.nodeLinesOverlayView = NodeLinesOverlayView()
@@ -44,8 +51,19 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     override var prefersStatusBarHidden: Bool {
         return true
     }
-    
-    // MARK -- Visualize Nodes
+    @objc func tappedInfoButton() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
+        vc.validator = self.validator
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    @IBAction func tappedNodeInfoButton() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
+        vc.validator = self.validator
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    // MARK: -- Visualize Nodes
     
     func createRow(row: Int) {
         let padding: CGFloat = 10.0
@@ -102,11 +120,6 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         nv.quorumNode = quorumNode
         nv.parentNodeView = parentNodeView
         nv.update()
-        if depth == 0 {
-            // If it's the root - style it specially and make it initial selection for node info
-            nv.updateAsRoot(validator: self.validator)
-            self.nodeViewTapped(nodeView: nv)
-        }
         nv.delegate = self
         self.rowStackViews[depth].addArrangedSubview(nv)
         self.nodeViews.append(nv)
@@ -133,20 +146,33 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         }
     }
     
+    private func redrawSelectNodeView() {
+        self.showNodeInfo(quorumNode: selectedNodeView.quorumNode)
+        
+        for nv in self.nodeViews {
+            // Selected if same quorumNode or if root selected any matching its quorumset or if selected matches roots quorum set
+            nv.selected = (
+                nv.quorumNode.identifier == selectedNodeView.quorumNode.identifier ||
+                selectedNodeView.quorumNode.identifier == self.validator.publicKey && nv.quorumNode.identifier == self.validator.quorumSet.identifier ||
+                nv.quorumNode.identifier == self.validator.publicKey && selectedNodeView.quorumNode.identifier == self.validator.quorumSet.identifier
+            )
+        }
+    }
     
-    // MARK -- NodeViewDelegate
+    
+    // MARK: -- NodeViewDelegate
     func nodeViewTapped(nodeView: NodeView) {
-        self.showNodeInfo(quorumNode: nodeView.quorumNode)
+        self.selectedNodeView = nodeView
     }
     func nodeViewDoubleTapped(nodeView: NodeView) {
-        self.showNodeInfo(quorumNode: nodeView.quorumNode)
+        self.selectedNodeView = nodeView
         // If we can find the full info then go to it
         if let validator: Validator = QuorumManager.validatorForId(id: nodeView.quorumNode.identifier) {
             self.pushValidatorNode(validator: validator)
         }
     }
     
-    // MARK -- Navigate
+    // MARK: -- Navigate
     private func pushValidatorNode(validator: Validator) {
         let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
@@ -154,7 +180,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    // MARK -- Display Detail
+    // MARK: -- Display Detail
     private func showNodeInfo(quorumNode: QuorumNode) {
         self.clearInfo()
         

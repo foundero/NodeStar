@@ -18,6 +18,7 @@ class NodeView: UIView {
     var delegate: NodeViewDelegate?
     var quorumNode: QuorumNode!
     var parentNodeView: NodeView?
+    var selected: Bool = false { didSet { setNeedsDisplay() } }
     
     private var nameLabel: UILabel!
     private var thresholdLabel: UILabel!
@@ -118,7 +119,10 @@ class NodeView: UIView {
     // https://stackoverflow.com/questions/29616992/how-do-i-draw-a-circle-in-ios-swift
     internal func drawRingFittingInsideView()->() {
         let halfSize:CGFloat = min( bounds.size.width/2, bounds.size.height/2)
-        let desiredLineWidth:CGFloat = 2.0
+        var desiredLineWidth:CGFloat = 2.0
+        if self.selected {
+            desiredLineWidth = 5.0
+        }
         
         let circlePath = UIBezierPath(
             arcCenter: CGPoint(x:bounds.size.width/2,y:bounds.size.height/2),

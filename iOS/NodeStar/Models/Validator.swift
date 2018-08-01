@@ -10,8 +10,8 @@ import Foundation
 
 class Validator {
     
-    var publicKey: String!
-    var ip: String!
+    var publicKey: String! = ""
+    var ip: String! = ""
     var city: String?
     var latitude: String?
     var longitude: String?
@@ -21,6 +21,8 @@ class Validator {
     
     var quorumSet: QuorumSet!
 
+    var rawData: [String: Any]!
+    
     // TODO: Computed Metrics from QuorumSet
     // Is it safe? stellar core has some way of computing this
     
@@ -46,6 +48,8 @@ class Validator {
         // recursively parse the QuorumSet as QuorumNodes (QuorumSet, QuorumValidator)
         let parsedQuorumSet = QuorumSet.nodeFromDictionary(dict: dict["quorumSet"] as? [String: AnyObject])
         node.quorumSet = parsedQuorumSet ?? QuorumSet()
+        
+        node.rawData = dict
         
         return node
     }
