@@ -29,10 +29,11 @@ Eventually:
 * computes some overall health metrics
 * incorporates [Stellar White Paper concepts](https://www.stellar.org/papers/stellar-consensus-protocol.pdf) like Dispensable Sets
 
-<img src="iOS/screen-shots/1-validators.png" width="200" alt="NodeStar - Stellar Validators Screenshot" />
-<img src="iOS/screen-shots/2-quorum-set-depth-2.png" width="200" alt="NodeStar - Quorum Set Depth 2" />
-<img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
-
+<p float="left">
+  <img src="iOS/screen-shots/1-validators.png" width="200" alt="NodeStar - Stellar Validators Screenshot" />
+  <img src="iOS/screen-shots/2-quorum-set-depth-2.png" width="200" alt="NodeStar - Quorum Set Depth 2" />
+  <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
+</p>
 <hr/>
 
 ## Math
