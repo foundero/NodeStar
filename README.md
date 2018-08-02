@@ -34,14 +34,15 @@ Eventually:
   <img src="iOS/screen-shots/2-quorum-set-depth-2.png" width="200" alt="NodeStar - Quorum Set Depth 2" />
   <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
 </p>
-<hr/>
 
 ### Install From Source
 * clone repo
 * `cd NodeStar/iOS/`
 * `pod update`
-* `open NodeStar.xcworkspace` or open from finder
+* `open NodeStar.xcworkspace` or open with finder
 * run from xcode
+
+<hr/>
 
 ## Math
 
