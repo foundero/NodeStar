@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="2NX-ug-nWU">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="2NX-ug-nWU">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -254,7 +253,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="199.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s9a-ZC-hFa">
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="s9a-ZC-hFa" customClass="BarChartView" customModule="Charts">
                                                     <rect key="frame" x="20" y="15" width="335" height="170"/>
                                                     <color key="backgroundColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </view>
@@ -326,7 +325,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="199.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cRy-2h-3Uv">
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cRy-2h-3Uv" customClass="BarChartView" customModule="Charts">
                                                     <rect key="frame" x="20" y="15" width="335" height="170"/>
                                                     <color key="backgroundColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </view>
@@ -404,10 +403,12 @@
                     <size key="freeformSize" width="375" height="1200"/>
                     <connections>
                         <outlet property="depthAverageLabel" destination="NdQ-Ov-18m" id="zqD-2B-r8c"/>
+                        <outlet property="depthChart" destination="cRy-2h-3Uv" id="EG2-q7-yes"/>
                         <outlet property="depthMaxLabel" destination="8ca-cG-DJJ" id="4TP-zw-AAa"/>
                         <outlet property="fetchedLabel" destination="koC-Qw-SRn" id="0hf-UG-ylp"/>
                         <outlet property="fromLabel" destination="Y47-ix-NF0" id="9ZE-O7-xuh"/>
                         <outlet property="nodesAverageLabel" destination="xxx-CZ-aLb" id="w1d-8Q-vSy"/>
+                        <outlet property="nodesChart" destination="s9a-ZC-hFa" id="oLl-8e-EBG"/>
                         <outlet property="nodesMaxLabel" destination="jud-CE-7Yh" id="PAp-gT-isq"/>
                         <outlet property="reuseDuplicateRefLabel" destination="Dpa-We-Zvx" id="s8u-wh-JiZ"/>
                         <outlet property="reuseSelfRefLabel" destination="V4N-7e-9pR" id="WYe-xR-yEZ"/>

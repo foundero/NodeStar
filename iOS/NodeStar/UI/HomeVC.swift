@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Charts
 
-class HomeVC: UITableViewController {
+class HomeVC: UITableViewController, ChartViewDelegate {
     
     let stellarbeatURLPath: String = "https://stellarbeat.io/nodes/raw"
     var validators: [Validator] = []
@@ -19,10 +20,14 @@ class HomeVC: UITableViewController {
     @IBOutlet var validatorsLabel: UILabel!
     @IBOutlet var nodesAverageLabel: UILabel!
     @IBOutlet var nodesMaxLabel: UILabel!
+    @IBOutlet var nodesChart: BarChartView!
     @IBOutlet var depthAverageLabel: UILabel!
     @IBOutlet var depthMaxLabel: UILabel!
+    @IBOutlet var depthChart: LineChartView!
     @IBOutlet var reuseSelfRefLabel: UILabel!
     @IBOutlet var reuseDuplicateRefLabel: UILabel!
+    
+    let intFormatter = NumberFormatter()
     
     
     // Ugly hack to get at VC.view instead of tableview
@@ -72,10 +77,46 @@ class HomeVC: UITableViewController {
         refreshControl?.tintColor = nodeStarBlue
         self.tableView.addSubview(self.refreshControl!)
         
+        // Setup chart formatting
+        intFormatter.minimumFractionDigits = 0
+        intFormatter.maximumFractionDigits = 0
+        
+        nodesChart.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: intFormatter)
+        nodesChart.leftAxis.axisMinimum = 0
+        nodesChart.leftAxis.granularity = 1
+        nodesChart.xAxis.drawGridLinesEnabled = false
+        let nodesFormatter = intFormatter.copy() as! NumberFormatter
+        nodesFormatter.positivePrefix = "n="
+        nodesChart.xAxis.valueFormatter = DefaultAxisValueFormatter(formatter: nodesFormatter)
+        nodesChart.xAxis.granularity = 1
+        nodesChart.xAxis.labelPosition = .bottom
+        nodesChart.rightAxis.enabled = false
+        nodesChart.chartDescription = nil
+        nodesChart.legend.enabled = false
+        nodesChart.isUserInteractionEnabled = false
+        
+        depthChart.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: intFormatter)
+        depthChart.leftAxis.axisMinimum = 0
+        depthChart.leftAxis.granularity = 1
+        depthChart.xAxis.drawGridLinesEnabled = false
+        let depthFormatter = intFormatter.copy() as! NumberFormatter
+        depthFormatter.positivePrefix = "d="
+        depthChart.xAxis.valueFormatter = DefaultAxisValueFormatter(formatter: depthFormatter)
+        depthChart.xAxis.granularity = 1
+        depthChart.xAxis.labelPosition = .bottom
+        depthChart.rightAxis.enabled = false
+        depthChart.chartDescription = nil
+        depthChart.legend.enabled = false
+        depthChart.isUserInteractionEnabled = false
+        
         // Start loading the data
         self.updateTableView()
+        self.refreshControl?.beginRefreshing()
         self.refresh()
     }
+    
+    
+    
     
     @objc func refresh() {
         reloadDataFromStellarBeat()
@@ -99,32 +140,53 @@ class HomeVC: UITableViewController {
             // Setup with our data
             
             // Calculate some metrics
-            var maxUpdated: Date = Date(timeIntervalSince1970: 0)
-            var maxNodes: Int = 0
-            var sumNodes: Int = 0
-            var maxDepth: Int = 0
-            var sumDepth: Int = 0
+            var updatedMax: Date = Date(timeIntervalSince1970: 0)
+            var nodesMax: Int = 0
+            var nodesSum: Int = 0
+            var nodesHistogram: [Int:Int] = [:]
+            var depthMax: Int = 0
+            var depthSum: Int = 0
+            var depthHistogram: [Int:Int] = [:]
             var countResuseSelfRef: Int = 0
             var countResuseDuplicateRef: Int = 0
             for v in validators {
+                // Node Counts
                 let nodeCount = v.quorumSet.leafValidators
-                sumNodes += nodeCount
-                if maxNodes < nodeCount {
-                    maxNodes = nodeCount
+                nodesSum += nodeCount
+                if nodesMax < nodeCount {
+                    nodesMax = nodeCount
                 }
+                if nodesHistogram[nodeCount] != nil {
+                    nodesHistogram[nodeCount] = nodesHistogram[nodeCount]! + 1
+                }
+                else {
+                    nodesHistogram[nodeCount] = 1
+                }
+                
+                // Depth
                 let depth = v.quorumSet.maxDepth
-                sumDepth += depth
-                if maxDepth < depth {
-                    maxDepth = depth
+                depthSum += depth
+                if depthMax < depth {
+                    depthMax = depth
                 }
+                if depthHistogram[depth] != nil {
+                    depthHistogram[depth] = depthHistogram[depth]! + 1
+                }
+                else {
+                    depthHistogram[depth] = 1
+                }
+                
+                // Reuse
                 if nodeCount != v.quorumSet.eventualValidators.count {
                     countResuseDuplicateRef += 1
                 }
                 if v.quorumSet.eventualValidators.contains(v.publicKey) {
                     countResuseSelfRef += 1
                 }
-                if v.updatedAt > maxUpdated {
-                    maxUpdated = v.updatedAt
+                
+                // Dates
+                if v.updatedAt > updatedMax {
+                    updatedMax = v.updatedAt
                 }
             }
             
@@ -132,21 +194,46 @@ class HomeVC: UITableViewController {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss a"
             self.fetchedLabel.text = dateFormatter.string(from: Date())
-            self.updatedLabel.text = dateFormatter.string(from: maxUpdated )
+            self.updatedLabel.text = dateFormatter.string(from: updatedMax )
             self.fromLabel.text = "stellarbeat.io"
             self.validatorsLabel.text = "\(validators.count)"
-            self.nodesAverageLabel.text = String(format: "%.02f", Double(sumNodes) / Double(validators.count))
-            self.nodesMaxLabel.text = "\(maxNodes)"
-            self.depthAverageLabel.text = String(format: "%.02f", Double(sumDepth) / Double(validators.count))
-            self.depthMaxLabel.text = "\(maxDepth)"
+            self.nodesAverageLabel.text = String(format: "%.02f", Double(nodesSum) / Double(validators.count))
+            self.nodesMaxLabel.text = "\(nodesMax)"
+            self.depthAverageLabel.text = String(format: "%.02f", Double(depthSum) / Double(validators.count))
+            self.depthMaxLabel.text = "\(depthMax)"
             self.reuseSelfRefLabel.text = "\(countResuseSelfRef) of \(validators.count)"
             self.reuseDuplicateRefLabel.text = "\(countResuseDuplicateRef) of \(validators.count)"
+            
+            // Update Charts
+            self.view.layoutIfNeeded()
+            let nodeEntries = nodesHistogram.map { (arg) -> BarChartDataEntry in
+                let (key, value) = arg
+                return BarChartDataEntry(x: Double(key), y: Double(value))
+            }
+            let nodesDataSet = BarChartDataSet(values: nodeEntries, label: nil)
+            //nodesDataSet.drawValuesEnabled = false;
+            nodesDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
+            self.nodesChart.data = BarChartData(dataSet: nodesDataSet)
+            
+            let depthEntries = depthHistogram.map { (arg) -> BarChartDataEntry in
+                let (key, value) = arg
+                return BarChartDataEntry(x: Double(key), y: Double(value))
+            }
+            let depthDataSet = BarChartDataSet(values: depthEntries, label: "asdfas")
+            depthDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
+            self.depthChart.data = BarChartData(dataSet: depthDataSet)
+            
+            // Chart Animation :)
+            nodesChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
+            depthChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
+            
+            self.tableView.reloadData()
         }
-        self.tableView.reloadData()
     }
     
     // MARK: User Interaction
     @objc func pushValidatorsVC() {
+        updateTableView()
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
         self.navigationController?.pushViewController(vc, animated: true)
@@ -160,6 +247,7 @@ class HomeVC: UITableViewController {
         URLSession.shared.dataTask(with: url) { [stellarbeatURLPath] (data: Data?, urlResponse: URLResponse?, error: Error?) in
             if error != nil {
                 print("Updating \(stellarbeatURLPath) Request Fail: \(error!.localizedDescription)")
+                self.showNetworkError()
             }
             else {
                 do {
@@ -181,18 +269,35 @@ class HomeVC: UITableViewController {
                     }
                     else {
                         print("Updating \(stellarbeatURLPath) Parsing Fail: Expecting an array")
-                        DispatchQueue.main.async{
-                            self.refreshControl?.endRefreshing()
-                        }
+                        self.showParsingError()
                     }
                 } catch let error as NSError {
                     print("Updating \(stellarbeatURLPath) Parsing Fail: \(error.localizedDescription)")
-                    DispatchQueue.main.async{
-                        self.refreshControl?.endRefreshing()
-                    }
+                    self.showParsingError()
                 }
             }
         }.resume()
+    }
+    private func showNetworkError() {
+        DispatchQueue.main.async{
+            let message = "Failed to get data. Check your internet connection. Pull to refresh or try updating from App Store."
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle:.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel,  handler: nil))
+            self.present(alert, animated: true, completion: {
+                self.refreshControl?.endRefreshing()
+            })
+        }
+    }
+    private func showParsingError() {
+        DispatchQueue.main.async{
+            self.refreshControl?.endRefreshing()
+            let message = "Failed to get parse network data. Pull to refresh or try updating from App Store."
+            let alert = UIAlertController(title: "Error", message: message, preferredStyle:.alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(alert, animated: true, completion: {
+                self.refreshControl?.endRefreshing()
+            })
+        }
     }
     
     // MARK: UITableViewDelegate
@@ -213,4 +318,16 @@ class HomeVC: UITableViewController {
         }
         return nil
     }
+    override public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.section == 1 && indexPath.row == 2 {
+            nodesChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
+        }
+        if indexPath.section == 2 && indexPath.row == 2 {
+            depthChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
+        }
+    }
+    
+    // MARK: ChartViewDelegate
+    //@objc optional func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight)
+    
 }
