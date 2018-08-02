@@ -36,6 +36,13 @@ Eventually:
 </p>
 <hr/>
 
+### Install From Source
+* clone repo
+* `cd NodeStar/iOS/`
+* `pod update`
+* `open NodeStar.xcworkspace` or open from finder
+* run from xcode
+
 ## Math
 
 We're developing standard language and metrics for discussing the stellar network and specific quorum sets dependence on a specific node or set of nodes.
