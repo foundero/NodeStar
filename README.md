@@ -34,6 +34,10 @@ Eventually:
   <img src="iOS/screen-shots/2-quorum-set-depth-2.png" width="200" alt="NodeStar - Quorum Set Depth 2" />
   <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
 </p>
+<p float="left">
+  <img src="iOS/screen-shots/4-summary-1.png" width="200" alt="NodeStar - Node Count Histogram" />
+  <img src="iOS/screen-shots/5-summary-2.png" width="200" alt="NodeStar - Depth Histogram" />
+</p>
 
 ### Install From Source
 * clone repo

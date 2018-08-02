@@ -211,7 +211,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                 return BarChartDataEntry(x: Double(key), y: Double(value))
             }
             let nodesDataSet = BarChartDataSet(values: nodeEntries, label: nil)
-            //nodesDataSet.drawValuesEnabled = false;
+            nodesDataSet.colors = [nodeStarBlue]
             nodesDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
             self.nodesChart.data = BarChartData(dataSet: nodesDataSet)
             
@@ -221,6 +221,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             }
             let depthDataSet = BarChartDataSet(values: depthEntries, label: "asdfas")
             depthDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
+            depthDataSet.colors = [nodeStarBlue]
             self.depthChart.data = BarChartData(dataSet: depthDataSet)
             
             // Chart Animation :)
