@@ -82,7 +82,7 @@ class NodeView: UIView {
             self.thresholdLabel.text = ""
             self.nameLabel.text = QuorumManager.handleForNodeId(id: self.quorumNode.identifier)
             if QuorumManager.validatorForId(id: self.quorumNode.identifier)?.verified == true {
-                self.fillColor = UIColor(red: 210.0/255, green: 250.0/255, blue: 190.0/255, alpha: 1.0)
+                self.fillColor = nodeStarLightGreen
             }
         }
         else {
@@ -97,7 +97,7 @@ class NodeView: UIView {
     func updateAsRoot(validator: Validator) {
         self.nameLabel.text = QuorumManager.handleForNodeId(id: validator.publicKey)
         if validator.verified == true {
-            self.fillColor = UIColor(red: 210.0/255, green: 250.0/255, blue: 190.0/255, alpha: 1.0).withAlphaComponent(0.5)
+            self.fillColor = nodeStarLightGreen.withAlphaComponent(0.5)
         }
         self.setNeedsDisplay()
     }

@@ -10,6 +10,12 @@ import Foundation
 
 class Validator {
     
+    static var dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ssz"
+        return dateFormatter
+    }()
+    
     var publicKey: String! = ""
     var ip: String! = ""
     var city: String?
@@ -18,6 +24,7 @@ class Validator {
     var name: String?
     var host: String?
     var verified: Bool! = false
+    var updatedAt: Date!
     
     var quorumSet: QuorumSet!
 
@@ -36,6 +43,7 @@ class Validator {
         node.name = dict["name"] as? String
         node.host = dict["host"] as? String
         node.verified = dict["verified"] as! Bool
+        node.updatedAt = dateFormatter.date(from: dict["updated_at"] as! String + "z")
         
         // stellarbeat.io returns empty string -- we'd rather have nil
         if node.ip == "" { node.ip = nil }
