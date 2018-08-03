@@ -16,8 +16,8 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     // MARK: View Loading
     override func viewDidLoad() {
         super.viewDidLoad()
-        validators = QuorumManager.validatorsNodes
-        self.title = "All Validators (\(validators.count))"
+        //validators = QuorumManager.validatorsNodes
+        //self.title = "All Validators (\(validators.count))"
         self.tableView?.rowHeight = ValidatorCell.desiredHieght
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
     }

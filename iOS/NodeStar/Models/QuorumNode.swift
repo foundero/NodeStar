@@ -10,9 +10,9 @@ import Foundation
 
 
 class QuorumManager {
-    static var validatorsNodes: [Validator] = []
+    static var validators: [Validator] = []
     static func validatorForId(id: String) -> Validator? {
-        for v in validatorsNodes {
+        for v in validators {
             if v.publicKey == id {
                 return v
             }
@@ -20,8 +20,8 @@ class QuorumManager {
         return nil
     }
     static func handleForNodeId(id: String) -> String {
-        for index in 0...validatorsNodes.count {
-            if validatorsNodes[index].publicKey == id {
+        for index in 0...validators.count {
+            if validators[index].publicKey == id {
                 return "\(index+1)"
             }
         }
@@ -51,13 +51,13 @@ protocol QuorumNode {
 
 
 class QuorumSet : QuorumNode {
-    var hashKey: String!
+    var hashKey: String! = ""
     
     // MARK: QuorumNode Protocol
     var quorumNodes: [QuorumNode] = []
     var threshold: Int = 0
     var identifier: String {
-        return self.hashKey!
+        return self.hashKey
     }
     var maxDepth: Int {
         var tempMax = 0
@@ -87,7 +87,10 @@ class QuorumSet : QuorumNode {
     // MARK: Parsing
     class func nodeFromDictionary(dict: [String: AnyObject]?) -> QuorumSet? {
         let node: QuorumSet = QuorumSet()
-        if dict == nil { return node }
+        if dict == nil {
+            //print("Empty quorum set :(")
+            return node
+        }
         node.hashKey = dict!["hashKey"] as! String
         node.threshold = dict!["threshold"] as! Int
         

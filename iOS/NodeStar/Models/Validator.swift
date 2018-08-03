@@ -55,7 +55,7 @@ class Validator {
         
         // recursively parse the QuorumSet as QuorumNodes (QuorumSet, QuorumValidator)
         let parsedQuorumSet = QuorumSet.nodeFromDictionary(dict: dict["quorumSet"] as? [String: AnyObject])
-        node.quorumSet = parsedQuorumSet ?? QuorumSet()
+        node.quorumSet = parsedQuorumSet
         
         node.rawData = dict
         

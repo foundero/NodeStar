@@ -11,24 +11,34 @@ import Charts
 
 class HomeVC: UITableViewController, ChartViewDelegate {
     
+    // TODO: clarify n vs l -- nodes (unique validator nodes in qs) vs leafs (sum validator nodes in qs)
+    
     let stellarbeatURLPath: String = "https://stellarbeat.io/nodes/raw"
     var validators: [Validator] = []
     
-    @IBOutlet var fetchedLabel: UILabel!
-    @IBOutlet var updatedLabel: UILabel!
-    @IBOutlet var fromLabel: UILabel!
-    @IBOutlet var validatorsLabel: UILabel!
-    @IBOutlet var nodesAverageLabel: UILabel!
-    @IBOutlet var nodesMaxLabel: UILabel!
+    // Charts
     @IBOutlet var nodesChart: BarChartView!
-    @IBOutlet var depthAverageLabel: UILabel!
-    @IBOutlet var depthMaxLabel: UILabel!
-    @IBOutlet var depthChart: LineChartView!
-    @IBOutlet var reuseSelfRefLabel: UILabel!
-    @IBOutlet var reuseDuplicateRefLabel: UILabel!
+    @IBOutlet var depthChart: BarChartView!
+    // Chart Cells
+    @IBOutlet var nodesChartCell: UITableViewCell!
+    @IBOutlet var depthChartCell: UITableViewCell!
+    // Selectable Cells
+    @IBOutlet var fromCell: UITableViewCell!
+    @IBOutlet var validatorsCell: UITableViewCell!
+    @IBOutlet var nodesSelectedCell: UITableViewCell!
+    @IBOutlet var depthSelectedCell: UITableViewCell!
+    @IBOutlet var selfRefCell: UITableViewCell!
+    @IBOutlet var duplicateRefCell: UITableViewCell!
+    // Other Cells
+    @IBOutlet var fetchedCell: UITableViewCell!
+    @IBOutlet var updatedCell: UITableViewCell!
+    @IBOutlet var nodesAverageCell: UITableViewCell!
+    @IBOutlet var nodesMaxCell: UITableViewCell!
+    @IBOutlet var depthAverageCell: UITableViewCell!
+    @IBOutlet var depthMaxCell: UITableViewCell!
+    
     
     let intFormatter = NumberFormatter()
-    
     
     // Ugly hack to get at VC.view instead of tableview
     // https://stackoverflow.com/a/16249515
@@ -62,7 +72,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         footerView.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         footerView.setTitleColor(UIColor.white, for: UIControlState.normal)
         footerView.setTitle("View Validators", for: UIControlState.normal)
-        footerView.addTarget(self, action: #selector(pushValidatorsVC), for: .touchUpInside)
+        footerView.addTarget(self, action: #selector(pushAllValidatorsVC), for: .touchUpInside)
         view.addSubview(footerView)
         view.addConstraint(NSLayoutConstraint(item: footerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0.0))
         view.addConstraint(NSLayoutConstraint(item: footerView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0.0))
@@ -93,7 +103,10 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         nodesChart.rightAxis.enabled = false
         nodesChart.chartDescription = nil
         nodesChart.legend.enabled = false
-        nodesChart.isUserInteractionEnabled = false
+        nodesChart.delegate = self
+        nodesChart.pinchZoomEnabled = false
+        nodesChart.scaleXEnabled = false
+        nodesChart.scaleYEnabled = false
         
         depthChart.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: intFormatter)
         depthChart.leftAxis.axisMinimum = 0
@@ -107,10 +120,18 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         depthChart.rightAxis.enabled = false
         depthChart.chartDescription = nil
         depthChart.legend.enabled = false
-        depthChart.isUserInteractionEnabled = false
+        depthChart.delegate = self
+        depthChart.pinchZoomEnabled = false
+        depthChart.scaleXEnabled = false
+        depthChart.scaleYEnabled = false
         
         // Start loading the data
         self.updateTableView()
+        self.tableView.setNeedsLayout()
+        depthChart.superview?.setNeedsLayout()
+        depthChart.superview?.superview?.setNeedsLayout()
+        depthChart.superview?.superview?.superview?.setNeedsLayout()
+        depthChart.setNeedsLayout()
         self.refreshControl?.beginRefreshing()
         self.refresh()
     }
@@ -125,16 +146,17 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     @objc func updateTableView() {
         if ( self.validators.count == 0 ) {
             // Clear it
-            self.fetchedLabel.text = ""
-            self.updatedLabel.text = ""
-            self.fromLabel.text = ""
-            self.validatorsLabel.text = ""
-            self.nodesAverageLabel.text = ""
-            self.nodesMaxLabel.text = ""
-            self.depthAverageLabel.text = ""
-            self.depthMaxLabel.text = ""
-            self.reuseSelfRefLabel.text = ""
-            self.reuseDuplicateRefLabel.text = ""
+            fetchedCell.detailTextLabel?.text = ""
+            updatedCell.detailTextLabel?.text = ""
+            fromCell.detailTextLabel?.text = ""
+            validatorsCell.detailTextLabel?.text = ""
+            nodesAverageCell.detailTextLabel?.text = ""
+            nodesMaxCell.detailTextLabel?.text = ""
+            depthAverageCell.detailTextLabel?.text = ""
+            depthMaxCell.detailTextLabel?.text = ""
+            selfRefCell.detailTextLabel?.text = ""
+            duplicateRefCell.detailTextLabel?.text = ""
+            nodesSelectedCell.detailTextLabel?.text = ""
         }
         else {
             // Setup with our data
@@ -193,36 +215,38 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             // Update our UI
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss a"
-            self.fetchedLabel.text = dateFormatter.string(from: Date())
-            self.updatedLabel.text = dateFormatter.string(from: updatedMax )
-            self.fromLabel.text = "stellarbeat.io"
-            self.validatorsLabel.text = "\(validators.count)"
-            self.nodesAverageLabel.text = String(format: "%.02f", Double(nodesSum) / Double(validators.count))
-            self.nodesMaxLabel.text = "\(nodesMax)"
-            self.depthAverageLabel.text = String(format: "%.02f", Double(depthSum) / Double(validators.count))
-            self.depthMaxLabel.text = "\(depthMax)"
-            self.reuseSelfRefLabel.text = "\(countResuseSelfRef) of \(validators.count)"
-            self.reuseDuplicateRefLabel.text = "\(countResuseDuplicateRef) of \(validators.count)"
+            
+            fetchedCell.detailTextLabel?.text = dateFormatter.string(from: Date())
+            updatedCell.detailTextLabel?.text = dateFormatter.string(from: updatedMax )
+            fromCell.detailTextLabel?.text = "stellarbeat.io"
+            validatorsCell.detailTextLabel?.text = "\(validators.count)"
+            nodesAverageCell.detailTextLabel?.text = String(format: "%.02f", Double(nodesSum) / Double(validators.count))
+            nodesMaxCell.detailTextLabel?.text = "\(nodesMax)"
+            depthAverageCell.detailTextLabel?.text = String(format: "%.02f", Double(depthSum) / Double(validators.count))
+            depthMaxCell.detailTextLabel?.text = "\(depthMax)"
+            selfRefCell.detailTextLabel?.text = "\(countResuseSelfRef) of \(validators.count)"
+            duplicateRefCell.detailTextLabel?.text = "\(countResuseDuplicateRef) of \(validators.count)"
             
             // Update Charts
-            self.view.layoutIfNeeded()
-            let nodeEntries = nodesHistogram.map { (arg) -> BarChartDataEntry in
-                let (key, value) = arg
+            let nodeTouplesSorted = nodesHistogram.sorted(by: { $0 < $1 })
+            let nodeEntries = nodeTouplesSorted.map { (key, value) -> BarChartDataEntry in
                 return BarChartDataEntry(x: Double(key), y: Double(value))
             }
             let nodesDataSet = BarChartDataSet(values: nodeEntries, label: nil)
-            nodesDataSet.colors = [nodeStarBlue]
+            nodesDataSet.colors = [nodeStarBlue.withAlphaComponent(0.8)]
             nodesDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
             self.nodesChart.data = BarChartData(dataSet: nodesDataSet)
             
-            let depthEntries = depthHistogram.map { (arg) -> BarChartDataEntry in
-                let (key, value) = arg
+            let depthTouplesSorted = depthHistogram.sorted(by: { $0 < $1 })
+            let depthEntries = depthTouplesSorted.map { (key, value) -> BarChartDataEntry in
                 return BarChartDataEntry(x: Double(key), y: Double(value))
             }
             let depthDataSet = BarChartDataSet(values: depthEntries, label: "asdfas")
             depthDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
-            depthDataSet.colors = [nodeStarBlue]
+            depthDataSet.colors = [nodeStarBlue.withAlphaComponent(0.8)]
             self.depthChart.data = BarChartData(dataSet: depthDataSet)
+            
+            updateSelected()
             
             // Chart Animation :)
             nodesChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
@@ -231,12 +255,44 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             self.tableView.reloadData()
         }
     }
+    private func updateSelected() {
+        if ( nodesChart.highlighted.count == 1 ) {
+            nodesSelectedCell.textLabel?.text = "n=\(Int(nodesChart.highlighted[0].x))"
+            nodesSelectedCell.detailTextLabel?.text = "\(Int(nodesChart.highlighted[0].y))"
+        }
+        else {
+            if let entry = nodesChart.barData?.dataSets[0].entryForIndex(0) {
+                nodesSelectedCell.textLabel?.text = "n=\(Int(entry.x))"
+                nodesSelectedCell.detailTextLabel?.text = "\(Int(entry.y))"
+            }
+            else {
+                nodesSelectedCell.textLabel?.text = ""
+                nodesSelectedCell.detailTextLabel?.text = ""
+            }
+        }
+        
+        if ( depthChart.highlighted.count == 1 ) {
+            depthSelectedCell.textLabel?.text = "d=\(Int(depthChart.highlighted[0].x))"
+            depthSelectedCell.detailTextLabel?.text = "\(Int(depthChart.highlighted[0].y))"
+        }
+        else {
+            if let entry = depthChart.barData?.dataSets[0].entryForIndex(0) {
+                depthSelectedCell.textLabel?.text = "d=\(Int(entry.x))"
+                depthSelectedCell.detailTextLabel?.text = "\(Int(entry.y))"
+            }
+            else {
+                depthSelectedCell.textLabel?.text = ""
+                depthSelectedCell.detailTextLabel?.text = ""
+            }
+        }
+    }
     
     // MARK: User Interaction
-    @objc func pushValidatorsVC() {
-        updateTableView()
+    @objc func pushAllValidatorsVC() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+        vc.title = "All Validators"
+        vc.validators = QuorumManager.validators
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -261,7 +317,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                             if node != nil { tempNodes.append(node!) }
                         }
                         print("Parsed Validator Nodes: \(tempNodes.count)")
-                        QuorumManager.validatorsNodes = tempNodes
+                        QuorumManager.validators = tempNodes
                         self.validators = tempNodes
                         DispatchQueue.main.async{
                             self.updateTableView()
@@ -303,32 +359,85 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     
     // MARK: UITableViewDelegate
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 0 && indexPath.row == 2 {
+        let cell = tableView.cellForRow(at: indexPath)
+        if cell == fromCell {
             // StellarBeat.io
             tableView.deselectRow(at: indexPath, animated: true)
             UIApplication.shared.open(URL(string: "https://stellarbeat.io/")!, options: [:], completionHandler: nil)
         }
-        if indexPath.section == 0 && indexPath.row == 3 {
+        if cell == validatorsCell {
             // Validators
-            self.pushValidatorsVC()
+            self.pushAllValidatorsVC()
+        }
+        if cell == nodesSelectedCell {
+            // Nodes Selected
+            var nodes = 0
+            if ( nodesChart.highlighted.count == 1 ) {
+                nodes = Int(nodesChart.highlighted[0].x)
+            }
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            vc.title = "n=\(nodes) Validators"
+            vc.validators = validators.filter({ (v) -> Bool in
+                return v.quorumSet.leafValidators == nodes
+            })
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        if cell == depthSelectedCell {
+            // Depth Selected
+            var depth = 0
+            if ( depthChart.highlighted.count == 1 ) {
+                depth = Int(depthChart.highlighted[0].x)
+            }
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            vc.title = "d=\(depth) Validators"
+            vc.validators = validators.filter({ (v) -> Bool in
+                return v.quorumSet.maxDepth == depth
+            })
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        if cell == selfRefCell {
+            // Self Ref Validators
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            vc.title = "Self Ref Validators"
+            vc.validators = validators.filter({ (v) -> Bool in
+                return v.quorumSet.eventualValidators.contains(v.publicKey)
+            })
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+        if cell == duplicateRefCell {
+            // Duplicate Ref Validators
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            vc.title = "Duplicate Ref Validators"
+            vc.validators = validators.filter({ (v) -> Bool in
+                return v.quorumSet.leafValidators != v.quorumSet.eventualValidators.count
+            })
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     override public func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        if indexPath.section == 0 && ( indexPath.row == 2 || indexPath.row == 3 ) {
+        let cell = tableView.cellForRow(at: indexPath)
+        if [fromCell, validatorsCell, nodesSelectedCell, depthSelectedCell, selfRefCell, duplicateRefCell].contains(cell) {
             return indexPath
         }
         return nil
     }
     override public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 2 {
+        let cell = tableView.cellForRow(at: indexPath)
+        if cell == nodesChartCell {
             nodesChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
         }
-        if indexPath.section == 2 && indexPath.row == 2 {
+        if cell == depthChartCell {
             depthChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
         }
     }
     
     // MARK: ChartViewDelegate
-    //@objc optional func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight)
+    @objc func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        updateSelected()
+    }
     
 }
