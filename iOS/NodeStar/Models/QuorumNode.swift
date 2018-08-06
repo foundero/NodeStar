@@ -35,20 +35,45 @@ protocol QuorumNode {
     var threshold: Int { get }
     var quorumNodes: [QuorumNode] { get }
     
-    // TODO: Computed metrics of this node relative to root QuorumSet
-    // Affect()
-    // Required()
-    // Influence()
-    // do we need rootNode reference?
-    // do we need parentNode reference?
-    // is it helpful to have current depth?
-    
     // Info about Quorum from this node through all children & subtrees
     var maxDepth: Int { get }
     var eventualValidators: Set<String> { get } // using public key for now -- later use object itself
     var leafValidators: Int { get } // count of all leaf validator nodes
+    
+    // Impact Metrics
+    func quorumMetricsForNode(node: QuorumNode) -> QuorumMetrics
 }
 
+struct QuorumMetrics {
+    var combinations: Int = 0 // Combinations, given Validator truthiness aka 2^(othervalidators-1)
+    var truthsGivenValidatorTrue: Int = 0
+    var truthsGivenValidatorFalse: Int = 0
+    var falsesGivenValidatorTrue: Int { return combinations - truthsGivenValidatorTrue }
+    var falsesGivenValidatorFalse: Int { return combinations - truthsGivenValidatorFalse }
+    
+    var validatorEffected: Int {
+        return truthsGivenValidatorTrue + falsesGivenValidatorFalse - combinations
+    }
+    var validatorAffect: Double {
+        return Double(validatorEffected) / Double(combinations)
+    }
+    var validatorRequire: Double {
+        return Double(validatorEffected) / Double(truthsGivenValidatorTrue)
+    }
+    var validatorInfluence: Double {
+        return Double(validatorEffected) / Double(falsesGivenValidatorFalse)
+    }
+    
+    func printMetrics() {
+        var b = String(format: "%.0f",validatorAffect*100)
+        var c = String(format: "%.0f",validatorRequire*100)
+        var d = String(format: "%.0f",validatorInfluence*100)
+        print("Effected: \(validatorEffected)")
+        print("Affect: \(b)%")
+        print("Require: \(c)%")
+        print("Influence: \(d)%")
+    }
+}
 
 class QuorumSet : QuorumNode {
     var hashKey: String! = ""
@@ -84,6 +109,105 @@ class QuorumSet : QuorumNode {
         return tempLeafs
     }
     
+    private var quorumMetricsCache: [String:QuorumMetrics] = [:]
+    func quorumMetricsForNode(node: QuorumNode) -> QuorumMetrics {
+        // Check Cache
+        if quorumMetricsCache[node.identifier] != nil {
+            return quorumMetricsCache[node.identifier]!
+        }
+        
+        var metrics = QuorumMetrics()
+        
+        // Split leafs from inner qs at this level and remove subject validator
+        var validatorNodes: [QuorumNode] = []
+        var quorumSetNodes: [QuorumNode] = []
+        var includesSubjectValidator: Int = 0
+        for quorumNode in self.quorumNodes {
+            if quorumNode.identifier == node.identifier {
+                includesSubjectValidator = 1
+            }
+            else if quorumNode is QuorumSet {
+                quorumSetNodes.append(quorumNode)
+            }
+            else {
+                validatorNodes.append(quorumNode)
+            }
+        }
+        
+        // Combinations
+        metrics.combinations = 2 << (validatorNodes.count-1) // AKA 2^(n) -- note the extra -1
+        for qsNode in quorumSetNodes {
+            metrics.combinations *= qsNode.quorumMetricsForNode(node: node).combinations
+        }
+        
+        // For all combinations of qs nodes t/f -- represented by bits in i
+        for i in UInt(0)...(UInt(2)<<(quorumSetNodes.count-1) - UInt(1)) {
+            let trueQSNodes = bitcount(n: i)
+            var neededValidators = threshold - trueQSNodes - includesSubjectValidator
+            if neededValidators < 0 {
+                neededValidators = 0
+            }
+            if neededValidators > validatorNodes.count {
+                continue
+            }
+            for trueValidators in neededValidators...validatorNodes.count {
+                let binomialTerm: Int = binomial(n: validatorNodes.count, k: trueValidators)
+                var truthsGivenValidatorTrue = 0
+                var falsesGivenValidatorFalse = 0
+                
+                // Given validator true
+                if trueQSNodes + trueValidators + includesSubjectValidator >= threshold {
+                    truthsGivenValidatorTrue = binomialTerm
+                }
+                // Given validator false
+                if trueQSNodes + trueValidators >= threshold {
+                    falsesGivenValidatorFalse = binomialTerm
+                }
+                
+                // Now multiply out the qsNodes
+                for (qsIndex, qsNode) in quorumSetNodes.enumerated() {
+                    let innerMetrics = qsNode.quorumMetricsForNode(node: node) // Recursion
+                    
+                    if i & 2<<(qsIndex-1) > 0 { // Truth of qsNode[qsIndex]
+                        // qs node in question is true
+                        truthsGivenValidatorTrue *= innerMetrics.truthsGivenValidatorTrue
+                        falsesGivenValidatorFalse *= innerMetrics.truthsGivenValidatorFalse
+                    }
+                    else { // qs is false
+                        truthsGivenValidatorTrue *= innerMetrics.falsesGivenValidatorTrue
+                        falsesGivenValidatorFalse *= innerMetrics.falsesGivenValidatorFalse
+                    }
+                }
+                metrics.truthsGivenValidatorTrue += truthsGivenValidatorTrue
+                metrics.truthsGivenValidatorFalse += falsesGivenValidatorFalse
+            }
+        }
+        
+        // Cache it
+        quorumMetricsCache[node.identifier] = metrics
+        return metrics
+    }
+    
+    // MARK: Private utils
+    private func binomial(n: Int, k: Int) -> Int {
+        precondition(k >= 0 && n >= 0)
+        if (k > n) { return 0 }
+        var result = 1
+        for i in 0 ..< min(k, n-k) {
+            result = (result * (n - i))/(i + 1)
+        }
+        return result
+    }
+    private func bitcount(n: UInt) -> Int {
+        var tempN = n
+        var count: Int = 0
+        while tempN != 0 {
+            tempN = tempN & (tempN-1)
+            count += 1
+        }
+        return count
+    }
+    
     // MARK: Parsing
     class func nodeFromDictionary(dict: [String: AnyObject]?) -> QuorumSet? {
         let node: QuorumSet = QuorumSet()
@@ -113,6 +237,7 @@ class QuorumSet : QuorumNode {
 
 
 class QuorumValidator : QuorumNode {
+    
     var publicKey: String!
     
     // MARK: QuorumNode Protocol
@@ -129,6 +254,19 @@ class QuorumValidator : QuorumNode {
     }
     var leafValidators: Int {
         return 1
+    }
+    
+    func quorumMetricsForNode(node: QuorumNode) -> QuorumMetrics {
+        if node.identifier == self.identifier {
+            return QuorumMetrics(combinations: 1,
+                                 truthsGivenValidatorTrue: 1,
+                                 truthsGivenValidatorFalse: 0)
+        }
+        else {
+            return QuorumMetrics(combinations: 2,
+                                 truthsGivenValidatorTrue: 1,
+                                 truthsGivenValidatorFalse: 1)
+        }
     }
     
     // MARK: Parsing

@@ -241,7 +241,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             let depthEntries = depthTouplesSorted.map { (key, value) -> BarChartDataEntry in
                 return BarChartDataEntry(x: Double(key), y: Double(value))
             }
-            let depthDataSet = BarChartDataSet(values: depthEntries, label: "asdfas")
+            let depthDataSet = BarChartDataSet(values: depthEntries, label: nil)
             depthDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
             depthDataSet.colors = [nodeStarBlue.withAlphaComponent(0.8)]
             self.depthChart.data = BarChartData(dataSet: depthDataSet)
@@ -437,7 +437,14 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     
     // MARK: ChartViewDelegate
     @objc func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        // Flash the chart selected cell
+        let cellToFlash = chartView == nodesChart ? nodesSelectedCell : depthSelectedCell
+        cellToFlash?.setSelected(true, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3 ) {
+            cellToFlash?.setSelected(false, animated: true)
+        }
+        
+        // Update the values in the chart selected cells
         updateSelected()
     }
-    
 }

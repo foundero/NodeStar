@@ -163,6 +163,8 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     // MARK: -- NodeViewDelegate
     func nodeViewTapped(nodeView: NodeView) {
         self.selectedNodeView = nodeView
+        let m = validator.quorumSet.quorumMetricsForNode(node: nodeView.quorumNode)
+        m.printMetrics()
     }
     func nodeViewDoubleTapped(nodeView: NodeView) {
         self.selectedNodeView = nodeView
