@@ -9,14 +9,15 @@
 import UIKit
 
 let nodeStarBlue: UIColor = UIColor(red: 24.0/255.0, green: 129.0/255.0, blue: 234.0/255.0, alpha: 1)
-let nodeStarLightGreen: UIColor = UIColor(red: 210.0/255, green: 250.0/255, blue: 190.0/255, alpha: 1.0)
+let nodeStarLightGreen: UIColor = UIColor(red: 220.0/255, green: 250.0/255, blue: 220.0/255, alpha: 1.0)
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         window?.backgroundColor = UIColor.white
         return true
     }

@@ -30,9 +30,6 @@ class Validator {
 
     var rawData: [String: Any]!
     
-    // TODO: Computed Metrics from QuorumSet
-    // Is it safe? stellar core has some way of computing this
-    
     class func nodeFromDictionary(dict: [String: AnyObject]) -> Validator? {
         let node: Validator = Validator()
         node.publicKey = dict["publicKey"] as! String

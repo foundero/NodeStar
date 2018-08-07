@@ -17,7 +17,6 @@ class ValidatorCell: UITableViewCell {
 
     @IBOutlet weak var rootThresholdLabel: UILabel?
     @IBOutlet weak var nodesLabel: UILabel?
-    @IBOutlet weak var leafsLabel: UILabel?
     @IBOutlet weak var depthLabel: UILabel?
     
     class var desiredHieght: CGFloat {
@@ -25,20 +24,19 @@ class ValidatorCell: UITableViewCell {
     }
     
     open func updateWithModel(validator: Validator) {
-        self.nameLabel?.text = "\(QuorumManager.handleForNodeId(id: validator.publicKey)). \(validator.name ?? "")"
-        self.cityLabel?.text = validator.city ?? "[City]"
-        self.publicKeyLabel?.text = validator.publicKey
-        self.verifiedCheckmark?.isHidden = !validator.verified
+        nameLabel?.text = "\(QuorumManager.handleForNodeId(id: validator.publicKey)). \(validator.name ?? "")"
+        cityLabel?.text = validator.city ?? "[City]"
+        publicKeyLabel?.text = "pk: " + validator.publicKey
+        verifiedCheckmark?.isHidden = !validator.verified
         
-        self.nodesLabel?.text = "n=\(validator.quorumSet.eventualValidators.count)"
-        self.leafsLabel?.text = "l=\(validator.quorumSet.leafValidators)"
-        self.depthLabel?.text = "d=\(validator.quorumSet.maxDepth)"
+        nodesLabel?.text = "n=\(validator.quorumSet.uniqueValidators.count)"
+        depthLabel?.text = "d=\(validator.quorumSet.maxDepth)"
         let thresholdString = "\(validator.quorumSet.threshold)/\(validator.quorumSet.quorumNodes.count)"
         if ( validator.quorumSet.maxDepth ) > 1 {
-            self.rootThresholdLabel?.text = "*" + thresholdString
+            rootThresholdLabel?.text = "*" + thresholdString
         }
         else {
-            self.rootThresholdLabel?.text = thresholdString
+            rootThresholdLabel?.text = thresholdString
         }
     }
 }

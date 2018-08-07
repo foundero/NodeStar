@@ -17,12 +17,13 @@ protocol NodeViewDelegate {
 class NodeView: UIView {
     var delegate: NodeViewDelegate?
     var quorumNode: QuorumNode!
+    var quorumMetrics: QuorumMetrics!
     var parentNodeView: NodeView?
     var selected: Bool = false { didSet { setNeedsDisplay() } }
     
     private var nameLabel: UILabel!
     private var thresholdLabel: UILabel!
-    private var borderColor: UIColor = UIColor.blue
+    private var borderColor: UIColor = UIColor.black
     private var fillColor: UIColor = UIColor.white
     
     init() {
@@ -38,33 +39,63 @@ class NodeView: UIView {
         sharedInit()
     }
     private func sharedInit() {
-        self.backgroundColor = UIColor.clear
-        self.contentMode = UIViewContentMode.redraw
+        backgroundColor = UIColor.clear
+        contentMode = UIViewContentMode.redraw
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.tap(recognizer:)))
-        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.doubleTap(recognizer:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tap(recognizer:)))
+        let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(doubleTap(recognizer:)))
         doubleTapGesture.numberOfTapsRequired = 2
         tapGesture.require(toFail: doubleTapGesture)
-        self.addGestureRecognizer(tapGesture)
-        self.addGestureRecognizer(doubleTapGesture)
+        addGestureRecognizer(tapGesture)
+        addGestureRecognizer(doubleTapGesture)
         
-        self.thresholdLabel = UILabel(frame: CGRect.null)
-        self.thresholdLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.thresholdLabel.font = UIFont.systemFont(ofSize: 8)
-        self.addSubview(self.thresholdLabel)
-        self.addConstraint(NSLayoutConstraint(item: self.thresholdLabel, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1.0, constant: -6.0))
-        self.addConstraint(NSLayoutConstraint(item: self.thresholdLabel, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1.0, constant: 0.0))
+        thresholdLabel = UILabel(frame: CGRect.null)
+        thresholdLabel.translatesAutoresizingMaskIntoConstraints = false
+        thresholdLabel.font = UIFont.systemFont(ofSize: 10)
+        addSubview(thresholdLabel)
+        addConstraint(NSLayoutConstraint(item: thresholdLabel,
+                                              attribute: .bottom,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: -7.0))
+        addConstraint(NSLayoutConstraint(item: thresholdLabel,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
         
-        self.nameLabel = UILabel(frame: CGRect.null)
-        self.nameLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.nameLabel.font = UIFont.systemFont(ofSize: 14)
-        self.nameLabel.adjustsFontSizeToFitWidth = true
-        self.nameLabel.minimumScaleFactor = 0.5
-        self.nameLabel.textAlignment = NSTextAlignment.center
-        self.addSubview(self.nameLabel)
-        self.addConstraint(NSLayoutConstraint(item: self.nameLabel, attribute: .top, relatedBy: .equal, toItem:self , attribute: .top, multiplier: 1.0, constant: 8.0))
-        self.addConstraint(NSLayoutConstraint(item: self.nameLabel, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1.0, constant: 4.0))
-        self.addConstraint(NSLayoutConstraint(item: self.nameLabel, attribute: .trailing, relatedBy: .equal, toItem: self, attribute: .trailing, multiplier: 1.0, constant: -4.0))
+        nameLabel = UILabel(frame: CGRect.null)
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        nameLabel.font = UIFont.systemFont(ofSize: 14)
+        nameLabel.adjustsFontSizeToFitWidth = true
+        nameLabel.minimumScaleFactor = 0.5
+        nameLabel.textAlignment = NSTextAlignment.center
+        addSubview(nameLabel)
+        addConstraint(NSLayoutConstraint(item: nameLabel,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .top,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
+        addConstraint(NSLayoutConstraint(item: nameLabel,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 4.0))
+        addConstraint(NSLayoutConstraint(item: nameLabel,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: -4.0))
     }
     
     override open var intrinsicContentSize: CGSize {
@@ -74,67 +105,91 @@ class NodeView: UIView {
     
     // MARK: Public Methods
     func update() {
-        if self.quorumNode is QuorumValidator {
+        if quorumNode is QuorumValidator {
             // Leaf
-            self.borderColor = UIColor.black
-            self.fillColor = UIColor.white
-            self.thresholdLabel.text = ""
-            self.thresholdLabel.text = ""
-            self.nameLabel.text = QuorumManager.handleForNodeId(id: self.quorumNode.identifier)
-            if QuorumManager.validatorForId(id: self.quorumNode.identifier)?.verified == true {
-                self.fillColor = nodeStarLightGreen
+            fillColor = UIColor.white
+            thresholdLabel.text = ""
+            thresholdLabel.text = ""
+            nameLabel.text = QuorumManager.handleForNodeId(id: quorumNode.identifier)
+            if QuorumManager.validatorForId(id: quorumNode.identifier)?.verified == true {
+                fillColor = nodeStarLightGreen
             }
         }
         else {
             // Quorum Set
-            self.borderColor = UIColor.black.withAlphaComponent(0.5)
-            self.fillColor = UIColor.white.withAlphaComponent(0.5)
-            self.thresholdLabel.text = "\(quorumNode.threshold)/\(quorumNode.quorumNodes.count)"
-            self.nameLabel.text = ""
+            fillColor = UIColor.lightGray
+            thresholdLabel.text = "\(quorumNode.threshold)/\(quorumNode.quorumNodes.count)"
+            nameLabel.text = ""
         }
-        self.setNeedsDisplay()
+        setNeedsDisplay()
     }
     func updateAsRoot(validator: Validator) {
-        self.nameLabel.text = QuorumManager.handleForNodeId(id: validator.publicKey)
-        if validator.verified == true {
-            self.fillColor = nodeStarLightGreen.withAlphaComponent(0.5)
-        }
-        self.setNeedsDisplay()
+        nameLabel.text = QuorumManager.handleForNodeId(id: validator.publicKey)
+        setNeedsDisplay()
     }
     
     
     // MARK: Gestures
     @objc func tap(recognizer : UITapGestureRecognizer) {
-        self.delegate?.nodeViewTapped(nodeView: self)
+        delegate?.nodeViewTapped(nodeView: self)
     }
     @objc func doubleTap(recognizer : UITapGestureRecognizer) {
-        self.delegate?.nodeViewDoubleTapped(nodeView: self)
+        delegate?.nodeViewDoubleTapped(nodeView: self)
     }
     
     
     // MARK: Drawing
     override func draw(_ rect: CGRect) {
+        if selected {
+            nameLabel.font = UIFont.boldSystemFont(ofSize: 14)
+            thresholdLabel.font = UIFont.boldSystemFont(ofSize: 10)
+        }
+        else {
+            nameLabel.font = UIFont.systemFont(ofSize: 14)
+            thresholdLabel.font = UIFont.systemFont(ofSize: 10)
+        }
         drawRingFittingInsideView()
     }
     // https://stackoverflow.com/questions/29616992/how-do-i-draw-a-circle-in-ios-swift
     internal func drawRingFittingInsideView()->() {
         let halfSize:CGFloat = min( bounds.size.width/2, bounds.size.height/2)
-        var desiredLineWidth:CGFloat = 2.0
-        if self.selected {
-            desiredLineWidth = 5.0
+        var desiredLineWidth:CGFloat = 0.5
+        if selected {
+            desiredLineWidth = 2.0
         }
         
         let circlePath = UIBezierPath(
-            arcCenter: CGPoint(x:bounds.size.width/2,y:bounds.size.height/2),
-            radius: CGFloat( halfSize - (desiredLineWidth/2) ),
+            arcCenter: CGPoint(x:bounds.size.width/2.0,y:bounds.size.height/2.0),
+            radius: CGFloat( halfSize - (desiredLineWidth/2.0) ),
             startAngle: CGFloat(0),
             endAngle:CGFloat(Double.pi * 2),
             clockwise: true)
         
-        self.borderColor.setStroke()
-        self.fillColor.setFill()
+        borderColor.setStroke()
+        fillColor.setFill()
         circlePath.lineWidth = desiredLineWidth
-        circlePath.stroke()
         circlePath.fill()
+        if quorumNode is QuorumValidator || selected {
+            circlePath.stroke()
+        }
+        
+        if selected {
+        // Draw the metrics as concentric circles on each node
+        for (index, (metric, color)) in [(quorumMetrics.validatorAffect, UIColor.green),
+                                         (quorumMetrics.validatorRequire, UIColor.blue),
+                                         (quorumMetrics.validatorInfluence, UIColor.red)].enumerated()
+        {
+            let radius =  CGFloat( halfSize - (desiredLineWidth*CGFloat(index + 1) - desiredLineWidth/2.0) )
+            let circlePathInner = UIBezierPath(
+                arcCenter: CGPoint(x:bounds.size.width/2.0,y:bounds.size.height/2.0),
+                radius:radius,
+                startAngle: CGFloat(-Double.pi/2.0),
+                endAngle:CGFloat(Double.pi * 2 * metric - Double.pi/2.0),
+                clockwise: true)
+            color.setStroke()
+            circlePathInner.lineWidth = desiredLineWidth
+            circlePathInner.stroke()
+        }
+        }
     }
 }

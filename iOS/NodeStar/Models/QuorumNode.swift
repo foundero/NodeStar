@@ -20,8 +20,8 @@ class QuorumManager {
         return nil
     }
     static func handleForNodeId(id: String) -> String {
-        for index in 0...validators.count {
-            if validators[index].publicKey == id {
+        for (index, validator) in validators.enumerated() {
+            if validator.publicKey == id {
                 return "\(index+1)"
             }
         }
@@ -37,11 +37,11 @@ protocol QuorumNode {
     
     // Info about Quorum from this node through all children & subtrees
     var maxDepth: Int { get }
-    var eventualValidators: Set<String> { get } // using public key for now -- later use object itself
-    var leafValidators: Int { get } // count of all leaf validator nodes
+    var uniqueValidators: Set<String> { get } // using public key for now -- later use object itself
+    var allValidatorsCount: Int { get } // count of all (leaf) validator nodes including dups
     
     // Impact Metrics
-    func quorumMetricsForNode(node: QuorumNode) -> QuorumMetrics
+    func impactOfNode(node: QuorumNode) -> QuorumMetrics
 }
 
 struct QuorumMetrics {
@@ -65,13 +65,13 @@ struct QuorumMetrics {
     }
     
     func printMetrics() {
-        var b = String(format: "%.0f",validatorAffect*100)
-        var c = String(format: "%.0f",validatorRequire*100)
-        var d = String(format: "%.0f",validatorInfluence*100)
+        let affect = String(format: "%.0f",validatorAffect*100)
+        let require = String(format: "%.0f",validatorRequire*100)
+        let influence = String(format: "%.0f",validatorInfluence*100)
         print("Effected: \(validatorEffected)")
-        print("Affect: \(b)%")
-        print("Require: \(c)%")
-        print("Influence: \(d)%")
+        print("Affect: \(affect)%")
+        print("Require: \(require)%")
+        print("Influence: \(influence)%")
     }
 }
 
@@ -82,11 +82,11 @@ class QuorumSet : QuorumNode {
     var quorumNodes: [QuorumNode] = []
     var threshold: Int = 0
     var identifier: String {
-        return self.hashKey
+        return hashKey
     }
     var maxDepth: Int {
         var tempMax = 0
-        for qn in self.quorumNodes {
+        for qn in quorumNodes {
             let qnMaxDepth = qn.maxDepth
             if qnMaxDepth + 1 > tempMax {
                 tempMax = qnMaxDepth + 1
@@ -94,23 +94,58 @@ class QuorumSet : QuorumNode {
         }
         return tempMax
     }
-    var eventualValidators: Set<String> {
+    var uniqueValidators: Set<String> {
         var tempValidators: Set<String> = []
-        for qn in self.quorumNodes {
-            tempValidators.formUnion(qn.eventualValidators)
+        for qn in quorumNodes {
+            tempValidators.formUnion(qn.uniqueValidators)
         }
         return tempValidators
     }
-    var leafValidators: Int {
+    var allValidatorsCount: Int {
         var tempLeafs = 0
-        for qn in self.quorumNodes {
-            tempLeafs += qn.leafValidators
+        for qn in quorumNodes {
+            tempLeafs += qn.allValidatorsCount
         }
         return tempLeafs
     }
     
+    func progeny(progenyIdentifier: String) -> QuorumNode? {
+        for node in quorumNodes {
+            if node.identifier == progenyIdentifier {
+                return node
+            }
+            for innerNode in node.quorumNodes {
+                if let innerQS = innerNode as? QuorumSet {
+                    if let progeny = innerQS.progeny(progenyIdentifier: progenyIdentifier) {
+                        return progeny
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    // Here we calculate the impact of a node on this node's truthiness. In general
+    // it's most useful to look at the impact of a node on the root qs of a validator
+    // but note that we call this method recursively so intermediate values are useful
+    // and cached during the calculation.
+    //
+    // NOTE: This may not work if a non-root validator node is repeated somewhere in the full quorum set.
+    // but there are not currently any instances of this as seen on the home summary screen that
+    // there are 0 duplicate references under the Quorum Set Validator Resuse section
+    //
+    // PERFORMANCE:
+    //
+    // We've documented 4 ways to calculate the Affect, Require and Influence metrics.
+    // General: computed t/f for every combination (2^N)
+    // Recursive: for each quorumset level compute t/f for every combination (2^N-nodes-per-qs)
+    // Recursive/Binomial Hybrid: for each quorumset level compute t/f for every combination of sub qs node
+    //     and use binomial combinations for the validator leafs. (2^N-qs-nodes-per-qs)
+    // Binomial: Only works if there is no inner quorum set - simply use binomial combinations
+    //
+    // We use caching to avoid recomputing the recursive bits
     private var quorumMetricsCache: [String:QuorumMetrics] = [:]
-    func quorumMetricsForNode(node: QuorumNode) -> QuorumMetrics {
+    func impactOfNode(node: QuorumNode) -> QuorumMetrics {
         // Check Cache
         if quorumMetricsCache[node.identifier] != nil {
             return quorumMetricsCache[node.identifier]!
@@ -122,7 +157,7 @@ class QuorumSet : QuorumNode {
         var validatorNodes: [QuorumNode] = []
         var quorumSetNodes: [QuorumNode] = []
         var includesSubjectValidator: Int = 0
-        for quorumNode in self.quorumNodes {
+        for quorumNode in quorumNodes {
             if quorumNode.identifier == node.identifier {
                 includesSubjectValidator = 1
             }
@@ -137,7 +172,7 @@ class QuorumSet : QuorumNode {
         // Combinations
         metrics.combinations = 2 << (validatorNodes.count-1) // AKA 2^(n) -- note the extra -1
         for qsNode in quorumSetNodes {
-            metrics.combinations *= qsNode.quorumMetricsForNode(node: node).combinations
+            metrics.combinations *= qsNode.impactOfNode(node: node).combinations
         }
         
         // For all combinations of qs nodes t/f -- represented by bits in i
@@ -166,7 +201,7 @@ class QuorumSet : QuorumNode {
                 
                 // Now multiply out the qsNodes
                 for (qsIndex, qsNode) in quorumSetNodes.enumerated() {
-                    let innerMetrics = qsNode.quorumMetricsForNode(node: node) // Recursion
+                    let innerMetrics = qsNode.impactOfNode(node: node) // Recursion
                     
                     if i & 2<<(qsIndex-1) > 0 { // Truth of qsNode[qsIndex]
                         // qs node in question is true
@@ -244,19 +279,19 @@ class QuorumValidator : QuorumNode {
     let quorumNodes: [QuorumNode] = []
     let threshold: Int = 0
     var identifier: String {
-        return self.publicKey!
+        return publicKey!
     }
     var maxDepth: Int {
         return 0
     }
-    var eventualValidators: Set<String> {
-        return [self.identifier]
+    var uniqueValidators: Set<String> {
+        return [identifier]
     }
-    var leafValidators: Int {
+    var allValidatorsCount: Int {
         return 1
     }
     
-    func quorumMetricsForNode(node: QuorumNode) -> QuorumMetrics {
+    func impactOfNode(node: QuorumNode) -> QuorumMetrics {
         if node.identifier == self.identifier {
             return QuorumMetrics(combinations: 1,
                                  truthsGivenValidatorTrue: 1,

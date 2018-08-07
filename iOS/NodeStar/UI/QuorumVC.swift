@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Charts
 
 class QuorumVC: UIViewController, NodeViewDelegate {
     
@@ -23,30 +24,69 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     @IBOutlet weak var quorumSetHashLabel: UILabel?
     @IBOutlet weak var rootThresholdLabel: UILabel?
     @IBOutlet weak var nodesLabel: UILabel?
-    @IBOutlet weak var leafsLabel: UILabel?
     @IBOutlet weak var depthLabel: UILabel?
+    @IBOutlet weak var metricChart: BarChartView!
     
     var validator: Validator!
+    
+    lazy var percentFormatter: NumberFormatter = {
+        var formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 0
+        formatter.positiveSuffix = "%"
+        return formatter
+    }()
     
     // MARK: -- View Controller Stuff
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Quorum Set - " + QuorumManager.handleForNodeId(id: self.validator.publicKey)
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "info", style:.plain, target: self, action: #selector(tappedInfoButton))
+        title = "Quorum Set - " + QuorumManager.handleForNodeId(id: validator.publicKey)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "",
+                                                           style:.plain,
+                                                           target: nil,
+                                                           action: nil)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "info",
+                                                            style:.plain,
+                                                            target: self,
+                                                            action: #selector(tappedInfoButton))
+        
+        // Setup the chart
+        metricChart.leftAxis.enabled = false
+        metricChart.rightAxis.enabled = false
+        metricChart.rightAxis.axisMinimum = 0.0
+        metricChart.rightAxis.axisMaximum = 116.0
+        metricChart.xAxis.drawGridLinesEnabled = false
+        metricChart.xAxis.labelPosition = .bottom
+        metricChart.xAxis.valueFormatter = MetricFormatter()
+        metricChart.xAxis.labelCount = 3
+        metricChart.xAxis.labelFont = UIFont.systemFont(ofSize: 8.0)
+        metricChart.chartDescription = nil
+        metricChart.legend.enabled = false
         
         // Draw all the nodes within horizontal stack views
-        self.showNodes(quorumNode: self.validator.quorumSet, depth: 0, parentNodeView: nil)
+        showNodes(quorumNode: validator.quorumSet, depth: 0, parentNodeView: nil)
         
-        // Select root
-        let rootNodeView = self.nodeViews[0]
-        rootNodeView.updateAsRoot(validator: self.validator)
-        selectedNodeView = rootNodeView
-
+        // Root Node View
+        let rootNodeView = nodeViews[0]
+        rootNodeView.updateAsRoot(validator: validator)
+        
+        // Select 1st validator nodeview or else root
+        var foundValidator = false
+        for nv in nodeViews {
+            if nv.quorumNode is QuorumValidator {
+                selectedNodeView = nv
+                foundValidator = true
+                break
+            }
+        }
+        if !foundValidator {
+            selectedNodeView = rootNodeView
+        }
+        
         // Setup the view to draw lines on
-        self.nodeLinesOverlayView = NodeLinesOverlayView()
-        self.nodeLinesOverlayView.overlayOnView(self.view)
+        nodeLinesOverlayView = NodeLinesOverlayView()
+        nodeLinesOverlayView.overlayOnView(view)
     }
     override var prefersStatusBarHidden: Bool {
         return true
@@ -54,15 +94,23 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     @objc func tappedInfoButton() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
-        vc.validator = self.validator
-        self.navigationController?.pushViewController(vc, animated: true)
+        vc.validator = validator
+        navigationController?.pushViewController(vc, animated: true)
     }
     @IBAction func tappedNodeInfoButton() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
-        vc.validator = self.validator
-        self.navigationController?.pushViewController(vc, animated: true)
+        // If we can find the full info then go to it
+        if let validator: Validator = QuorumManager.validatorForId(id: selectedNodeView.quorumNode.identifier) {
+            pushValidatorDetail(validatorToPush: validator)
+        }
+        else if selectedNodeView.quorumNode.identifier == validator.quorumSet.identifier {
+            pushValidatorDetail(validatorToPush: validator)
+        }
     }
+    @IBAction func tappedNodeMetricsButton() {
+        // TODO:
+    }
+    
+    
     // MARK: -- Visualize Nodes
     
     func createRow(row: Int) {
@@ -74,20 +122,45 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         stackView.distribution = UIStackViewDistribution.fillEqually
         stackView.alignment = UIStackViewAlignment.center
         stackView.axis = .horizontal
-        self.verticalStackView?.addArrangedSubview(stackView)
+        verticalStackView?.addArrangedSubview(stackView)
         stackView.layoutMargins = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
         stackView.isLayoutMarginsRelativeArrangement = true
         
         // Give it a background that changes color based on row
         let background = UIView(frame: CGRect.null)
         background.translatesAutoresizingMaskIntoConstraints = false
-        let backgroundAlpha: CGFloat = (CGFloat(self.validator.quorumSet.maxDepth + 1) - CGFloat(row)) / CGFloat(self.validator.quorumSet.maxDepth + 1)
+        let maxDepth = validator.quorumSet.maxDepth
+        let backgroundAlpha: CGFloat = (CGFloat(maxDepth + 1) - CGFloat(row)) / CGFloat(maxDepth + 1)
         background.backgroundColor = UIColor.brown.withAlphaComponent(backgroundAlpha)
         stackView.addSubview(background)
-        stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .top, relatedBy: .equal, toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .leading, relatedBy: .equal, toItem: stackView, attribute: .leading, multiplier: 1.0, constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .trailing, relatedBy: .equal, toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background, attribute: .bottom, relatedBy: .equal, toItem: stackView, attribute: .bottom, multiplier: 1.0, constant: 0.0))
+        stackView.addConstraint(NSLayoutConstraint(item: background,
+                                                   attribute: .top,
+                                                   relatedBy: .equal,
+                                                   toItem: stackView,
+                                                   attribute: .top,
+                                                   multiplier: 1.0,
+                                                   constant: 0.0))
+        stackView.addConstraint(NSLayoutConstraint(item: background,
+                                                   attribute: .leading,
+                                                   relatedBy: .equal,
+                                                   toItem: stackView,
+                                                   attribute: .leading,
+                                                   multiplier: 1.0,
+                                                   constant: 0.0))
+        stackView.addConstraint(NSLayoutConstraint(item: background,
+                                                   attribute: .trailing,
+                                                   relatedBy: .equal,
+                                                   toItem: stackView,
+                                                   attribute: .trailing,
+                                                   multiplier: 1.0,
+                                                   constant: 0.0))
+        stackView.addConstraint(NSLayoutConstraint(item: background,
+                                                   attribute: .bottom,
+                                                   relatedBy: .equal,
+                                                   toItem: stackView,
+                                                   attribute: .bottom,
+                                                   multiplier: 1.0,
+                                                   constant: 0.0))
         
         // Give the row a label
         let rowLabel = UILabel(frame: CGRect.null)
@@ -102,140 +175,197 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         rowLabel.font = UIFont.systemFont(ofSize: 10.0)
         rowLabel.backgroundColor = UIColor.white
         stackView.addSubview(rowLabel)
-        stackView.addConstraint(NSLayoutConstraint(item: rowLabel, attribute: .top, relatedBy: .equal, toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: rowLabel, attribute: .trailing, relatedBy: .equal, toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
+        stackView.addConstraint(NSLayoutConstraint(item: rowLabel,
+                                                   attribute: .top,
+                                                   relatedBy: .equal,
+                                                   toItem: stackView,
+                                                   attribute: .top,
+                                                   multiplier: 1.0,
+                                                   constant: 0.0))
+        stackView.addConstraint(NSLayoutConstraint(item: rowLabel,
+                                                   attribute: .trailing,
+                                                   relatedBy: .equal,
+                                                   toItem: stackView,
+                                                   attribute: .trailing,
+                                                   multiplier: 1.0,
+                                                   constant: 0.0))
         
         // Add the row to the view
-        self.rowStackViews.append(stackView)
+        rowStackViews.append(stackView)
     }
     
     func showNodes(quorumNode: QuorumNode, depth: Int, parentNodeView: NodeView?) {
         // Create StackView if needed
-        if self.rowStackViews.count < depth+1 {
-            self.createRow(row: depth)
+        if rowStackViews.count < depth+1 {
+            createRow(row: depth)
         }
         
         // Show this node in the row stack view
         let nv: NodeView = NodeView()
         nv.quorumNode = quorumNode
+        nv.quorumMetrics = validator.quorumSet.impactOfNode(node: quorumNode)
         nv.parentNodeView = parentNodeView
         nv.update()
         nv.delegate = self
-        self.rowStackViews[depth].addArrangedSubview(nv)
-        self.nodeViews.append(nv)
+        rowStackViews[depth].addArrangedSubview(nv)
+        nodeViews.append(nv)
         
         // Before showing children add spacer if next row already exists
-        if self.rowStackViews.count > depth+1 {
-            self.rowStackViews[depth+1].setCustomSpacing(8, after: self.rowStackViews[depth+1].arrangedSubviews.last!)
+        if rowStackViews.count > depth+1 {
+            rowStackViews[depth+1].setCustomSpacing(8, after: rowStackViews[depth+1].arrangedSubviews.last!)
         }
         
         // Show children
         for qn in quorumNode.quorumNodes {
-            self.showNodes(quorumNode: qn, depth: depth+1, parentNodeView: nv)
+            showNodes(quorumNode: qn, depth: depth+1, parentNodeView: nv)
         }
     }
     
     override func viewDidLayoutSubviews() {
         // Draw the lines between nodes
-        self.nodeLinesOverlayView.clearLines()
-        for nv in self.nodeViews {
+        nodeLinesOverlayView.clearLines()
+        for nv in nodeViews {
             if let pnv: NodeView = nv.parentNodeView {
                 // Draw from pnv to nv
-                self.nodeLinesOverlayView.addLine(from: pnv, to: nv)
+                nodeLinesOverlayView.addLine(from: pnv, to: nv)
             }
         }
     }
     
     private func redrawSelectNodeView() {
-        self.showNodeInfo(quorumNode: selectedNodeView.quorumNode)
+        showNodeInfo(quorumNode: selectedNodeView.quorumNode)
         
-        for nv in self.nodeViews {
-            // Selected if same quorumNode or if root selected any matching its quorumset or if selected matches roots quorum set
-            nv.selected = (
-                nv.quorumNode.identifier == selectedNodeView.quorumNode.identifier ||
-                selectedNodeView.quorumNode.identifier == self.validator.publicKey && nv.quorumNode.identifier == self.validator.quorumSet.identifier ||
-                nv.quorumNode.identifier == self.validator.publicKey && selectedNodeView.quorumNode.identifier == self.validator.quorumSet.identifier
-            )
+        for nv in nodeViews {
+            let sameNode = nv.quorumNode.identifier == selectedNodeView.quorumNode.identifier
+            let rootSelected = selectedNodeView.quorumNode.identifier == validator.publicKey &&
+                nv.quorumNode.identifier == validator.quorumSet.identifier
+            let leafSelectedThatIsRoot = nv.quorumNode.identifier == validator.publicKey &&
+                selectedNodeView.quorumNode.identifier == validator.quorumSet.identifier
+            nv.selected = sameNode || rootSelected || leafSelectedThatIsRoot
         }
     }
     
     
     // MARK: -- NodeViewDelegate
     func nodeViewTapped(nodeView: NodeView) {
-        self.selectedNodeView = nodeView
-        let m = validator.quorumSet.quorumMetricsForNode(node: nodeView.quorumNode)
+        selectedNodeView = nodeView
+        let m = validator.quorumSet.impactOfNode(node: nodeView.quorumNode)
         m.printMetrics()
     }
     func nodeViewDoubleTapped(nodeView: NodeView) {
-        self.selectedNodeView = nodeView
+        selectedNodeView = nodeView
         // If we can find the full info then go to it
         if let validator: Validator = QuorumManager.validatorForId(id: nodeView.quorumNode.identifier) {
-            self.pushValidatorNode(validator: validator)
+            pushValidatorViewer(validatorToPush: validator)
         }
     }
     
     // MARK: -- Navigate
-    private func pushValidatorNode(validator: Validator) {
+    private func pushValidatorViewer(validatorToPush: Validator) {
         let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
-        vc.validator = validator
-        self.navigationController?.pushViewController(vc, animated: true)
+        vc.validator = validatorToPush
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    private func pushValidatorDetail(validatorToPush: Validator) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
+        vc.validator = validatorToPush
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     // MARK: -- Display Detail
     private func showNodeInfo(quorumNode: QuorumNode) {
-        self.clearInfo()
+        clearInfo()
         
-        if quorumNode.identifier == self.validator.quorumSet.identifier {
+        if quorumNode.identifier == validator.quorumSet.identifier {
             // Root node let - show Validator (because the QuorumNode is a QuorumSetNode in this case)
-            self.showValidatorInfo(validator: self.validator)
+            showValidatorInfo(validatorToShow: validator)
         }
         else if let validator: Validator = QuorumManager.validatorForId(id: quorumNode.identifier) {
             // Leaf validator where we have it's fulll Validator info
-            self.showValidatorInfo(validator: validator)
+            showValidatorInfo(validatorToShow: validator)
         }
         else {
             // Either a QuorumSetNode or QuorumValidatorNode - either way we don't have much info on it
-            self.showQuorumNodeInfo(node: quorumNode)
+            showQuorumNodeInfo(node: quorumNode)
         }
+        
+        // Update Metrics Chart
+        var nodeForMetrics = quorumNode
+        if quorumNode.identifier == validator.quorumSet.identifier {
+            // Selected root - check for leaf to display metrics for instead
+            if let progeny = validator.quorumSet.progeny(progenyIdentifier: validator.publicKey) {
+                nodeForMetrics = progeny
+            }
+        }
+        let metrics = validator.quorumSet.impactOfNode(node: nodeForMetrics)
+        let dataSet = BarChartDataSet(values: [
+            BarChartDataEntry(x: Double(0), y: Double(metrics.validatorAffect * 100)),
+            BarChartDataEntry(x: Double(1), y: Double(metrics.validatorRequire * 100)),
+            BarChartDataEntry(x: Double(2), y: Double(metrics.validatorInfluence * 100))], label: nil)
+        dataSet.colors = [UIColor.green, UIColor.blue, UIColor.red]
+        dataSet.valueFormatter = DefaultValueFormatter(formatter: percentFormatter)
+        dataSet.valueFont = UIFont.systemFont(ofSize: 8.0)
+        dataSet.axisDependency = YAxis.AxisDependency.right
+        metricChart.data = BarChartData(dataSet: dataSet)
+        metricChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
     }
     private func clearInfo() {
-        self.quorumSetHashLabel?.text = " "
-        self.publicKeyLabel?.text = " "
-        self.cityLabel?.text = " "
-        self.nameLabel?.text = " "
-        self.nodesLabel?.text = " "
-        self.leafsLabel?.text = " "
-        self.depthLabel?.text = " "
-        self.rootThresholdLabel?.text = " "
-        self.verifiedCheckmark?.isHidden = true
+        quorumSetHashLabel?.text = ""
+        publicKeyLabel?.text = " \n "
+        cityLabel?.text = ""
+        nameLabel?.text = ""
+        nodesLabel?.text = ""
+        depthLabel?.text = ""
+        rootThresholdLabel?.text = ""
+        verifiedCheckmark?.isHidden = true
     }
-    private func showValidatorInfo(validator: Validator) {
-        self.nameLabel?.text = "\(QuorumManager.handleForNodeId(id: validator.publicKey)). \(validator.name ?? "")"
-        self.cityLabel?.text = validator.city ?? "[City]"
-        self.publicKeyLabel?.text = "pk: " + validator.publicKey
-        self.verifiedCheckmark?.isHidden = !validator.verified
+    private func showValidatorInfo(validatorToShow: Validator) {
+        nameLabel?.text = "\(QuorumManager.handleForNodeId(id: validatorToShow.publicKey)). \(validatorToShow.name ?? "")"
+        cityLabel?.text = validatorToShow.city ?? "[City]"
+        publicKeyLabel?.text = "pk: " + validatorToShow.publicKey
+        verifiedCheckmark?.isHidden = !validatorToShow.verified
         
-        self.nodesLabel?.text = "n=\(validator.quorumSet.eventualValidators.count)"
-        self.leafsLabel?.text = "l=\(validator.quorumSet.leafValidators)"
-        self.depthLabel?.text = "d=\(validator.quorumSet.maxDepth)"
-        self.showQuorumNodeInfo(node: validator.quorumSet)
+        nodesLabel?.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)"
+        depthLabel?.text = "d=\(validatorToShow.quorumSet.maxDepth)"
+        showQuorumNodeInfo(node: validatorToShow.quorumSet)
     }
     private func showQuorumNodeInfo(node: QuorumNode) {
         // Limited QuorumNode (QuorumSet or ValidatorNode) info
         if node is QuorumValidator {
-            self.publicKeyLabel?.text = "pk: " + node.identifier
+            publicKeyLabel?.text = "pk: " + node.identifier
+            if nameLabel?.text == "" {
+                nameLabel?.text = "?. Unkonwn Validator"
+            }
         }
         else {
-            self.quorumSetHashLabel?.text = "qsh: " + node.identifier
+            quorumSetHashLabel?.text = "qsh: " + node.identifier
+            if nameLabel?.text == "" {
+                nameLabel?.text = "Quorum Set"
+            }
         }
         
         let thresholdString = "\(node.threshold)/\(node.quorumNodes.count)"
         if ( node.maxDepth ) > 1 {
-            self.rootThresholdLabel?.text = "*" + thresholdString
+            rootThresholdLabel?.text = "*" + thresholdString
         }
         else {
-            self.rootThresholdLabel?.text = thresholdString
+            rootThresholdLabel?.text = thresholdString
+        }
+    }
+}
+
+class MetricFormatter: IAxisValueFormatter {
+    func stringForValue(_ value: Double, axis: AxisBase?) -> String {
+        if value == 0 {
+            return "A"
+        }
+        else if value == 1 {
+            return "R"
+        }
+        else {
+            return "I"
         }
     }
 }

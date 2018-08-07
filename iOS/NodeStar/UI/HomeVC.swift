@@ -38,7 +38,12 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     @IBOutlet var depthMaxCell: UITableViewCell!
     
     
-    let intFormatter = NumberFormatter()
+    lazy var intFormatter: NumberFormatter = {
+        var formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }()
     
     // Ugly hack to get at VC.view instead of tableview
     // https://stackoverflow.com/a/16249515
@@ -56,7 +61,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     // MARK: View Loading
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "NodeStar"
+        title = "NodeStar"
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
 
         // Ugly hack to get at VC.view instead of tableview
@@ -74,23 +79,44 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         footerView.setTitle("View Validators", for: UIControlState.normal)
         footerView.addTarget(self, action: #selector(pushAllValidatorsVC), for: .touchUpInside)
         view.addSubview(footerView)
-        view.addConstraint(NSLayoutConstraint(item: footerView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1.0, constant: 0.0))
-        view.addConstraint(NSLayoutConstraint(item: footerView, attribute: .leading, relatedBy: .equal, toItem: view, attribute: .leading, multiplier: 1.0, constant: 0.0))
-        view.addConstraint(NSLayoutConstraint(item: footerView, attribute: .trailing, relatedBy: .equal, toItem: view, attribute: .trailing, multiplier: 1.0, constant: 0.0))
-        view.addConstraint(NSLayoutConstraint(item: footerView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 72.0))
+        view.addConstraint(NSLayoutConstraint(item: footerView,
+                                              attribute: .bottom,
+                                              relatedBy: .equal,
+                                              toItem: view,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: footerView,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: view,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: footerView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: view,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: footerView,
+                                              attribute: .height,
+                                              relatedBy: .equal,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1.0,
+                                              constant: 72.0))
         tableView.contentInset = UIEdgeInsetsMake(0.0, 0.0, 72.0, 0.0)
         tableView.scrollIndicatorInsets = UIEdgeInsetsMake(0.0, 0.0, 72.0, 0.0)
         
         // Setup refresh control
-        self.refreshControl = UIRefreshControl()
+        refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action:#selector(refresh), for: UIControlEvents.valueChanged)
         refreshControl?.tintColor = nodeStarBlue
-        self.tableView.addSubview(self.refreshControl!)
+        tableView.addSubview(refreshControl!)
         
         // Setup chart formatting
-        intFormatter.minimumFractionDigits = 0
-        intFormatter.maximumFractionDigits = 0
-        
         nodesChart.leftAxis.valueFormatter = DefaultAxisValueFormatter(formatter: intFormatter)
         nodesChart.leftAxis.axisMinimum = 0
         nodesChart.leftAxis.granularity = 1
@@ -125,26 +151,20 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         depthChart.scaleXEnabled = false
         depthChart.scaleYEnabled = false
         
+        // Update the data (clear it out)
+        updateTableView()
+        
         // Start loading the data
-        self.updateTableView()
-        self.tableView.setNeedsLayout()
-        depthChart.superview?.setNeedsLayout()
-        depthChart.superview?.superview?.setNeedsLayout()
-        depthChart.superview?.superview?.superview?.setNeedsLayout()
-        depthChart.setNeedsLayout()
-        self.refreshControl?.beginRefreshing()
-        self.refresh()
+        refreshControl?.beginRefreshing()
+        refresh()
     }
-    
-    
-    
-    
+
     @objc func refresh() {
         reloadDataFromStellarBeat()
     }
     
     @objc func updateTableView() {
-        if ( self.validators.count == 0 ) {
+        if ( validators.count == 0 ) {
             // Clear it
             fetchedCell.detailTextLabel?.text = ""
             updatedCell.detailTextLabel?.text = ""
@@ -173,7 +193,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             var countResuseDuplicateRef: Int = 0
             for v in validators {
                 // Node Counts
-                let nodeCount = v.quorumSet.leafValidators
+                let nodeCount = v.quorumSet.allValidatorsCount
                 nodesSum += nodeCount
                 if nodesMax < nodeCount {
                     nodesMax = nodeCount
@@ -199,10 +219,10 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                 }
                 
                 // Reuse
-                if nodeCount != v.quorumSet.eventualValidators.count {
+                if nodeCount != v.quorumSet.uniqueValidators.count {
                     countResuseDuplicateRef += 1
                 }
-                if v.quorumSet.eventualValidators.contains(v.publicKey) {
+                if v.quorumSet.uniqueValidators.contains(v.publicKey) {
                     countResuseSelfRef += 1
                 }
                 
@@ -220,9 +240,11 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             updatedCell.detailTextLabel?.text = dateFormatter.string(from: updatedMax )
             fromCell.detailTextLabel?.text = "stellarbeat.io"
             validatorsCell.detailTextLabel?.text = "\(validators.count)"
-            nodesAverageCell.detailTextLabel?.text = String(format: "%.02f", Double(nodesSum) / Double(validators.count))
+            let nodesAverage = Double(nodesSum) / Double(validators.count)
+            nodesAverageCell.detailTextLabel?.text = String(format: "%.02f", nodesAverage)
             nodesMaxCell.detailTextLabel?.text = "\(nodesMax)"
-            depthAverageCell.detailTextLabel?.text = String(format: "%.02f", Double(depthSum) / Double(validators.count))
+            let depthAverage = Double(depthSum) / Double(validators.count)
+            depthAverageCell.detailTextLabel?.text = String(format: "%.02f", depthAverage)
             depthMaxCell.detailTextLabel?.text = "\(depthMax)"
             selfRefCell.detailTextLabel?.text = "\(countResuseSelfRef) of \(validators.count)"
             duplicateRefCell.detailTextLabel?.text = "\(countResuseDuplicateRef) of \(validators.count)"
@@ -235,7 +257,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             let nodesDataSet = BarChartDataSet(values: nodeEntries, label: nil)
             nodesDataSet.colors = [nodeStarBlue.withAlphaComponent(0.8)]
             nodesDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
-            self.nodesChart.data = BarChartData(dataSet: nodesDataSet)
+            nodesChart.data = BarChartData(dataSet: nodesDataSet)
             
             let depthTouplesSorted = depthHistogram.sorted(by: { $0 < $1 })
             let depthEntries = depthTouplesSorted.map { (key, value) -> BarChartDataEntry in
@@ -244,7 +266,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             let depthDataSet = BarChartDataSet(values: depthEntries, label: nil)
             depthDataSet.valueFormatter = DefaultValueFormatter(formatter: intFormatter)
             depthDataSet.colors = [nodeStarBlue.withAlphaComponent(0.8)]
-            self.depthChart.data = BarChartData(dataSet: depthDataSet)
+            depthChart.data = BarChartData(dataSet: depthDataSet)
             
             updateSelected()
             
@@ -252,7 +274,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             nodesChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
             depthChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
             
-            self.tableView.reloadData()
+            tableView.reloadData()
         }
     }
     private func updateSelected() {
@@ -293,7 +315,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
         vc.title = "All Validators"
         vc.validators = QuorumManager.validators
-        self.navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     // MARK: Network Load Data
@@ -301,14 +323,19 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         //TODO: decouple this from the VC
         let url: URL = URL(string: stellarbeatURLPath)!
         print("Updating \(stellarbeatURLPath)")
-        URLSession.shared.dataTask(with: url) { [stellarbeatURLPath] (data: Data?, urlResponse: URLResponse?, error: Error?) in
+        URLSession.shared.dataTask(with: url) { (a, n, c) in
+        
+        }
+        URLSession.shared.dataTask(with: url) { [stellarbeatURLPath] (data, urlResponse, error) in
             if error != nil {
                 print("Updating \(stellarbeatURLPath) Request Fail: \(error!.localizedDescription)")
                 self.showNetworkError()
             }
             else {
                 do {
-                    if let jsonNodes: [[String: AnyObject]] = try JSONSerialization.jsonObject(with: data!, options: []) as? [[String: AnyObject]] {
+                    if let jsonNodes: [[String: AnyObject]] =
+                        try JSONSerialization.jsonObject(with: data!,options: []) as? [[String: AnyObject]] {
+                        
                         print("Updating \(stellarbeatURLPath) Got JSON")
                         //print("ASynchronous\(jsonResult)")
                         var tempNodes: [Validator] = []
@@ -337,7 +364,8 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     }
     private func showNetworkError() {
         DispatchQueue.main.async{
-            let message = "Failed to get data. Check your internet connection. Pull to refresh or try updating from App Store."
+            let message = "Failed to get data. " +
+                          "Check your internet connection. Pull to refresh or try updating from App Store."
             let alert = UIAlertController(title: "Error", message: message, preferredStyle:.alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel,  handler: nil))
             self.present(alert, animated: true, completion: {
@@ -348,7 +376,8 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     private func showParsingError() {
         DispatchQueue.main.async{
             self.refreshControl?.endRefreshing()
-            let message = "Failed to get parse network data. Pull to refresh or try updating from App Store."
+            let message = "Failed to get parse network data. " +
+                          "Pull to refresh or try updating from App Store."
             let alert = UIAlertController(title: "Error", message: message, preferredStyle:.alert)
             alert.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
             self.present(alert, animated: true, completion: {
@@ -367,7 +396,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         }
         if cell == validatorsCell {
             // Validators
-            self.pushAllValidatorsVC()
+            pushAllValidatorsVC()
         }
         if cell == nodesSelectedCell {
             // Nodes Selected
@@ -379,9 +408,9 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
             vc.title = "n=\(nodes) Validators"
             vc.validators = validators.filter({ (v) -> Bool in
-                return v.quorumSet.leafValidators == nodes
+                return v.quorumSet.allValidatorsCount == nodes
             })
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         }
         if cell == depthSelectedCell {
             // Depth Selected
@@ -395,7 +424,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.maxDepth == depth
             })
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         }
         if cell == selfRefCell {
             // Self Ref Validators
@@ -403,9 +432,9 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
             vc.title = "Self Ref Validators"
             vc.validators = validators.filter({ (v) -> Bool in
-                return v.quorumSet.eventualValidators.contains(v.publicKey)
+                return v.quorumSet.uniqueValidators.contains(v.publicKey)
             })
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         }
         if cell == duplicateRefCell {
             // Duplicate Ref Validators
@@ -413,26 +442,23 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
             vc.title = "Duplicate Ref Validators"
             vc.validators = validators.filter({ (v) -> Bool in
-                return v.quorumSet.leafValidators != v.quorumSet.eventualValidators.count
+                return v.quorumSet.allValidatorsCount != v.quorumSet.uniqueValidators.count
             })
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     override public func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         let cell = tableView.cellForRow(at: indexPath)
-        if [fromCell, validatorsCell, nodesSelectedCell, depthSelectedCell, selfRefCell, duplicateRefCell].contains(cell) {
+        let selectableCells = [fromCell,
+                               validatorsCell,
+                               nodesSelectedCell,
+                               depthSelectedCell,
+                               selfRefCell,
+                               duplicateRefCell]
+        if selectableCells.contains(cell) {
             return indexPath
         }
         return nil
-    }
-    override public func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath)
-        if cell == nodesChartCell {
-            nodesChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
-        }
-        if cell == depthChartCell {
-            depthChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
-        }
     }
     
     // MARK: ChartViewDelegate

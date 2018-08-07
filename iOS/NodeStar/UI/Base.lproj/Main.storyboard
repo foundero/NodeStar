@@ -504,7 +504,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="publickeythatsverylong" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yKc-Zu-pN3">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="pk: publickeythatsverylong" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yKc-Zu-pN3">
                                                     <rect key="frame" x="15" y="51.5" width="345" height="10"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                                     <nil key="textColor"/>
@@ -518,9 +518,9 @@
                                                     </constraints>
                                                 </imageView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="eEp-tP-CyT">
-                                                    <rect key="frame" x="307" y="10" width="53" height="40"/>
+                                                    <rect key="frame" x="307" y="10" width="53" height="30"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="2/3*" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FFc-Ko-aAo">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="*2/3" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FFc-Ko-aAo">
                                                             <rect key="frame" x="0.0" y="0.0" width="53" height="10"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                                             <nil key="textColor"/>
@@ -532,14 +532,8 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="l=4" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqT-Z5-Ta1">
-                                                            <rect key="frame" x="0.0" y="20" width="53" height="10"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="8"/>
-                                                            <nil key="textColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="d=2" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Ge-eM-4e4">
-                                                            <rect key="frame" x="0.0" y="30" width="53" height="10"/>
+                                                            <rect key="frame" x="0.0" y="20" width="53" height="10"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="8"/>
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
@@ -567,7 +561,6 @@
                                         <connections>
                                             <outlet property="cityLabel" destination="Mh9-0Q-Hao" id="qes-9P-5IM"/>
                                             <outlet property="depthLabel" destination="6Ge-eM-4e4" id="2s0-d9-kJp"/>
-                                            <outlet property="leafsLabel" destination="hqT-Z5-Ta1" id="X6t-EW-ZW0"/>
                                             <outlet property="nameLabel" destination="rfx-cd-X1T" id="8E9-fJ-3oP"/>
                                             <outlet property="nodesLabel" destination="sjy-O4-TjN" id="n2Z-9W-LTT"/>
                                             <outlet property="publicKeyLabel" destination="yKc-Zu-pN3" id="uWQ-nZ-Sc2"/>

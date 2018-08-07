@@ -16,9 +16,7 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     // MARK: View Loading
     override func viewDidLoad() {
         super.viewDidLoad()
-        //validators = QuorumManager.validatorsNodes
-        //self.title = "All Validators (\(validators.count))"
-        self.tableView?.rowHeight = ValidatorCell.desiredHieght
+        tableView?.rowHeight = ValidatorCell.desiredHieght
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
     }
     
@@ -30,7 +28,8 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         return validators.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: ValidatorCell = tableView.dequeueReusableCell(withIdentifier: "ValidatorCell", for: indexPath) as! ValidatorCell
+        let cell: ValidatorCell = tableView.dequeueReusableCell(withIdentifier: "ValidatorCell",
+                                                                for: indexPath) as! ValidatorCell
         cell.updateWithModel(validator: validators[indexPath.row])
         return cell
     }
@@ -38,11 +37,11 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         return ValidatorCell.desiredHieght
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.tableView?.deselectRow(at: indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
         
         let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
         vc.validator = validators[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(vc, animated: true)
     }
 }

@@ -25,8 +25,8 @@ class NodeLinesOverlayView: UIView {
         sharedInit()
     }
     private func sharedInit() {
-        self.backgroundColor = .clear
-        self.isUserInteractionEnabled = false
+        backgroundColor = .clear
+        isUserInteractionEnabled = false
     }
     
     // MARK: Public Methods
@@ -34,32 +34,33 @@ class NodeLinesOverlayView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(self)
         NSLayoutConstraint.activate([
-            self.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            self.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            self.topAnchor.constraint(equalTo: view.topAnchor),
-            self.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topAnchor.constraint(equalTo: view.topAnchor),
+            bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
     }
     
     func clearLines() {
-        self.paths = []
+        paths = []
     }
     
     func addLine(from: NodeView, to: NodeView) {
         // Make sure autolayout is done first
-        self.superview?.layoutIfNeeded()
+        superview?.layoutIfNeeded()
         
         // Create path from pnv to nv
         let path = UIBezierPath()
         let fromBottom = CGPoint(x: from.bounds.size.width/2.0, y: to.bounds.size.height)
-        let toTop = CGPoint(x: to.bounds.size.width/2.0, y: (max(0, (to.bounds.size.height - to.bounds.size.width))) / 2.0)
+        let toTopY = max(0, (to.bounds.size.height - to.bounds.size.width)) / 2.0
+        let toTop = CGPoint(x: to.bounds.size.width/2.0, y: toTopY)
         let controlPoint = CGPoint(x: fromBottom.x, y: fromBottom.y + 30)
-        path.move(to: self.convert(fromBottom, from: from))
-        path.addQuadCurve(to: self.convert(toTop, from: to), controlPoint: self.convert(controlPoint, from: from))
+        path.move(to: convert(fromBottom, from: from))
+        path.addQuadCurve(to: convert(toTop, from: to), controlPoint: convert(controlPoint, from: from))
         path.lineWidth = 0.5
         
         // Add it to list - which will eventually redraw (setNeedsDisplay)
-        self.paths.append(path)
+        paths.append(path)
     }
     
     // MARK: Drawign

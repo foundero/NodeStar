@@ -18,9 +18,9 @@ class ValidatorDetailVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "Validator - " + QuorumManager.handleForNodeId(id: self.validator.publicKey)
+        title = "Validator - " + QuorumManager.handleForNodeId(id: validator.publicKey)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
-        updateWithModel(validator: self.validator)
+        updateWithModel(validator: validator)
     }
     
     func updateWithModel(validator: Validator) {
@@ -32,8 +32,8 @@ class ValidatorDetailVC: UIViewController {
     @IBAction func tapQuorumSetButton() {
         let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
-        vc.validator = self.validator
-        self.navigationController?.pushViewController(vc, animated: true)
+        vc.validator = validator
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
