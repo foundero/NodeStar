@@ -311,12 +311,12 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     }
     private func updateSelected() {
         if ( nodesChart.highlighted.count == 1 ) {
-            nodesSelectedCell.textLabel?.text = "n=\(Int(nodesChart.highlighted[0].x))"
+            nodesSelectedCell.textLabel?.text = "Validators n=\(Int(nodesChart.highlighted[0].x))"
             nodesSelectedCell.detailTextLabel?.text = "\(Int(nodesChart.highlighted[0].y))"
         }
         else {
             if let entry = nodesChart.barData?.dataSets[0].entryForIndex(0) {
-                nodesSelectedCell.textLabel?.text = "n=\(Int(entry.x))"
+                nodesSelectedCell.textLabel?.text = "Validators n=\(Int(entry.x))"
                 nodesSelectedCell.detailTextLabel?.text = "\(Int(entry.y))"
             }
             else {
@@ -326,12 +326,12 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         }
         
         if ( depthChart.highlighted.count == 1 ) {
-            depthSelectedCell.textLabel?.text = "d=\(Int(depthChart.highlighted[0].x))"
+            depthSelectedCell.textLabel?.text = "Validators d=\(Int(depthChart.highlighted[0].x))"
             depthSelectedCell.detailTextLabel?.text = "\(Int(depthChart.highlighted[0].y))"
         }
         else {
             if let entry = depthChart.barData?.dataSets[0].entryForIndex(0) {
-                depthSelectedCell.textLabel?.text = "d=\(Int(entry.x))"
+                depthSelectedCell.textLabel?.text = "Validators d=\(Int(entry.x))"
                 depthSelectedCell.detailTextLabel?.text = "\(Int(entry.y))"
             }
             else {
@@ -440,7 +440,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                 nodes = Int(nodesChart.highlighted[0].x)
             }
             let vc = ValidatorsVC.newVC()
-            vc.title = "n=\(nodes) Validators"
+            vc.title = "Validators n=\(nodes)"
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.allValidatorsCount == nodes
             })
@@ -453,7 +453,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                 depth = Int(depthChart.highlighted[0].x)
             }
             let vc = ValidatorsVC.newVC()
-            vc.title = "d=\(depth) Validators"
+            vc.title = "Validators d=\(depth)"
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.maxDepth == depth
             })

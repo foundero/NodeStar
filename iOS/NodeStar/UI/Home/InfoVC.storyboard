@@ -37,11 +37,11 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q0T-as-Bhg">
-                                                    <rect key="frame" x="113" y="16" width="246" height="140"/>
-                                                    <string key="text">x: the threshold of the validator's root quorum set
- y: the the number of nodes in the validator's root quorum set (not including subtrees)
+                                                    <rect key="frame" x="113" y="16" width="246" height="124.5"/>
+                                                    <string key="text">x - the threshold of the validator's root quorum set
+ y - the the number of nodes in the validator's root quorum set (not including subtrees)
 
-*: if the root quorum set has inner quorum sets</string>
+* - if there are inner quorum sets</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
