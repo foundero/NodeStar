@@ -18,7 +18,7 @@ class ValidatorCell: UITableViewCell {
     @IBOutlet weak var rootThresholdLabel: UILabel!
     @IBOutlet weak var nodesLabel: UILabel!
     @IBOutlet weak var depthLabel: UILabel!
-    @IBOutlet weak var referencesLabel: UILabel!
+    @IBOutlet weak var usagesLabel: UILabel!
     
     class var desiredHieght: CGFloat {
         return 72.0
@@ -39,6 +39,6 @@ class ValidatorCell: UITableViewCell {
         else {
             rootThresholdLabel.text = thresholdString
         }
-        referencesLabel.text = "r=\(validator.usagesInValidatorQuorumSets())"
+        usagesLabel.text = "u=\(validator.usagesInValidatorQuorumSets())"
     }
 }

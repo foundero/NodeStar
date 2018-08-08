@@ -183,9 +183,12 @@ on Validator: [XXX]</string>
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="199.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lqT-Wg-Vox" customClass="BarChartView" customModule="Charts">
+                                                <view contentMode="scaleToFill" verticalCompressionResistancePriority="999" translatesAutoresizingMaskIntoConstraints="NO" id="lqT-Wg-Vox" customClass="BarChartView" customModule="Charts">
                                                     <rect key="frame" x="16" y="11" width="343" height="178"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="178" id="J83-Vu-DF3"/>
+                                                    </constraints>
                                                 </view>
                                             </subviews>
                                             <constraints>
@@ -874,7 +877,7 @@ Combinations</string>
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="99.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="How often the selected node is required to be true for overall quorum truths." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2VD-DJ-l5l">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="How often the selected node is required to be true for quorum truths." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2VD-DJ-l5l">
                                                     <rect key="frame" x="16" y="16" width="343" height="31.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <nil key="textColor"/>

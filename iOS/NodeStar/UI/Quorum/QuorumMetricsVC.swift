@@ -86,7 +86,7 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
         // Root
         let validatorHandle = QuorumManager.handleForNodeId(id: validator.publicKey)
         let rootNameString = "\(validatorHandle). \(validator.name ?? "")"
-        var nodeNameString = "Inner Quorum Set Node"
+        var nodeNameString = "Inner Quorum Set"
         cellRootName.detailTextLabel?.text = rootNameString
         cellRootPK.detailTextLabel?.text = validator.publicKey
         
@@ -183,11 +183,7 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
         metricChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
     }
     
-    
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 3 && indexPath.row == 0 {
-            return cellMetricsChart.frame.size.height
-        }
         return UITableViewAutomaticDimension
     }
 }

@@ -10,13 +10,13 @@ import UIKit
 
 class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    @IBOutlet weak var tableView: UITableView?
+    @IBOutlet weak var tableView: UITableView!
     var validators: [Validator] = []
     
     // MARK: View Loading
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView?.rowHeight = ValidatorCell.desiredHieght
+        tableView.rowHeight = ValidatorCell.desiredHieght
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
     }
     

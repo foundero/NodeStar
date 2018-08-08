@@ -107,8 +107,8 @@
                                             <outlet property="nameLabel" destination="Eal-VI-vDX" id="qQ9-uC-fwz"/>
                                             <outlet property="nodesLabel" destination="pUk-mb-pDG" id="Kxc-K1-UxQ"/>
                                             <outlet property="publicKeyLabel" destination="nd7-rJ-noM" id="yyS-0w-QWp"/>
-                                            <outlet property="referencesLabel" destination="sxs-ln-nPz" id="ooX-Bh-obW"/>
                                             <outlet property="rootThresholdLabel" destination="rIi-5h-bdY" id="ikb-fk-B5D"/>
+                                            <outlet property="usagesLabel" destination="sxs-ln-nPz" id="ooX-Bh-obW"/>
                                             <outlet property="verifiedCheckmark" destination="A35-Oh-QQ9" id="2bC-J2-D8e"/>
                                         </connections>
                                     </tableViewCell>

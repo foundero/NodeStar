@@ -25,7 +25,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     @IBOutlet weak var rootThresholdLabel: UILabel!
     @IBOutlet weak var nodesLabel: UILabel!
     @IBOutlet weak var depthLabel: UILabel!
-    @IBOutlet weak var referencesLabel: UILabel!
+    @IBOutlet weak var usagesLabel: UILabel!
     @IBOutlet weak var metricChart: BarChartView!
     
     var validator: Validator!
@@ -312,7 +312,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         nameLabel.text = ""
         nodesLabel.text = ""
         depthLabel.text = ""
-        referencesLabel.text = ""
+        usagesLabel.text = ""
         rootThresholdLabel.text = ""
         verifiedCheckmark.isHidden = true
     }
@@ -325,7 +325,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         
         nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)"
         depthLabel.text = "d=\(validatorToShow.quorumSet.maxDepth)"
-        referencesLabel.text = "r=\(validatorToShow.usagesInValidatorQuorumSets())"
+        usagesLabel.text = "r=\(validatorToShow.usagesInValidatorQuorumSets())"
         showQuorumNodeInfo(node: validatorToShow.quorumSet)
     }
     private func showQuorumNodeInfo(node: QuorumNode) {

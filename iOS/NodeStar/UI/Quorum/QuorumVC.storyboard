@@ -172,8 +172,8 @@
                         <outlet property="nodesLabel" destination="b5f-pa-s4o" id="6Oy-58-tU6"/>
                         <outlet property="publicKeyLabel" destination="qLJ-0a-Rfd" id="s2M-PV-xuA"/>
                         <outlet property="quorumSetHashLabel" destination="MsT-j0-ZKQ" id="EN1-FU-3rW"/>
-                        <outlet property="referencesLabel" destination="PPz-XZ-FfV" id="eOk-YA-ilg"/>
                         <outlet property="rootThresholdLabel" destination="JBn-kg-qRD" id="XGf-zY-iCi"/>
+                        <outlet property="usagesLabel" destination="PPz-XZ-FfV" id="eOk-YA-ilg"/>
                         <outlet property="verifiedCheckmark" destination="rcj-8P-fdr" id="Wu3-qA-FLc"/>
                         <outlet property="verticalStackView" destination="pLI-Ku-1Jo" id="fKZ-D6-eo2"/>
                     </connections>

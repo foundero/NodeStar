@@ -10,7 +10,7 @@ import UIKit
 
 class ValidatorDetailVC: UIViewController {
 
-    @IBOutlet weak var dataLabel: UILabel?
+    @IBOutlet weak var dataLabel: UILabel!
     
     var validator: Validator!
     
@@ -26,7 +26,7 @@ class ValidatorDetailVC: UIViewController {
     func updateWithModel(validator: Validator) {
         var raw: [String: Any] = validator.rawData
         raw["quorumSet"] = nil
-        dataLabel?.text = "\(raw as AnyObject)"
+        dataLabel.text = "\(raw as AnyObject)"
     }
     
     @IBAction func tapQuorumSetButton() {
