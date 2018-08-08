@@ -46,7 +46,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
                                                            style:.plain,
                                                            target: nil,
                                                            action: nil)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "info",
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detail",
                                                             style:.plain,
                                                             target: self,
                                                             action: #selector(tappedInfoButton))
@@ -92,24 +92,28 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         return true
     }
     @objc func tappedInfoButton() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
+        let vc = ValidatorDetailVC.newVC()
         vc.validator = validator
         navigationController?.pushViewController(vc, animated: true)
     }
     @IBAction func tappedNodeInfoButton() {
         // If we can find the full info then go to it
-        if let validator: Validator = QuorumManager.validatorForId(id: selectedNodeView.quorumNode.identifier) {
-            pushValidatorDetail(validatorToPush: validator)
+        var validatorToPush = QuorumManager.validatorForId(id: selectedNodeView.quorumNode.identifier)
+        if validatorToPush == nil && selectedNodeView.quorumNode.identifier == validator.quorumSet.identifier {
+            validatorToPush = validator
         }
-        else if selectedNodeView.quorumNode.identifier == validator.quorumSet.identifier {
-            pushValidatorDetail(validatorToPush: validator)
+        if validatorToPush != nil {
+            let vc = ValidatorDetailVC.newVC()
+            vc.validator = validatorToPush
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
     @IBAction func tappedNodeMetricsButton() {
-        // TODO:
+        let vc = QuorumMetricsVC.newVC()
+        vc.validator = validator
+        vc.quorumNode = nodeForMetrics(node: selectedNodeView.quorumNode)
+        navigationController?.pushViewController(vc, animated: true)
     }
-    
     
     // MARK: -- Visualize Nodes
     
@@ -249,29 +253,15 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     // MARK: -- NodeViewDelegate
     func nodeViewTapped(nodeView: NodeView) {
         selectedNodeView = nodeView
-        let m = validator.quorumSet.impactOfNode(node: nodeView.quorumNode)
-        m.printMetrics()
     }
     func nodeViewDoubleTapped(nodeView: NodeView) {
         selectedNodeView = nodeView
         // If we can find the full info then go to it
-        if let validator: Validator = QuorumManager.validatorForId(id: nodeView.quorumNode.identifier) {
-            pushValidatorViewer(validatorToPush: validator)
+        if let validatorToPush: Validator = QuorumManager.validatorForId(id: nodeView.quorumNode.identifier) {
+            let vc = QuorumVC.newVC()
+            vc.validator = validatorToPush
+            navigationController?.pushViewController(vc, animated: true)
         }
-    }
-    
-    // MARK: -- Navigate
-    private func pushValidatorViewer(validatorToPush: Validator) {
-        let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
-        vc.validator = validatorToPush
-        navigationController?.pushViewController(vc, animated: true)
-    }
-    private func pushValidatorDetail(validatorToPush: Validator) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorDetailVC") as! ValidatorDetailVC
-        vc.validator = validatorToPush
-        navigationController?.pushViewController(vc, animated: true)
     }
     
     // MARK: -- Display Detail
@@ -292,24 +282,27 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         }
         
         // Update Metrics Chart
-        var nodeForMetrics = quorumNode
-        if quorumNode.identifier == validator.quorumSet.identifier {
-            // Selected root - check for leaf to display metrics for instead
-            if let progeny = validator.quorumSet.progeny(progenyIdentifier: validator.publicKey) {
-                nodeForMetrics = progeny
-            }
-        }
-        let metrics = validator.quorumSet.impactOfNode(node: nodeForMetrics)
+        let metrics = validator.quorumSet.impactOfNode(node: nodeForMetrics(node: quorumNode))
         let dataSet = BarChartDataSet(values: [
-            BarChartDataEntry(x: Double(0), y: Double(metrics.validatorAffect * 100)),
-            BarChartDataEntry(x: Double(1), y: Double(metrics.validatorRequire * 100)),
-            BarChartDataEntry(x: Double(2), y: Double(metrics.validatorInfluence * 100))], label: nil)
-        dataSet.colors = [UIColor.green, UIColor.blue, UIColor.red]
+            BarChartDataEntry(x: Double(0), y: Double(metrics.affect * 100)),
+            BarChartDataEntry(x: Double(1), y: Double(metrics.require * 100)),
+            BarChartDataEntry(x: Double(2), y: Double(metrics.influence * 100))], label: nil)
+        dataSet.colors = [UIColor.blue, UIColor.red, UIColor.green]
         dataSet.valueFormatter = DefaultValueFormatter(formatter: percentFormatter)
         dataSet.valueFont = UIFont.systemFont(ofSize: 8.0)
         dataSet.axisDependency = YAxis.AxisDependency.right
         metricChart.data = BarChartData(dataSet: dataSet)
         metricChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
+    }
+    private func nodeForMetrics(node: QuorumNode) -> QuorumNode {
+        var nodeForMetrics = node
+        if node.identifier == validator.quorumSet.identifier {
+            // Selected root - check for leaf to display metrics for instead
+            if let progeny = validator.quorumSet.progeny(progenyIdentifier: validator.publicKey) {
+                nodeForMetrics = progeny
+            }
+        }
+        return nodeForMetrics
     }
     private func clearInfo() {
         quorumSetHashLabel?.text = ""
@@ -322,7 +315,8 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         verifiedCheckmark?.isHidden = true
     }
     private func showValidatorInfo(validatorToShow: Validator) {
-        nameLabel?.text = "\(QuorumManager.handleForNodeId(id: validatorToShow.publicKey)). \(validatorToShow.name ?? "")"
+        let validatorHandle = QuorumManager.handleForNodeId(id: validatorToShow.publicKey)
+        nameLabel?.text = "\(validatorHandle). \(validatorToShow.name ?? "")"
         cityLabel?.text = validatorToShow.city ?? "[City]"
         publicKeyLabel?.text = "pk: " + validatorToShow.publicKey
         verifiedCheckmark?.isHidden = !validatorToShow.verified
@@ -357,15 +351,15 @@ class QuorumVC: UIViewController, NodeViewDelegate {
 }
 
 class MetricFormatter: IAxisValueFormatter {
+    var shortForm: Bool = true
     func stringForValue(_ value: Double, axis: AxisBase?) -> String {
-        if value == 0 {
-            return "A"
-        }
-        else if value == 1 {
-            return "R"
+        var strings: [String] = []
+        if shortForm {
+            strings = ["A", "R", "I"]
         }
         else {
-            return "I"
+            strings = ["Affect", "Require", "Influence"]
         }
+        return strings[min(Int(value),2)]
     }
 }

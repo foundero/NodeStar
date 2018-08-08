@@ -95,9 +95,20 @@
                                     </button>
                                     <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YLr-rE-jCF" customClass="BarChartView" customModule="Charts">
                                         <rect key="frame" x="305" y="0.0" width="70" height="68"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-expand" translatesAutoresizingMaskIntoConstraints="NO" id="9Tm-nJ-paz">
+                                                <rect key="frame" x="55" y="1" width="14" height="14"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="14" id="Ztq-Lw-T4i"/>
+                                                    <constraint firstAttribute="height" constant="14" id="pTX-ms-npJ"/>
+                                                </constraints>
+                                            </imageView>
+                                        </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="70" id="3EP-N9-tV8"/>
+                                            <constraint firstAttribute="trailing" secondItem="9Tm-nJ-paz" secondAttribute="trailing" constant="1" id="Kex-SM-Y5I"/>
+                                            <constraint firstItem="9Tm-nJ-paz" firstAttribute="top" secondItem="YLr-rE-jCF" secondAttribute="top" constant="1" id="l3Z-ui-dSf"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -166,6 +177,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="icon-expand" width="209" height="201"/>
         <image name="icon-verified" width="75" height="75"/>
     </resources>
 </document>

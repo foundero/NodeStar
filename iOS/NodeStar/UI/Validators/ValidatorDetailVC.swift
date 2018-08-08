@@ -30,8 +30,7 @@ class ValidatorDetailVC: UIViewController {
     }
     
     @IBAction func tapQuorumSetButton() {
-        let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
+        let vc = QuorumVC.newVC()
         vc.validator = validator
         navigationController?.pushViewController(vc, animated: true)
     }

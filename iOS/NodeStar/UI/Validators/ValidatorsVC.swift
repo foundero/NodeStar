@@ -39,8 +39,7 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let storyboard = UIStoryboard(name: "QuorumVC", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "QuorumVC") as! QuorumVC
+        let vc = QuorumVC.newVC()
         vc.validator = validators[indexPath.row]
         navigationController?.pushViewController(vc, animated: true)
     }

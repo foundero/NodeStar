@@ -15,6 +15,10 @@
 		1F42FE74210A5DF4000050AA /* QuorumNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F42FE73210A5DF4000050AA /* QuorumNode.swift */; };
 		1F42FE79210A7EB6000050AA /* ValidatorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F42FE78210A7EB6000050AA /* ValidatorCell.swift */; };
 		1F42FE7B210A83E3000050AA /* ValidatorDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */; };
+		1F473AAE211A71C60028D59C /* QuorumMetricsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F473AAD211A71C60028D59C /* QuorumMetricsVC.swift */; };
+		1F473AB0211A72B60028D59C /* QuorumMetricsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */; };
+		1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */; };
+		1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */; };
 		1FB8D061210FB04700B75F04 /* QuorumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D060210FB04700B75F04 /* QuorumVC.swift */; };
 		1FB8D063210FB15700B75F04 /* QuorumVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */; };
 		1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D064210FB2F600B75F04 /* NodeView.swift */; };
@@ -36,6 +40,10 @@
 		1F42FE73210A5DF4000050AA /* QuorumNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumNode.swift; sourceTree = "<group>"; };
 		1F42FE78210A7EB6000050AA /* ValidatorCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorCell.swift; sourceTree = "<group>"; };
 		1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorDetailVC.swift; sourceTree = "<group>"; };
+		1F473AAD211A71C60028D59C /* QuorumMetricsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumMetricsVC.swift; sourceTree = "<group>"; };
+		1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumMetricsVC.storyboard; sourceTree = "<group>"; };
+		1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorDetailVC.storyboard; sourceTree = "<group>"; };
+		1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorsVC.storyboard; sourceTree = "<group>"; };
 		1FB8D060210FB04700B75F04 /* QuorumVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumVC.swift; sourceTree = "<group>"; };
 		1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumVC.storyboard; sourceTree = "<group>"; };
 		1FB8D064210FB2F600B75F04 /* NodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeView.swift; sourceTree = "<group>"; };
@@ -112,17 +120,45 @@
 		1F42FE77210A5E32000050AA /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				1F42FE63210A4E7A000050AA /* Main.storyboard */,
+				1F473AB5211A7BCB0028D59C /* Home */,
+				1F473AB6211A7BD80028D59C /* Validators */,
+				1F473AB7211A7BEA0028D59C /* Quorum */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		1F473AB5211A7BCB0028D59C /* Home */ = {
+			isa = PBXGroup;
+			children = (
 				1F42FE71210A5176000050AA /* HomeVC.swift */,
+				1F42FE63210A4E7A000050AA /* Main.storyboard */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		1F473AB6211A7BD80028D59C /* Validators */ = {
+			isa = PBXGroup;
+			children = (
 				1FC3A48521127D2A005A0011 /* ValidatorsVC.swift */,
+				1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */,
 				1F42FE78210A7EB6000050AA /* ValidatorCell.swift */,
 				1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */,
+				1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */,
+			);
+			path = Validators;
+			sourceTree = "<group>";
+		};
+		1F473AB7211A7BEA0028D59C /* Quorum */ = {
+			isa = PBXGroup;
+			children = (
 				1FB8D060210FB04700B75F04 /* QuorumVC.swift */,
 				1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */,
 				1FB8D064210FB2F600B75F04 /* NodeView.swift */,
 				1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */,
+				1F473AAD211A71C60028D59C /* QuorumMetricsVC.swift */,
+				1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */,
 			);
-			path = UI;
+			path = Quorum;
 			sourceTree = "<group>";
 		};
 		FD4E3033AB1370383C6A3D0B /* Frameworks */ = {
@@ -207,7 +243,10 @@
 				1FB8D063210FB15700B75F04 /* QuorumVC.storyboard in Resources */,
 				1F42FE6A210A4E7A000050AA /* LaunchScreen.storyboard in Resources */,
 				1F42FE67210A4E7A000050AA /* Assets.xcassets in Resources */,
+				1F473AB0211A72B60028D59C /* QuorumMetricsVC.storyboard in Resources */,
+				1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */,
 				1F42FE65210A4E7A000050AA /* Main.storyboard in Resources */,
+				1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -277,6 +316,7 @@
 				1F42FE74210A5DF4000050AA /* QuorumNode.swift in Sources */,
 				1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */,
 				1F42FE72210A5176000050AA /* HomeVC.swift in Sources */,
+				1F473AAE211A71C60028D59C /* QuorumMetricsVC.swift in Sources */,
 				1FC3A48621127D2A005A0011 /* ValidatorsVC.swift in Sources */,
 				1F42FE5E210A4E7A000050AA /* AppDelegate.swift in Sources */,
 				1F42FE7B210A83E3000050AA /* ValidatorDetailVC.swift in Sources */,

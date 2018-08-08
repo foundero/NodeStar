@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Validator DetailVC-->
+        <scene sceneID="U6T-dL-kxY">
+            <objects>
+                <viewController storyboardIdentifier="ValidatorDetailVC" id="qZm-uJ-42k" customClass="ValidatorDetailVC" customModule="NodeStar" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="JfP-SW-UcB">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="603"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oyp-hC-A7y">
+                                <rect key="frame" x="20" y="20" width="335" height="10"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="8"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BiR-xG-KHo">
+                                <rect key="frame" x="0.0" y="531" width="375" height="72"/>
+                                <color key="backgroundColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="72" id="Gii-2O-X7f"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="View Quorum Set">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <state key="selected">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                </state>
+                                <connections>
+                                    <action selector="tapQuorumSetButton" destination="qZm-uJ-42k" eventType="touchUpInside" id="Scd-VE-0Pd"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="BiR-xG-KHo" firstAttribute="leading" secondItem="myd-jA-NpZ" secondAttribute="leading" id="2If-MJ-OMN"/>
+                            <constraint firstItem="myd-jA-NpZ" firstAttribute="trailing" secondItem="BiR-xG-KHo" secondAttribute="trailing" id="8NQ-QH-ble"/>
+                            <constraint firstItem="BiR-xG-KHo" firstAttribute="bottom" secondItem="myd-jA-NpZ" secondAttribute="bottom" id="C2M-CR-oR8"/>
+                            <constraint firstItem="oyp-hC-A7y" firstAttribute="leading" secondItem="myd-jA-NpZ" secondAttribute="leading" constant="20" id="PyR-B2-fvz"/>
+                            <constraint firstItem="myd-jA-NpZ" firstAttribute="trailing" secondItem="oyp-hC-A7y" secondAttribute="trailing" constant="20" id="QS8-v6-ct1"/>
+                            <constraint firstItem="BiR-xG-KHo" firstAttribute="top" relation="greaterThanOrEqual" secondItem="oyp-hC-A7y" secondAttribute="bottom" constant="20" id="h73-Cq-2eQ"/>
+                            <constraint firstItem="oyp-hC-A7y" firstAttribute="top" secondItem="myd-jA-NpZ" secondAttribute="top" constant="20" id="oSh-VV-8a8"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="myd-jA-NpZ"/>
+                    </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+                    <connections>
+                        <outlet property="dataLabel" destination="oyp-hC-A7y" id="HPn-gB-d2t"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Vfn-VZ-aUm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2941.5999999999999" y="-323.38830584707648"/>
+        </scene>
+    </scenes>
+</document>

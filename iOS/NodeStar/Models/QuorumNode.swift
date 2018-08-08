@@ -51,27 +51,21 @@ struct QuorumMetrics {
     var falsesGivenValidatorTrue: Int { return combinations - truthsGivenValidatorTrue }
     var falsesGivenValidatorFalse: Int { return combinations - truthsGivenValidatorFalse }
     
-    var validatorEffected: Int {
+    var effected: Int {
         return truthsGivenValidatorTrue + falsesGivenValidatorFalse - combinations
     }
-    var validatorAffect: Double {
-        return Double(validatorEffected) / Double(combinations)
+    var affect: Double {
+        return Double(effected) / Double(combinations)
     }
-    var validatorRequire: Double {
-        return Double(validatorEffected) / Double(truthsGivenValidatorTrue)
+    var require: Double {
+        return Double(effected) / Double(truthsGivenValidatorTrue)
     }
-    var validatorInfluence: Double {
-        return Double(validatorEffected) / Double(falsesGivenValidatorFalse)
+    var influence: Double {
+        return Double(effected) / Double(falsesGivenValidatorFalse)
     }
     
-    func printMetrics() {
-        let affect = String(format: "%.0f",validatorAffect*100)
-        let require = String(format: "%.0f",validatorRequire*100)
-        let influence = String(format: "%.0f",validatorInfluence*100)
-        print("Effected: \(validatorEffected)")
-        print("Affect: \(affect)%")
-        print("Require: \(require)%")
-        print("Influence: \(influence)%")
+    static func percentString(value: Double) -> String {
+        return String(format: "%.0f",value*100) + "%"
     }
 }
 

@@ -311,8 +311,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     
     // MARK: User Interaction
     @objc func pushAllValidatorsVC() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+        let vc = ValidatorsVC.newVC()
         vc.title = "All Validators"
         vc.validators = QuorumManager.validators
         navigationController?.pushViewController(vc, animated: true)
@@ -404,8 +403,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             if ( nodesChart.highlighted.count == 1 ) {
                 nodes = Int(nodesChart.highlighted[0].x)
             }
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            let vc = ValidatorsVC.newVC()
             vc.title = "n=\(nodes) Validators"
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.allValidatorsCount == nodes
@@ -418,8 +416,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             if ( depthChart.highlighted.count == 1 ) {
                 depth = Int(depthChart.highlighted[0].x)
             }
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            let vc = ValidatorsVC.newVC()
             vc.title = "d=\(depth) Validators"
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.maxDepth == depth
@@ -428,8 +425,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         }
         if cell == selfRefCell {
             // Self Ref Validators
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            let vc = ValidatorsVC.newVC()
             vc.title = "Self Ref Validators"
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.uniqueValidators.contains(v.publicKey)
@@ -438,8 +434,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         }
         if cell == duplicateRefCell {
             // Duplicate Ref Validators
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "ValidatorsVC") as! ValidatorsVC
+            let vc = ValidatorsVC.newVC()
             vc.title = "Duplicate Ref Validators"
             vc.validators = validators.filter({ (v) -> Bool in
                 return v.quorumSet.allValidatorsCount != v.quorumSet.uniqueValidators.count
