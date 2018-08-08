@@ -11,20 +11,21 @@ import Charts
 
 class QuorumVC: UIViewController, NodeViewDelegate {
     
-    @IBOutlet var verticalStackView: UIStackView?
+    @IBOutlet var verticalStackView: UIStackView!
     var rowStackViews: [UIStackView] = []
     var nodeLinesOverlayView: NodeLinesOverlayView!
     var nodeViews: [NodeView] = []
     var selectedNodeView: NodeView! { didSet { redrawSelectNodeView() } }
     
-    @IBOutlet weak var cityLabel: UILabel?
-    @IBOutlet weak var nameLabel: UILabel?
-    @IBOutlet weak var verifiedCheckmark: UIView?
-    @IBOutlet weak var publicKeyLabel: UILabel?
-    @IBOutlet weak var quorumSetHashLabel: UILabel?
-    @IBOutlet weak var rootThresholdLabel: UILabel?
-    @IBOutlet weak var nodesLabel: UILabel?
-    @IBOutlet weak var depthLabel: UILabel?
+    @IBOutlet weak var cityLabel: UILabel!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var verifiedCheckmark: UIView!
+    @IBOutlet weak var publicKeyLabel: UILabel!
+    @IBOutlet weak var quorumSetHashLabel: UILabel!
+    @IBOutlet weak var rootThresholdLabel: UILabel!
+    @IBOutlet weak var nodesLabel: UILabel!
+    @IBOutlet weak var depthLabel: UILabel!
+    @IBOutlet weak var referencesLabel: UILabel!
     @IBOutlet weak var metricChart: BarChartView!
     
     var validator: Validator!
@@ -126,7 +127,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         stackView.distribution = UIStackViewDistribution.fillEqually
         stackView.alignment = UIStackViewAlignment.center
         stackView.axis = .horizontal
-        verticalStackView?.addArrangedSubview(stackView)
+        verticalStackView.addArrangedSubview(stackView)
         stackView.layoutMargins = UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
         stackView.isLayoutMarginsRelativeArrangement = true
         
@@ -305,47 +306,49 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         return nodeForMetrics
     }
     private func clearInfo() {
-        quorumSetHashLabel?.text = ""
-        publicKeyLabel?.text = " \n "
-        cityLabel?.text = ""
-        nameLabel?.text = ""
-        nodesLabel?.text = ""
-        depthLabel?.text = ""
-        rootThresholdLabel?.text = ""
-        verifiedCheckmark?.isHidden = true
+        quorumSetHashLabel.text = ""
+        publicKeyLabel.text = " \n "
+        cityLabel.text = ""
+        nameLabel.text = ""
+        nodesLabel.text = ""
+        depthLabel.text = ""
+        referencesLabel.text = ""
+        rootThresholdLabel.text = ""
+        verifiedCheckmark.isHidden = true
     }
     private func showValidatorInfo(validatorToShow: Validator) {
         let validatorHandle = QuorumManager.handleForNodeId(id: validatorToShow.publicKey)
-        nameLabel?.text = "\(validatorHandle). \(validatorToShow.name ?? "")"
-        cityLabel?.text = validatorToShow.city ?? "[City]"
-        publicKeyLabel?.text = "pk: " + validatorToShow.publicKey
-        verifiedCheckmark?.isHidden = !validatorToShow.verified
+        nameLabel.text = "\(validatorHandle). \(validatorToShow.name ?? "")"
+        cityLabel.text = validatorToShow.city ?? "[City]"
+        publicKeyLabel.text = "pk: " + validatorToShow.publicKey
+        verifiedCheckmark.isHidden = !validatorToShow.verified
         
-        nodesLabel?.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)"
-        depthLabel?.text = "d=\(validatorToShow.quorumSet.maxDepth)"
+        nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)"
+        depthLabel.text = "d=\(validatorToShow.quorumSet.maxDepth)"
+        referencesLabel.text = "r=\(validatorToShow.usagesInValidatorQuorumSets())"
         showQuorumNodeInfo(node: validatorToShow.quorumSet)
     }
     private func showQuorumNodeInfo(node: QuorumNode) {
         // Limited QuorumNode (QuorumSet or ValidatorNode) info
         if node is QuorumValidator {
-            publicKeyLabel?.text = "pk: " + node.identifier
-            if nameLabel?.text == "" {
-                nameLabel?.text = "?. Unkonwn Validator"
+            publicKeyLabel.text = "pk: " + node.identifier
+            if nameLabel.text == "" {
+                nameLabel.text = "?. Unkonwn Validator"
             }
         }
         else {
-            quorumSetHashLabel?.text = "qsh: " + node.identifier
-            if nameLabel?.text == "" {
-                nameLabel?.text = "Quorum Set"
+            quorumSetHashLabel.text = "qsh: " + node.identifier
+            if nameLabel.text == "" {
+                nameLabel.text = "Quorum Set"
             }
         }
         
         let thresholdString = "\(node.threshold)/\(node.quorumNodes.count)"
         if ( node.maxDepth ) > 1 {
-            rootThresholdLabel?.text = "*" + thresholdString
+            rootThresholdLabel.text = "*" + thresholdString
         }
         else {
-            rootThresholdLabel?.text = thresholdString
+            rootThresholdLabel.text = thresholdString
         }
     }
 }

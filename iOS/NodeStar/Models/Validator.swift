@@ -58,4 +58,15 @@ class Validator {
         
         return node
     }
+    
+    // Return number of validators (including self) that use this validator in their quorum set
+    func usagesInValidatorQuorumSets() -> Int {
+        var usages: Int = 0
+        for validator in QuorumManager.validators {
+            if validator.quorumSet.uniqueValidators.contains(publicKey) {
+                usages += 1
+            }
+        }
+        return usages
+    }
 }
