@@ -41,31 +41,38 @@ protocol QuorumNode {
     var allValidatorsCount: Int { get } // count of all (leaf) validator nodes including dups
     
     // Impact Metrics
-    func impactOfNode(node: QuorumNode) -> QuorumMetrics
+    func impactOfNode(subjectNode: QuorumNode) -> QuorumMetrics
 }
 
 struct QuorumMetrics {
-    var combinations: Int = 0 // Combinations, given Validator truthiness aka 2^(othervalidators-1)
-    var truthsGivenValidatorTrue: Int = 0
-    var truthsGivenValidatorFalse: Int = 0
-    var falsesGivenValidatorTrue: Int { return combinations - truthsGivenValidatorTrue }
-    var falsesGivenValidatorFalse: Int { return combinations - truthsGivenValidatorFalse }
+    var combinations: Int = 0 // Combinations, given node truthiness
+    var truthsGivenNodeTrue: Int = 0
+    var truthsGivenNodeFalse: Int = 0
+    var falsesGivenNodeTrue: Int { return combinations - truthsGivenNodeTrue }
+    var falsesGivenNodeFalse: Int { return combinations - truthsGivenNodeFalse }
     
     var effected: Int {
-        return truthsGivenValidatorTrue + falsesGivenValidatorFalse - combinations
+        return truthsGivenNodeTrue + falsesGivenNodeFalse - combinations
     }
     var affect: Double {
         return Double(effected) / Double(combinations)
     }
     var require: Double {
-        return Double(effected) / Double(truthsGivenValidatorTrue)
+        return Double(effected) / Double(truthsGivenNodeTrue)
     }
     var influence: Double {
-        return Double(effected) / Double(falsesGivenValidatorFalse)
+        return Double(effected) / Double(falsesGivenNodeFalse)
     }
     
     static func percentString(value: Double) -> String {
         return String(format: "%.0f",value*100) + "%"
+    }
+    static func ratioString(value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.minimumIntegerDigits = 1
+        formatter.minimumFractionDigits = 1
+        formatter.maximumFractionDigits = 4
+        return formatter.string(from: NSNumber(value: value))!
     }
 }
 
@@ -139,34 +146,42 @@ class QuorumSet : QuorumNode {
     //
     // We use caching to avoid recomputing the recursive bits
     private var quorumMetricsCache: [String:QuorumMetrics] = [:]
-    func impactOfNode(node: QuorumNode) -> QuorumMetrics {
+    func impactOfNode(subjectNode: QuorumNode) -> QuorumMetrics {
         // Check Cache
-        if quorumMetricsCache[node.identifier] != nil {
-            return quorumMetricsCache[node.identifier]!
+        if quorumMetricsCache[subjectNode.identifier] != nil {
+            return quorumMetricsCache[subjectNode.identifier]!
         }
         
         var metrics = QuorumMetrics()
+        
+        // Impact of self on self is identity metrics
+        if identifier == subjectNode.identifier {
+            metrics.combinations = 1
+            metrics.truthsGivenNodeTrue = 1
+            metrics.truthsGivenNodeFalse = 0
+            return metrics
+        }
         
         // Split leafs from inner qs at this level and remove subject validator
         var validatorNodes: [QuorumNode] = []
         var quorumSetNodes: [QuorumNode] = []
         var includesSubjectValidator: Int = 0
-        for quorumNode in quorumNodes {
-            if quorumNode.identifier == node.identifier {
+        for node in quorumNodes {
+            if node.identifier == subjectNode.identifier {
                 includesSubjectValidator = 1
             }
-            else if quorumNode is QuorumSet {
-                quorumSetNodes.append(quorumNode)
+            else if node is QuorumSet {
+                quorumSetNodes.append(node)
             }
             else {
-                validatorNodes.append(quorumNode)
+                validatorNodes.append(node)
             }
         }
         
         // Combinations
         metrics.combinations = 2 << (validatorNodes.count-1) // AKA 2^(n) -- note the extra -1
         for qsNode in quorumSetNodes {
-            metrics.combinations *= qsNode.impactOfNode(node: node).combinations
+            metrics.combinations *= qsNode.impactOfNode(subjectNode: subjectNode).combinations
         }
         
         // For all combinations of qs nodes t/f -- represented by bits in i
@@ -181,39 +196,39 @@ class QuorumSet : QuorumNode {
             }
             for trueValidators in neededValidators...validatorNodes.count {
                 let binomialTerm: Int = binomial(n: validatorNodes.count, k: trueValidators)
-                var truthsGivenValidatorTrue = 0
-                var falsesGivenValidatorFalse = 0
+                var truthsGivenNodeTrue = 0
+                var falsesGivenNodeFalse = 0
                 
                 // Given validator true
                 if trueQSNodes + trueValidators + includesSubjectValidator >= threshold {
-                    truthsGivenValidatorTrue = binomialTerm
+                    truthsGivenNodeTrue = binomialTerm
                 }
                 // Given validator false
                 if trueQSNodes + trueValidators >= threshold {
-                    falsesGivenValidatorFalse = binomialTerm
+                    falsesGivenNodeFalse = binomialTerm
                 }
                 
                 // Now multiply out the qsNodes
                 for (qsIndex, qsNode) in quorumSetNodes.enumerated() {
-                    let innerMetrics = qsNode.impactOfNode(node: node) // Recursion
+                    let innerMetrics = qsNode.impactOfNode(subjectNode: subjectNode) // Recursion
                     
                     if i & 2<<(qsIndex-1) > 0 { // Truth of qsNode[qsIndex]
                         // qs node in question is true
-                        truthsGivenValidatorTrue *= innerMetrics.truthsGivenValidatorTrue
-                        falsesGivenValidatorFalse *= innerMetrics.truthsGivenValidatorFalse
+                        truthsGivenNodeTrue *= innerMetrics.truthsGivenNodeTrue
+                        falsesGivenNodeFalse *= innerMetrics.truthsGivenNodeFalse
                     }
                     else { // qs is false
-                        truthsGivenValidatorTrue *= innerMetrics.falsesGivenValidatorTrue
-                        falsesGivenValidatorFalse *= innerMetrics.falsesGivenValidatorFalse
+                        truthsGivenNodeTrue *= innerMetrics.falsesGivenNodeTrue
+                        falsesGivenNodeFalse *= innerMetrics.falsesGivenNodeFalse
                     }
                 }
-                metrics.truthsGivenValidatorTrue += truthsGivenValidatorTrue
-                metrics.truthsGivenValidatorFalse += falsesGivenValidatorFalse
+                metrics.truthsGivenNodeTrue += truthsGivenNodeTrue
+                metrics.truthsGivenNodeFalse += falsesGivenNodeFalse
             }
         }
         
         // Cache it
-        quorumMetricsCache[node.identifier] = metrics
+        quorumMetricsCache[subjectNode.identifier] = metrics
         return metrics
     }
     
@@ -285,16 +300,16 @@ class QuorumValidator : QuorumNode {
         return 1
     }
     
-    func impactOfNode(node: QuorumNode) -> QuorumMetrics {
-        if node.identifier == self.identifier {
+    func impactOfNode(subjectNode: QuorumNode) -> QuorumMetrics {
+        if subjectNode.identifier == self.identifier {
             return QuorumMetrics(combinations: 1,
-                                 truthsGivenValidatorTrue: 1,
-                                 truthsGivenValidatorFalse: 0)
+                                 truthsGivenNodeTrue: 1,
+                                 truthsGivenNodeFalse: 0)
         }
         else {
             return QuorumMetrics(combinations: 2,
-                                 truthsGivenValidatorTrue: 1,
-                                 truthsGivenValidatorFalse: 1)
+                                 truthsGivenNodeTrue: 1,
+                                 truthsGivenNodeFalse: 1)
         }
     }
     

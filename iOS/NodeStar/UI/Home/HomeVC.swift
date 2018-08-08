@@ -11,8 +11,6 @@ import Charts
 
 class HomeVC: UITableViewController, ChartViewDelegate {
     
-    // TODO: clarify n vs l -- nodes (unique validator nodes in qs) vs leafs (sum validator nodes in qs)
-    
     let stellarbeatURLPath: String = "https://stellarbeat.io/nodes/raw"
     var validators: [Validator] = []
     
@@ -318,8 +316,8 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     }
     
     // MARK: Network Load Data
+    // TODO: decouple this from the VC
     func reloadDataFromStellarBeat() {
-        //TODO: decouple this from the VC
         let url: URL = URL(string: stellarbeatURLPath)!
         print("Updating \(stellarbeatURLPath)")
         URLSession.shared.dataTask(with: url) { (a, n, c) in

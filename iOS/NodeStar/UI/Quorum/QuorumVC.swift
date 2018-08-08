@@ -207,7 +207,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         // Show this node in the row stack view
         let nv: NodeView = NodeView()
         nv.quorumNode = quorumNode
-        nv.quorumMetrics = validator.quorumSet.impactOfNode(node: quorumNode)
+        nv.quorumMetrics = validator.quorumSet.impactOfNode(subjectNode: quorumNode)
         nv.parentNodeView = parentNodeView
         nv.update()
         nv.delegate = self
@@ -282,7 +282,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         }
         
         // Update Metrics Chart
-        let metrics = validator.quorumSet.impactOfNode(node: nodeForMetrics(node: quorumNode))
+        let metrics = validator.quorumSet.impactOfNode(subjectNode: nodeForMetrics(node: quorumNode))
         let dataSet = BarChartDataSet(values: [
             BarChartDataEntry(x: Double(0), y: Double(metrics.affect * 100)),
             BarChartDataEntry(x: Double(1), y: Double(metrics.require * 100)),

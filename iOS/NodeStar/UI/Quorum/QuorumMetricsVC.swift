@@ -26,9 +26,25 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
     @IBOutlet weak var cellMetricsRequire: UITableViewCell!
     @IBOutlet weak var cellMetricsInfluence: UITableViewCell!
     // Labels
+    @IBOutlet weak var labelSummary: UILabel!
     @IBOutlet weak var labelMetricsAffect: UILabel!
     @IBOutlet weak var labelMetricsRequire: UILabel!
     @IBOutlet weak var labelMetricsInfluence: UILabel!
+    @IBOutlet weak var labelCombinationsLeafs: UILabel!
+    @IBOutlet weak var labelCombinations: UILabel!
+    @IBOutlet weak var labelCombinationsRecursive: UILabel!
+    @IBOutlet weak var labelTrueGivenTrue: UILabel!
+    @IBOutlet weak var labelTrueGivenFalse: UILabel!
+    @IBOutlet weak var labelFalseGivenTrue: UILabel!
+    @IBOutlet weak var labelFalseGivenFalse: UILabel!
+    @IBOutlet weak var labelEffectedMath: UILabel!
+    @IBOutlet weak var labelEffectedResult: UILabel!
+    @IBOutlet weak var labelAffectMath: UILabel!
+    @IBOutlet weak var labelAffectResult: UILabel!
+    @IBOutlet weak var labelRequireMath: UILabel!
+    @IBOutlet weak var labelRequireResult: UILabel!
+    @IBOutlet weak var labelInfluenceMath: UILabel!
+    @IBOutlet weak var labelInfluenceResult: UILabel!
     
     lazy var percentFormatter: NumberFormatter = {
         var formatter = NumberFormatter()
@@ -66,9 +82,12 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
     }
     
     @objc func updateTableView() {
+
         // Root
         let validatorHandle = QuorumManager.handleForNodeId(id: validator.publicKey)
-        cellRootName.detailTextLabel?.text = "\(validatorHandle). \(validator.name ?? "")"
+        let rootNameString = "\(validatorHandle). \(validator.name ?? "")"
+        var nodeNameString = "Inner Quorum Set Node"
+        cellRootName.detailTextLabel?.text = rootNameString
         cellRootPK.detailTextLabel?.text = validator.publicKey
         
         // Node
@@ -76,7 +95,8 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
             if quorumNode.identifier == validator.quorumSet.identifier {
                 // Root
                 cellNodeType.detailTextLabel?.text = "Root Validator / Quorum Set Node"
-                cellNodeName.detailTextLabel?.text = "\(validatorHandle). \(validator.name ?? "")"
+                nodeNameString = "\(validatorHandle). \(validator.name ?? "")"
+                cellNodeName.detailTextLabel?.text = nodeNameString
                 cellNodeIdentifier.textLabel?.text = "Public Key:"
                 cellNodeIdentifier.detailTextLabel?.text = validator.publicKey
             }
@@ -93,25 +113,62 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
             cellNodeType.detailTextLabel?.text = "Leaf Validator Node"
             let leafValidatorHandle = QuorumManager.handleForNodeId(id: quorumNode.identifier)
             let leafValidator = QuorumManager.validatorForId(id: quorumNode.identifier)
-            cellRootName.detailTextLabel?.text = "\(leafValidatorHandle). \(leafValidator?.name ?? "")"
+            nodeNameString = "\(leafValidatorHandle). \(leafValidator?.name ?? "")"
+            cellNodeName.detailTextLabel?.text = nodeNameString
             cellNodeIdentifier.textLabel?.text = "Public Key:"
             cellNodeIdentifier.detailTextLabel?.text = quorumNode.identifier
         }
         
+        // Summary
+        labelSummary.text =
+            "Impact of Selected Node: [\(nodeNameString)]\n" +
+            "on Validator: [\(rootNameString)]"
+        
         // Metrics
-        let metrics = validator.quorumSet.impactOfNode(node: quorumNode)
+        let metrics = validator.quorumSet.impactOfNode(subjectNode: quorumNode)
         labelMetricsAffect.text =
-            "The selected quorum node affects the overall quorum outcome in " +
+            "The selected node affects the quorum outcome in " +
             QuorumMetrics.percentString(value: metrics.affect) +
             " of combinations."
         labelMetricsRequire.text =
-            "The selected quorum node is required to be true in " +
+            "The selected node is required to be true in " +
             QuorumMetrics.percentString(value: metrics.require) +
-            " of the combinations that lead to overall quorum truth."
+            " of the combinations that lead to quorum truth."
         labelMetricsInfluence.text =
-            "The selected quorum node influences the overall quorum result to true in " +
+            "The selected node influences the quorum result to true in " +
             QuorumMetrics.percentString(value: metrics.influence) +
             " of combinations where it otherwise would have been false."
+        
+        // Combinations
+        let leafs = validator.quorumSet.uniqueValidators.subtracting(quorumNode.uniqueValidators).count
+        labelCombinationsLeafs.text = "\(leafs)"
+        labelCombinations.text = "\(pow(2, leafs))"
+        labelCombinationsRecursive.text = "\(metrics.combinations)"
+        labelTrueGivenTrue.text = "\(metrics.truthsGivenNodeTrue)"
+        labelTrueGivenFalse.text = "\(metrics.truthsGivenNodeFalse)"
+        labelFalseGivenTrue.text = "\(metrics.falsesGivenNodeTrue)"
+        labelFalseGivenFalse.text = "\(metrics.falsesGivenNodeFalse)"
+        
+        // Math
+        labelEffectedMath.text =
+            "\(metrics.truthsGivenNodeTrue) + \(metrics.falsesGivenNodeFalse)" +
+            " - \(metrics.combinations)"
+        labelEffectedResult.text = "\(metrics.effected)"
+        labelAffectMath.text = "\(metrics.effected) / \(metrics.combinations)"
+        labelAffectResult.text =
+            QuorumMetrics.ratioString(value: metrics.affect) +
+            " or " +
+            QuorumMetrics.percentString(value: metrics.affect)
+        labelRequireMath.text = "\(metrics.effected) / \(metrics.truthsGivenNodeTrue)"
+        labelRequireResult.text =
+            QuorumMetrics.ratioString(value: metrics.require) +
+            " or " +
+            QuorumMetrics.percentString(value: metrics.require)
+        labelInfluenceMath.text = "\(metrics.effected) / \(metrics.falsesGivenNodeFalse)"
+        labelInfluenceResult.text =
+            QuorumMetrics.ratioString(value: metrics.influence) +
+            " or " +
+            QuorumMetrics.percentString(value: metrics.influence)
         
         // Update Metrics Chart
         let dataSet = BarChartDataSet(values: [
@@ -128,7 +185,7 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
     
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 2 && indexPath.row == 0 {
+        if indexPath.section == 3 && indexPath.row == 0 {
             return cellMetricsChart.frame.size.height
         }
         return UITableViewAutomaticDimension
