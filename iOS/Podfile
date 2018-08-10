@@ -7,5 +7,6 @@ target 'NodeStar' do
 
   # Pods for NodeStar
   pod 'Charts'
+  pod 'FittableFontLabel'
 
 end

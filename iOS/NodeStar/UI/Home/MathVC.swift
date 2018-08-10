@@ -9,7 +9,7 @@
 import UIKit
 
 class MathVC: UIViewController {
-    static let mathNames = ["Impact Metrics", "Simple Quorum", "Recursive Quorum"]
+    static let mathNames = ["Quorum Impact Metrics", "Simple Quorum", "Recursive Quorum"]
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!

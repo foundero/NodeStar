@@ -30,13 +30,14 @@ Eventually:
 * incorporates [Stellar White Paper concepts](https://www.stellar.org/papers/stellar-consensus-protocol.pdf) like Dispensable Sets
 
 <p float="left">
-  <img src="iOS/screen-shots/1-validators.png" width="200" alt="NodeStar - Stellar Validators Screenshot" />
-  <img src="iOS/screen-shots/2-quorum-set-depth-2.png" width="200" alt="NodeStar - Quorum Set Depth 2" />
   <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
+  <img src="iOS/screen-shots/7-quorum-metrics.png" width="200" alt="NodeStar - Quorum Metrics" />
+  <img src="iOS/screen-shots/6-math.png" width="200" alt="NodeStar - Math" />
 </p>
 <p float="left">
   <img src="iOS/screen-shots/4-summary-1.png" width="200" alt="NodeStar - Node Count Histogram" />
   <img src="iOS/screen-shots/5-summary-2.png" width="200" alt="NodeStar - Depth Histogram" />
+  <img src="iOS/screen-shots/1-validators.png" width="200" alt="NodeStar - Stellar Validators Screenshot" />
 </p>
 
 ### Install From Source
@@ -54,13 +55,13 @@ We're developing standard language and metrics for discussing the stellar networ
 
 Terms:
 
-* Effected - how often does node A have an effect on quorum set Q
-* Effect() - fraction of node truthiness combinations where node A has an effect on quorum set Q
-* Require() - fraction of node truthiness combinations where node A can veto, when Q otherwise would be true
-* Influence() - fraction of node truthiness combinations where node A can overpower, when it Q otherwise would be false
+* **Effected** - count of combinations where the selected node impacts the quorum result
+* **Affect** - how often the selected node has an impact on the quorum result
+* **Require** - how often the selected node is required to be true for quorum truths
+* **Influence** - how often the selected node influences the quorum result to true where it otherwise would have been false
 
 
-### Part 1 - Impact Metrics
+### Part 1 - Quorum Impact Metrics
 ![alt text](math/math1.tex.png "Math 1 - impact metrics")
 
 ### Part 2 - Simple Quorum

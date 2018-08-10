@@ -43,6 +43,14 @@ protocol QuorumNode {
     // Impact Metrics
     func impactOfNode(subjectNode: QuorumNode) -> QuorumMetrics
 }
+extension QuorumNode {
+    func quorumNodesChildValidators() -> [QuorumNode] {
+        return quorumNodes.filter { $0 is QuorumValidator }
+    }
+    func quorumNodesChildQuorumSets() -> [QuorumNode] {
+        return quorumNodes.filter { $0 is QuorumSet }
+    }
+}
 
 struct QuorumMetrics {
     var combinations: Int = 0 // Combinations, given node truthiness

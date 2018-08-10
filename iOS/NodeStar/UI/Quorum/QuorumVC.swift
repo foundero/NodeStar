@@ -117,7 +117,6 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     }
     
     // MARK: -- Visualize Nodes
-    
     func createRow(row: Int) {
         let padding: CGFloat = 10.0
         
@@ -220,9 +219,19 @@ class QuorumVC: UIViewController, NodeViewDelegate {
             rowStackViews[depth+1].setCustomSpacing(8, after: rowStackViews[depth+1].arrangedSubviews.last!)
         }
         
-        // Show children
-        for qn in quorumNode.quorumNodes {
+        // Show children: first half validators, all inner quorum set, second half validators
+        for (index, qn) in quorumNode.quorumNodesChildValidators().enumerated() {
+            if index <= quorumNode.quorumNodesChildValidators().count / 2 {
+                showNodes(quorumNode: qn, depth: depth+1, parentNodeView: nv)
+            }
+        }
+        for qn in quorumNode.quorumNodesChildQuorumSets() {
             showNodes(quorumNode: qn, depth: depth+1, parentNodeView: nv)
+        }
+        for (index, qn) in quorumNode.quorumNodesChildValidators().enumerated() {
+            if index > quorumNode.quorumNodesChildValidators().count / 2 {
+                showNodes(quorumNode: qn, depth: depth+1, parentNodeView: nv)
+            }
         }
     }
     
@@ -233,6 +242,22 @@ class QuorumVC: UIViewController, NodeViewDelegate {
             if let pnv: NodeView = nv.parentNodeView {
                 // Draw from pnv to nv
                 nodeLinesOverlayView.addLine(from: pnv, to: nv)
+            }
+        }
+        
+        // Update the font sizes to be consistent per row
+        for rowStackView in rowStackViews {
+            // Get the min size
+            var minRowFontSize: CGFloat = 14.0
+            for case let nv as NodeView in rowStackView.arrangedSubviews {
+                let nvAdjustedFontSize = nv.adjustedFontSize()
+                if nvAdjustedFontSize < minRowFontSize {
+                    minRowFontSize = nvAdjustedFontSize
+                }
+            }
+            // Set all in row to min size
+            for case let nv as NodeView in rowStackView.arrangedSubviews {
+                nv.setFontSize(size: minRowFontSize)
             }
         }
     }
@@ -325,7 +350,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         
         nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)"
         depthLabel.text = "d=\(validatorToShow.quorumSet.maxDepth)"
-        usagesLabel.text = "r=\(validatorToShow.usagesInValidatorQuorumSets())"
+        usagesLabel.text = "u=\(validatorToShow.usagesInValidatorQuorumSets())"
         showQuorumNodeInfo(node: validatorToShow.quorumSet)
     }
     private func showQuorumNodeInfo(node: QuorumNode) {

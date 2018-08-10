@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import FittableFontLabel
 
 protocol NodeViewDelegate {
     func nodeViewTapped(nodeView: NodeView)
@@ -25,6 +25,16 @@ class NodeView: UIView {
     private var thresholdLabel: UILabel!
     private var borderColor: UIColor = UIColor.black
     private var fillColor: UIColor = UIColor.white
+    
+    func adjustedFontSize() -> CGFloat {
+        return self.nameLabel.fontSizeThatFits(text: nameLabel.text ?? "",
+                                               maxFontSize: 14,
+                                               minFontScale: 0.3,
+                                               rectSize: nil)
+    }
+    func setFontSize(size: CGFloat) {
+        nameLabel.font = UIFont.systemFont(ofSize: size)
+    }
     
     init() {
         super.init(frame: CGRect.null)
@@ -59,7 +69,7 @@ class NodeView: UIView {
                                               toItem: self,
                                               attribute: .bottom,
                                               multiplier: 1.0,
-                                              constant: -7.0))
+                                              constant: -6.0))
         addConstraint(NSLayoutConstraint(item: thresholdLabel,
                                               attribute: .centerX,
                                               relatedBy: .equal,
@@ -72,9 +82,16 @@ class NodeView: UIView {
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         nameLabel.font = UIFont.systemFont(ofSize: 14)
         nameLabel.adjustsFontSizeToFitWidth = true
-        nameLabel.minimumScaleFactor = 0.5
+        nameLabel.minimumScaleFactor = 0.3
         nameLabel.textAlignment = NSTextAlignment.center
         addSubview(nameLabel)
+        addConstraint(NSLayoutConstraint(item: nameLabel,
+                                         attribute: .height,
+                                         relatedBy: .equal,
+                                         toItem: nil,
+                                         attribute: .notAnAttribute,
+                                         multiplier: 1.0,
+                                         constant: 22.0))
         addConstraint(NSLayoutConstraint(item: nameLabel,
                                               attribute: .top,
                                               relatedBy: .equal,
@@ -88,14 +105,14 @@ class NodeView: UIView {
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 4.0))
+                                              constant: 1.0))
         addConstraint(NSLayoutConstraint(item: nameLabel,
                                               attribute: .trailing,
                                               relatedBy: .equal,
                                               toItem: self,
                                               attribute: .trailing,
                                               multiplier: 1.0,
-                                              constant: -4.0))
+                                              constant: -1.0))
     }
     
     override open var intrinsicContentSize: CGSize {
