@@ -1,0 +1,94 @@
+\documentclass[10pt]{article}
+\usepackage[usenames]{color} %used for font color
+\usepackage{amssymb} %maths
+\usepackage{amsmath} %maths
+\usepackage[utf8]{inputenc} %useful to type directly diacritic characters
+\begin{document}
+% Export: fontsize=18, mode=auto, type=png
+\newcommand{\powerset}[1]{\mathbb{P}(#1)}
+\newcommand{\cardinality}[1]{\left\vert{#1}\right\vert}
+
+\newcommand{\tgt}[0]{ \cardinality{ C(Qt|1) } }
+\newcommand{\tgf}[0]{ \cardinality{ C(Qt|0) } }
+\newcommand{\fgt}[0]{ \cardinality{ C(Qf|1) } }
+\newcommand{\fgf}[0]{ \cardinality{ C(Qf|0) } }
+\newcommand{\effected}[0]{ \tgt + \fgf - 2^m }
+% ^ Shared Stuff
+
+\setcounter{equation}{15}
+
+
+
+\textbf{General Quorum - Recursion:}\\\par
+Note: does not work for quorum set with leaf validators used more than once
+
+\begin{itemize}
+  \item $Q_i$ is a Quorum Set function - possibly an inner quorum set function
+  \item $Q_{r}$ is the threshold of Quorum Set
+  \item $M_{c}$ set of direct children of QuorumSet excluding $a$
+  \item $M_{q}$ set of inner quorum set children of QuorumSet excluding $a$
+  \item $M_{v}$ set of validator children of QuorumSet excluding $a$
+  \item $M_{xt}$ set of $true$ children of type x
+  \item $M_{ctr}$ set of true children where cardinality $>=Q_r$
+\end{itemize}
+
+
+
+Recursive Calculation (all combinations of Quorum Set children):
+\begin{itemize}
+  \item Base Case: when $Q$ is $Q_{simple}$ calculate needed values with equations:
+    simple binomial combinations 10 \& 11,
+    combinations complement 2,
+    combinations cardinality 3
+  \item Normal Case: use equations 5-8, we just need to compute
+    $\cardinality{C(Qt|1)}$ and $\cardinality{C(Qt|0)}$
+\end{itemize}
+
+
+\begin{align}
+  Q(expr)_i =
+  \begin{cases}
+    Qt_i \text{ if } expr==true \\
+    Qf_i \text{ if } expr==false
+  \end{cases}
+\end{align}
+
+
+\begin{align}
+  \tgt &=
+        \sum_{ M_{ctr} \in \powerset{ M_{c} } }
+        \prod_{i=1}^{ \cardinality{M_c} }
+                C(Q(i \in M_{ct})_i|1)
+  \\
+  \tgf &=
+        \sum_{ M_{ctr} \in \powerset{ M_{c} } }
+        \prod_{i=1}^{ \cardinality{M_c} }
+                C(Q(i \in M_{ct})_i|0)
+\end{align}
+
+
+\textbf{Recursive Hybrid Binomial}\\\par
+Binomials for validators and all combinations for inner quorum sets
+
+
+
+\begin{align}
+  \tgt &=
+        \sum_{ M_{qt} \in \powerset{ M_{q} } }
+        \sum_{ v=0 }^{ \cardinality{M_v} }
+           (v + \cardinality{M_{qt}} + a \in N_{v}>= Q_r)
+           \binom{ \cardinality{M_v} }{ v }
+           \prod_{q=0}^{ \cardinality{M_q} } C(Q(q \in M_{qt})_i|1)
+  \\
+  \tgf &=
+        \sum_{ M_{qt} \in \powerset{ M_{1} } }
+        \sum_{ v=0 }^{ \cardinality{M_v} }
+           (v + \cardinality{M_{qt}} >= Q_r)
+           \binom{ \cardinality{M_v} }{ v }
+           \prod_{i=0}^{ \cardinality{M_q} } C(Q(q \in M_{qt})_i|0)
+\end{align}
+
+
+
+
+\end{document}

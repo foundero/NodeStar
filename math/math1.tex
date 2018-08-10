@@ -6,74 +6,76 @@
 \begin{document}
 % Export: fontsize=18, mode=auto, type=png
 \newcommand{\powerset}[1]{\mathbb{P}(#1)}
+\newcommand{\cardinality}[1]{\left\vert{#1}\right\vert}
 
-\newcommand{\effectedExpression}[0]{ \sum_{N_t \in P} Q(\{1\},N_t) \land \lnot Q(\{\},N_t) }
-\newcommand{\affectDenomExpression}[0]{ 2^{n-1} }
-\newcommand{\requireDenomExpression}[0]{ \sum_{N_t \in P} Q(\{a\},N_t) }
-\newcommand{\influenceDenomExpression}[0]{ \sum_{N_t \in P} \lnot Q(\{\},N_t) }
+\newcommand{\tgt}[0]{ \cardinality{ C(Qt|1) } }
+\newcommand{\tgf}[0]{ \cardinality{ C(Qt|0) } }
+\newcommand{\fgt}[0]{ \cardinality{ C(Qf|1) } }
+\newcommand{\fgf}[0]{ \cardinality{ C(Qf|0) } }
+\newcommand{\effected}[0]{ \tgt + \fgf - 2^m }
+% ^ Shared Stuff
 
 
 \textbf{General Quorum:}\\\par
-$Q(N_t) \Rightarrow \{0,1\}$ is a general (potentially nested) QuorumSet
+$Q(N_t) \Rightarrow \{0,1\}$ is a general (potentially nested) Quorum Set function
 
 \begin{itemize}
-  \item $N$ is the set of all nodes referenced by QuorumSet
-  \item $n$ is the cardinality of $N$
-  \item $N_t$ is the set of all $true$ nodes
-\end{itemize}
-
-For Convenience:
-\begin{equation}
-    Q(A_t,N_t-A_t) = Q(A_t \cap (N_t-A_t))
-\end{equation}
-\begin{itemize}
-  \item $A$ is the set $\{a\}$ where $a \in N$
-  \item $A_t$ set of true nodes in $A$ aka if $a$ is $true$ then $\{a\}$ else $\{\}$
-\end{itemize}
-
-Let:
-\begin{itemize}
-  \item $\powerset{N}$ aka the power set of $N$, has cardinality $2^n$
-  \item let $P = \powerset{N-A}$ aka the power set of $N-A$, has cardinality $2^{n-1}$
+  \item $N$ is the set of all nodes referenced by Quorum Set
+  \item $N_v$ is the set of Validators (leaf nodes) referenced by Quorum Set
+  \item $N_{vt}$ is a set of $true$ validators
+  \item $a$ is the Validator $a \in N_v$  we're computing impact metrics for
+  \item $M$ is the set $N_v-A$
+  \item $m = \cardinality{M}$ cardinality of $M$ aka number of validators - 1
+  \item $C = \powerset{M}$ power set of $M$, represents all t/f combinations of $M$
 \end{itemize}
 
 
-
-
-
-\leavevmode
-\par
-\textbf{Effected:}
-\begin{equation}
-    Effected(a,Q) = \effectedExpression{}
-\end{equation}
-
-\textbf{Affect:}
+Combinations:
 \begin{align}
 \begin{split}
-    Affect(a,Q) &= \frac{Effected(a,Q)}{\affectDenomExpression{}} \\
-\\
-                &= \frac{\effectedExpression{}}{\affectDenomExpression{}}
+  C(Qt|1) \text{ } &= \text{ Combinations in } C \text{ where } Q == true \text{, given } a == true \\
+  C(Qf|0) \text{ } &= \text{ Combinations in } C \text{ where } Q == false \text{, given } a == false \\
 \end{split}
 \end{align}
 
-\textbf{Require:}
 \begin{align}
 \begin{split}
-    Require(a,Q) &= \frac{Effected(a,Q)}{\requireDenomExpression{}} \\
-\\
-                 &= \frac{\effectedExpression{}}{\requireDenomExpression{}}
+  C(Qt|1) + C(Qf|1) &= C \\
+  C(Qt|0) + C(Qf|0) &= C \\
 \end{split}
 \end{align}
 
-\textbf{Influence:}
 \begin{align}
 \begin{split}
-    Influence(a,Q) &= \frac{Effected(a,Q)}{\influenceDenomExpression{}} \\
-\\
-                   &= \frac{\effectedExpression{}}{\influenceDenomExpression{}}
+  \cardinality{C} &= 2^m
 \end{split}
 \end{align}
-\\
+
+
+Union Combinations:
+\begin{align}
+\begin{split}
+  C(Qf|1) &\subseteq C(Qf|0) \\
+  C(Qt|1) &+ C(Qf|1) = C \\
+             &\therefore \\
+  C(Qt|1) &\cup C(Qf|0) = C
+\end{split}
+\end{align}
+
+
+Impact Metrics:
+\begin{align}
+\begin{split}
+  Effected(a,Q) &= \cardinality{ C(Qt|1) \cap C(Qf|0) } \\
+                &= \tgt + \fgf - \cardinality{ C(Qt|1) \cup C(Qf|0) } \\
+                &= \tgt + \fgf - \cardinality{C} \\
+                &= \effected
+\end{split} \\
+  Affect(a,Q) &= \frac{Effected(a,Q)}{\cardinality{C}} \\
+  Require(a,Q) &= \frac{Effected(a,Q)}{\tgt} \\
+  Influence(a,Q) &= \frac{Effected(a,Q)}{\fgf}
+\end{align}
+
+
 
 \end{document}

@@ -60,10 +60,13 @@ Terms:
 * Influence() - fraction of node truthiness combinations where node A can overpower, when it Q otherwise would be false
 
 
-### Part 1
-![alt text](math/math1.tex.png "Math 1")
+### Part 1 - Impact Metrics
+![alt text](math/math1.tex.png "Math 1 - impact metrics")
 
-### Part 2
-![alt text](math/math2.tex.png "Math 2")
+### Part 2 - Simple Quorum
+![alt text](math/math2.tex.png "Math 2 - simple quorum")
+
+### Part 3 - Recursive Quorum
+![alt text](math/math3.tex.png "Math 2 - recursive quorum")
 
 

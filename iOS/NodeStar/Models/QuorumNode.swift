@@ -197,7 +197,7 @@ class QuorumSet : QuorumNode {
             for trueValidators in neededValidators...validatorNodes.count {
                 let binomialTerm: Int = binomial(n: validatorNodes.count, k: trueValidators)
                 var truthsGivenNodeTrue = 0
-                var falsesGivenNodeFalse = 0
+                var truthsGivenNodeFalse = 0
                 
                 // Given validator true
                 if trueQSNodes + trueValidators + includesSubjectValidator >= threshold {
@@ -205,7 +205,7 @@ class QuorumSet : QuorumNode {
                 }
                 // Given validator false
                 if trueQSNodes + trueValidators >= threshold {
-                    falsesGivenNodeFalse = binomialTerm
+                    truthsGivenNodeFalse = binomialTerm
                 }
                 
                 // Now multiply out the qsNodes
@@ -215,15 +215,15 @@ class QuorumSet : QuorumNode {
                     if i & 2<<(qsIndex-1) > 0 { // Truth of qsNode[qsIndex]
                         // qs node in question is true
                         truthsGivenNodeTrue *= innerMetrics.truthsGivenNodeTrue
-                        falsesGivenNodeFalse *= innerMetrics.truthsGivenNodeFalse
+                        truthsGivenNodeFalse *= innerMetrics.truthsGivenNodeFalse
                     }
                     else { // qs is false
                         truthsGivenNodeTrue *= innerMetrics.falsesGivenNodeTrue
-                        falsesGivenNodeFalse *= innerMetrics.falsesGivenNodeFalse
+                        truthsGivenNodeFalse *= innerMetrics.falsesGivenNodeFalse
                     }
                 }
                 metrics.truthsGivenNodeTrue += truthsGivenNodeTrue
-                metrics.truthsGivenNodeFalse += falsesGivenNodeFalse
+                metrics.truthsGivenNodeFalse += truthsGivenNodeFalse
             }
         }
         
