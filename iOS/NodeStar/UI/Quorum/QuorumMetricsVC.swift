@@ -25,6 +25,8 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
     @IBOutlet weak var cellMetricsAffect: UITableViewCell!
     @IBOutlet weak var cellMetricsRequire: UITableViewCell!
     @IBOutlet weak var cellMetricsInfluence: UITableViewCell!
+    @IBOutlet weak var cellHelpDefinitions: UITableViewCell!
+    @IBOutlet weak var cellHelpMath: UITableViewCell!
     // Labels
     @IBOutlet weak var labelSummary: UILabel!
     @IBOutlet weak var labelMetricsAffect: UILabel!
@@ -175,7 +177,7 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
             BarChartDataEntry(x: Double(0), y: Double(metrics.affect * 100)),
             BarChartDataEntry(x: Double(1), y: Double(metrics.require * 100)),
             BarChartDataEntry(x: Double(2), y: Double(metrics.influence * 100))], label: nil)
-        dataSet.colors = [UIColor.blue, UIColor.red, UIColor.green]
+        dataSet.colors = [nodeStarBlue, UIColor.red, nodeStarGreen]
         dataSet.valueFormatter = DefaultValueFormatter(formatter: percentFormatter)
         dataSet.valueFont = UIFont.systemFont(ofSize: 13.0)
         dataSet.axisDependency = YAxis.AxisDependency.left
@@ -183,7 +185,19 @@ class QuorumMetricsVC: UITableViewController, ChartViewDelegate {
         metricChart.animate(yAxisDuration: 0.8, easingOption: ChartEasingOption.easeOutQuad)
     }
     
+    // MARK: UITableViewDelegate
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
+    }
+    override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath)
+        if cell == cellHelpDefinitions {
+            let vc = InfoVC.newVC()
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        if cell == cellHelpMath {
+            let vc = MathListVC()
+            navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }

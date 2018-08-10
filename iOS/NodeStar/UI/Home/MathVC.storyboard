@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--MathVC-->
+        <scene sceneID="RuZ-mK-RvD">
+            <objects>
+                <viewController storyboardIdentifier="MathVC" id="Tro-gC-5wk" customClass="MathVC" customModule="NodeStar" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="kfL-eD-qwn">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="999" verticalHuggingPriority="999" horizontalCompressionResistancePriority="999" verticalCompressionResistancePriority="999" placeholderIntrinsicWidth="355" placeholderIntrinsicHeight="627" adjustsImageSizeForAccessibilityContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ing-m5-snz">
+                                <rect key="frame" x="10" y="40" width="355" height="627"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="355" id="Y8f-vL-SE2"/>
+                                    <constraint firstAttribute="height" constant="627" id="sm7-jP-RxZ"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="ing-m5-snz" firstAttribute="centerX" secondItem="kfL-eD-qwn" secondAttribute="centerX" id="3Hi-we-0K1"/>
+                            <constraint firstItem="ing-m5-snz" firstAttribute="top" secondItem="6Xr-5b-0SH" secondAttribute="top" constant="20" id="Dzy-Kn-EeT"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="6Xr-5b-0SH"/>
+                    </view>
+                    <connections>
+                        <outlet property="heightConstraint" destination="sm7-jP-RxZ" id="Emd-gF-eN8"/>
+                        <outlet property="imageView" destination="ing-m5-snz" id="X4u-Br-vCq"/>
+                        <outlet property="widthConstraint" destination="Y8f-vL-SE2" id="Kz2-Wh-h5F"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dxm-EP-Cc6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-41" y="63"/>
+        </scene>
+    </scenes>
+</document>

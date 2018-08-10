@@ -175,9 +175,9 @@ class NodeView: UIView {
         
         if selected {
         // Draw the metrics as concentric circles on each node
-        for (index, (metric, color)) in [(quorumMetrics.affect, UIColor.blue),
+        for (index, (metric, color)) in [(quorumMetrics.affect, nodeStarBlue),
                                          (quorumMetrics.require, UIColor.red),
-                                         (quorumMetrics.influence, UIColor.green)].enumerated()
+                                         (quorumMetrics.influence, nodeStarGreen)].enumerated()
         {
             let radius =  CGFloat( halfSize - (desiredLineWidth*CGFloat(index + 1) - desiredLineWidth/2.0) )
             let circlePathInner = UIBezierPath(

@@ -12,6 +12,9 @@ extension UINavigationController {
     override open var supportedInterfaceOrientations : UIInterfaceOrientationMask {
         return .all
     }
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 }
 
 extension UIViewController {

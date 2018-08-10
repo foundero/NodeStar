@@ -47,7 +47,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
                                                            style:.plain,
                                                            target: nil,
                                                            action: nil)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Detail",
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "detail",
                                                             style:.plain,
                                                             target: self,
                                                             action: #selector(tappedInfoButton))
@@ -288,7 +288,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
             BarChartDataEntry(x: Double(0), y: Double(metrics.affect * 100)),
             BarChartDataEntry(x: Double(1), y: Double(metrics.require * 100)),
             BarChartDataEntry(x: Double(2), y: Double(metrics.influence * 100))], label: nil)
-        dataSet.colors = [UIColor.blue, UIColor.red, UIColor.green]
+        dataSet.colors = [nodeStarBlue, UIColor.red, nodeStarGreen]
         dataSet.valueFormatter = DefaultValueFormatter(formatter: percentFormatter)
         dataSet.valueFont = UIFont.systemFont(ofSize: 8.0)
         dataSet.axisDependency = YAxis.AxisDependency.right
