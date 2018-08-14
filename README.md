@@ -11,23 +11,30 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 
 ## iOS App - NodeStar
 
-It'll cost $0.99 from the App Store (coming soon) or build from source and install it with xcode for free!
+<a href="https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg) no-repeat;width:135px;height:40px;background-size:contain;"></a>
+<br />
+$0.99 from the App Store or free if you [install from source](#install-from-source).
 
-We're creating an app that:
-
-* parses information from [StellarBeat.io raw data](https://stellarbeat.io/nodes/dataset) -- Thanks StellarBeat!
+### V1.0
+* Parses Validator and Quorum Set Info
+  * from [StellarBeat.io raw data](https://stellarbeat.io/nodes/dataset) -- Thanks StellarBeat!
   * [StellarBeat.io source](https://github.com/stellarbeat/js-stellar-node-connector)
   * eventually get the data ourselves
-* displays interesting summary network & quorum set metrics
-* displays list of all validators
-* graphically visualizes a nodes quorum set
-* computes some metrics on quorum set nodes - [see math below](#math)
+* Network Summary Metrics
+  * number of validators
+  * distribution of validator count in quoum sets
+  * distribution of inner quorum set depth
+  * validator reuse in quorum sets
+* Info on All Validators
+* Specific Quorum Sets
+  * graphically visualize the quorum and inner quorum sets
+  * impact metrics of specific validator on a quorum set - [see math below](#math)
 
-Eventually:
+### Coming Soon:
 
-* visualizes the network of all validators and their quorum sets
-* computes some overall health metrics
-* incorporates [Stellar White Paper concepts](https://www.stellar.org/papers/stellar-consensus-protocol.pdf) like Dispensable Sets
+* visualize the entire network
+* compute overall network health metrics
+* incorporate [Stellar White Paper concepts](https://www.stellar.org/papers/stellar-consensus-protocol.pdf) like Dispensable Sets
 
 <p float="left">
   <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
