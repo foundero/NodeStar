@@ -11,9 +11,7 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 
 ## iOS App - NodeStar
 
-<a href="https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8" style="display:inline-block;overflow:hidden;background:url(https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg) no-repeat;width:135px;height:40px;background-size:contain;"></a>
-<br />
-$0.99 from the App Store or free if you [install from source](#install-from-source).
+$0.99 from the [AppStore](https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8) or free if you [install from source](#install-from-source).
 
 ### V1.0
 * Parses Validator and Quorum Set Info
