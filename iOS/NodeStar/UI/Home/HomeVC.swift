@@ -209,6 +209,9 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             selfRefCell.detailTextLabel?.text = ""
             duplicateRefCell.detailTextLabel?.text = ""
             nodesSelectedCell.detailTextLabel?.text = ""
+            depthSelectedCell.detailTextLabel?.text = ""
+            nodesSelectedCell.textLabel?.text = ""
+            depthSelectedCell.textLabel?.text = ""
         }
         else {
             // Setup with our data
