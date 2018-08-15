@@ -37,7 +37,7 @@ $0.99 from the [AppStore](https://itunes.apple.com/us/app/nodestar-for-stellar/i
 <p float="left">
   <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
   <img src="iOS/screen-shots/7-quorum-metrics.png" width="200" alt="NodeStar - Quorum Metrics" />
-  <img src="iOS/screen-shots/6-math.png" width="200" alt="NodeStar - Math" />
+  <img src="iOS/screen-shots/8-validator-clusters.png" width="200" alt="NodeStar - Validator Clusters" />
 </p>
 <p float="left">
   <img src="iOS/screen-shots/4-summary-1.png" width="200" alt="NodeStar - Node Count Histogram" />
