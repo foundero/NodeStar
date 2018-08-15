@@ -13,7 +13,7 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 
 $0.99 from the [AppStore](https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8) or free if you [install from source](#install-from-source).
 
-### V1.0
+### V1.1
 * Parses Validator and Quorum Set Info
   * from [StellarBeat.io raw data](https://stellarbeat.io/nodes/dataset) -- Thanks StellarBeat!
   * [StellarBeat.io source](https://github.com/stellarbeat/js-stellar-node-connector)
