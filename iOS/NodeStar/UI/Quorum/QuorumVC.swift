@@ -348,9 +348,11 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         publicKeyLabel.text = "pk: " + validatorToShow.publicKey
         verifiedCheckmark.isHidden = !validatorToShow.verified
         
-        nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)"
+        nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)," +
+            "\(validatorToShow.uniqueEventualValidators.count)"
         depthLabel.text = "d=\(validatorToShow.quorumSet.maxDepth)"
-        usagesLabel.text = "u=\(validatorToShow.usagesInValidatorQuorumSets())"
+        usagesLabel.text = "u=\(validatorToShow.usagesInValidatorQuorumSets())," +
+            "\(validatorToShow.quorumSet.quorumNodes.count)"
         showQuorumNodeInfo(node: validatorToShow.quorumSet)
     }
     private func showQuorumNodeInfo(node: QuorumNode) {

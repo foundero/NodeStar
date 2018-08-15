@@ -30,7 +30,7 @@ class ValidatorCell: UITableViewCell {
         publicKeyLabel.text = "pk: " + validator.publicKey
         verifiedCheckmark.isHidden = !validator.verified
         
-        nodesLabel.text = "n=\(validator.quorumSet.uniqueValidators.count)"
+        nodesLabel.text = "n=\(validator.quorumSet.uniqueValidators.count),\(validator.uniqueEventualValidators.count)"
         depthLabel.text = "d=\(validator.quorumSet.maxDepth)"
         let thresholdString = "\(validator.quorumSet.threshold)/\(validator.quorumSet.quorumNodes.count)"
         if ( validator.quorumSet.maxDepth ) > 1 {
@@ -39,6 +39,6 @@ class ValidatorCell: UITableViewCell {
         else {
             rootThresholdLabel.text = thresholdString
         }
-        usagesLabel.text = "u=\(validator.usagesInValidatorQuorumSets())"
+        usagesLabel.text = "u=\(validator.usagesInValidatorQuorumSets()),\(validator.usagesEventual())"
     }
 }

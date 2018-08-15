@@ -19,6 +19,8 @@
 		1F473AB0211A72B60028D59C /* QuorumMetricsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */; };
 		1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */; };
 		1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */; };
+		1F80518221238CF1006E4679 /* NetworkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F80518121238CF1006E4679 /* NetworkVC.swift */; };
+		1F80518421238CFF006E4679 /* NetworkVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F80518321238CFF006E4679 /* NetworkVC.storyboard */; };
 		1FAF1EA4211B7AA100265F91 /* InfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAF1EA3211B7AA100265F91 /* InfoVC.swift */; };
 		1FAF1EA6211B7AAE00265F91 /* InfoVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAF1EA5211B7AAE00265F91 /* InfoVC.storyboard */; };
 		1FB8D061210FB04700B75F04 /* QuorumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D060210FB04700B75F04 /* QuorumVC.swift */; };
@@ -48,6 +50,8 @@
 		1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumMetricsVC.storyboard; sourceTree = "<group>"; };
 		1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorDetailVC.storyboard; sourceTree = "<group>"; };
 		1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorsVC.storyboard; sourceTree = "<group>"; };
+		1F80518121238CF1006E4679 /* NetworkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkVC.swift; sourceTree = "<group>"; };
+		1F80518321238CFF006E4679 /* NetworkVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NetworkVC.storyboard; sourceTree = "<group>"; };
 		1FAF1EA3211B7AA100265F91 /* InfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoVC.swift; sourceTree = "<group>"; };
 		1FAF1EA5211B7AAE00265F91 /* InfoVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = InfoVC.storyboard; sourceTree = "<group>"; };
 		1FB8D060210FB04700B75F04 /* QuorumVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumVC.swift; sourceTree = "<group>"; };
@@ -156,6 +160,8 @@
 				1F42FE78210A7EB6000050AA /* ValidatorCell.swift */,
 				1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */,
 				1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */,
+				1F80518121238CF1006E4679 /* NetworkVC.swift */,
+				1F80518321238CFF006E4679 /* NetworkVC.storyboard */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -265,6 +271,7 @@
 				1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */,
 				1FAF1EA6211B7AAE00265F91 /* InfoVC.storyboard in Resources */,
 				1F42FE65210A4E7A000050AA /* Main.storyboard in Resources */,
+				1F80518421238CFF006E4679 /* NetworkVC.storyboard in Resources */,
 				1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,6 +342,7 @@
 				1FEC7E12210A93FF00BB2758 /* Validator.swift in Sources */,
 				1FDD6B3221122CDB00F1FB9C /* Extensions.swift in Sources */,
 				1F42FE74210A5DF4000050AA /* QuorumNode.swift in Sources */,
+				1F80518221238CF1006E4679 /* NetworkVC.swift in Sources */,
 				1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */,
 				1F42FE72210A5176000050AA /* HomeVC.swift in Sources */,
 				1F473AAE211A71C60028D59C /* QuorumMetricsVC.swift in Sources */,

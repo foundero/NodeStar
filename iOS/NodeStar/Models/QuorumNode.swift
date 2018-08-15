@@ -93,7 +93,7 @@ class QuorumSet : QuorumNode {
     var identifier: String {
         return hashKey
     }
-    var maxDepth: Int {
+    lazy var maxDepth: Int = {
         var tempMax = 0
         for qn in quorumNodes {
             let qnMaxDepth = qn.maxDepth
@@ -102,21 +102,21 @@ class QuorumSet : QuorumNode {
             }
         }
         return tempMax
-    }
-    var uniqueValidators: Set<String> {
+    }()
+    lazy var uniqueValidators: Set<String> = {
         var tempValidators: Set<String> = []
         for qn in quorumNodes {
             tempValidators.formUnion(qn.uniqueValidators)
         }
         return tempValidators
-    }
-    var allValidatorsCount: Int {
+    }()
+    lazy var allValidatorsCount: Int = {
         var tempLeafs = 0
         for qn in quorumNodes {
             tempLeafs += qn.allValidatorsCount
         }
         return tempLeafs
-    }
+    }()
     
     func progeny(progenyIdentifier: String) -> QuorumNode? {
         for node in quorumNodes {

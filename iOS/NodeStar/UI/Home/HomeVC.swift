@@ -16,18 +16,24 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     
     // Charts
     @IBOutlet var nodesChart: BarChartView!
+    @IBOutlet var nodesNChart: BarChartView!
     @IBOutlet var depthChart: BarChartView!
     @IBOutlet var usageChart: BarChartView!
+    @IBOutlet var usageNChart: BarChartView!
     // Chart Cells
     @IBOutlet var nodesChartCell: UITableViewCell!
+    @IBOutlet var nodesNChartCell: UITableViewCell!
     @IBOutlet var depthChartCell: UITableViewCell!
     @IBOutlet var usageChartCell: UITableViewCell!
+    @IBOutlet var usageNChartCell: UITableViewCell!
     // Selectable Cells
     @IBOutlet var fromCell: UITableViewCell!
     @IBOutlet var validatorsCell: UITableViewCell!
     @IBOutlet var nodesSelectedCell: UITableViewCell!
+    @IBOutlet var nodesNSelectedCell: UITableViewCell!
     @IBOutlet var depthSelectedCell: UITableViewCell!
     @IBOutlet var usageSelectedCell: UITableViewCell!
+    @IBOutlet var usageNSelectedCell: UITableViewCell!
     @IBOutlet var selfRefCell: UITableViewCell!
     @IBOutlet var duplicateRefCell: UITableViewCell!
     // Other Cells
@@ -35,16 +41,22 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     @IBOutlet var updatedCell: UITableViewCell!
     @IBOutlet var nodesAverageCell: UITableViewCell!
     @IBOutlet var nodesMaxCell: UITableViewCell!
+    @IBOutlet var nodesNAverageCell: UITableViewCell!
+    @IBOutlet var nodesNMaxCell: UITableViewCell!
     @IBOutlet var depthAverageCell: UITableViewCell!
     @IBOutlet var depthMaxCell: UITableViewCell!
     @IBOutlet var usageAverageCell: UITableViewCell!
     @IBOutlet var usageMaxCell: UITableViewCell!
+    @IBOutlet var usageNAverageCell: UITableViewCell!
+    @IBOutlet var usageNMaxCell: UITableViewCell!
     
     // BarChartView to ChartCell, SelectedCell, prefix
     lazy var chartMetadata: [BarChartView : ChartMetadata] = {
         return [nodesChart : ChartMetadata(selectCell: nodesSelectedCell, chartCell: nodesChartCell, prefix: "n="),
                 depthChart : ChartMetadata(selectCell: depthSelectedCell, chartCell: depthChartCell, prefix: "d="),
-                usageChart : ChartMetadata(selectCell: usageSelectedCell, chartCell: usageChartCell, prefix: "u=")]
+                usageChart : ChartMetadata(selectCell: usageSelectedCell, chartCell: usageChartCell, prefix: "u="),
+                nodesNChart : ChartMetadata(selectCell: nodesNSelectedCell, chartCell: nodesNChartCell, prefix: "n'="),
+                usageNChart : ChartMetadata(selectCell: usageNSelectedCell, chartCell: usageNChartCell, prefix: "u'=")]
     }()
     lazy var intFormatter: NumberFormatter = {
         var formatter = NumberFormatter()
@@ -218,25 +230,21 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             // Calculate some metrics
             var updatedMax: Date = Date(timeIntervalSince1970: 0)
             chartMetadata[nodesChart]!.validatorsForKey = [:]
+            chartMetadata[nodesNChart]!.validatorsForKey = [:]
             chartMetadata[depthChart]!.validatorsForKey = [:]
             chartMetadata[usageChart]!.validatorsForKey = [:]
+            chartMetadata[usageNChart]!.validatorsForKey = [:]
             var countResuseSelfRef: Int = 0
             var countResuseDuplicateRef: Int = 0
             for v in validators {
-                // Node Counts
-                let nodeCount = v.quorumSet.allValidatorsCount
-                chartAddValidator(chart: nodesChart, validator: v, key: nodeCount)
-                
-                // Depth
-                let depth = v.quorumSet.maxDepth
-                chartAddValidator(chart: depthChart, validator: v, key: depth)
-                
-                // Usage
-                let usage = v.usagesInValidatorQuorumSets()
-                chartAddValidator(chart: usageChart, validator: v, key: usage)
+                chartAddValidator(chart: nodesChart, validator: v, key: v.quorumSet.allValidatorsCount)
+                chartAddValidator(chart: nodesNChart, validator: v, key: v.uniqueEventualValidators.count)
+                chartAddValidator(chart: depthChart, validator: v, key: v.quorumSet.maxDepth)
+                chartAddValidator(chart: usageChart, validator: v, key: v.usagesInValidatorQuorumSets())
+                chartAddValidator(chart: usageNChart, validator: v, key: v.usagesEventual())
                 
                 // Reuse
-                if nodeCount != v.quorumSet.uniqueValidators.count {
+                if v.quorumSet.allValidatorsCount != v.quorumSet.uniqueValidators.count {
                     countResuseDuplicateRef += 1
                 }
                 if v.quorumSet.uniqueValidators.contains(v.publicKey) {
@@ -257,8 +265,10 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             fromCell.detailTextLabel?.text = "stellarbeat.io"
             validatorsCell.detailTextLabel?.text = "\(validators.count)"
             updateMaxAndAverage(chart: nodesChart, averageCell: nodesAverageCell, maxCell: nodesMaxCell)
+            updateMaxAndAverage(chart: nodesNChart, averageCell: nodesNAverageCell, maxCell: nodesNMaxCell)
             updateMaxAndAverage(chart: depthChart, averageCell: depthAverageCell, maxCell: depthMaxCell)
             updateMaxAndAverage(chart: usageChart, averageCell: usageAverageCell, maxCell: usageMaxCell)
+            updateMaxAndAverage(chart: usageNChart, averageCell: usageNAverageCell, maxCell: usageNMaxCell)
             selfRefCell.detailTextLabel?.text = "\(countResuseSelfRef) of \(validators.count)"
             duplicateRefCell.detailTextLabel?.text = "\(countResuseDuplicateRef) of \(validators.count)"
             
@@ -473,14 +483,19 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         let selectableCells = [fromCell,
                                validatorsCell,
                                nodesSelectedCell,
+                               nodesNSelectedCell,
                                depthSelectedCell,
                                usageSelectedCell,
+                               usageNSelectedCell,
                                selfRefCell,
                                duplicateRefCell]
         if selectableCells.contains(cell) {
             return indexPath
         }
         return nil
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
     }
     
     // MARK: ChartViewDelegate

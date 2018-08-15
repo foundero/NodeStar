@@ -69,4 +69,29 @@ class Validator {
         }
         return usages
     }
+    
+    // Traverses validator graph
+    lazy var uniqueEventualValidators: Set<String> = {
+        var touched : Set<String> = Set()
+        recurseEventualValidators(validator: self.publicKey, touched: &touched)
+        return touched
+    }()
+    private func recurseEventualValidators(validator: String, touched: inout Set<String>) {
+        if let v = QuorumManager.validatorForId(id: validator) {
+            for newV in v.quorumSet.uniqueValidators.subtracting(touched) {
+                touched.formUnion([newV])
+                recurseEventualValidators(validator: newV, touched: &touched)
+            }
+        }
+    }
+    // Number of validators who eventually depend on this validator
+    func usagesEventual() -> Int {
+        var usages: Int = 0
+        for validator in QuorumManager.validators {
+            if validator.uniqueEventualValidators.contains(publicKey) {
+                usages += 1
+            }
+        }
+        return usages
+    }
 }
