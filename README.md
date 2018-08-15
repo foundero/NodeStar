@@ -19,18 +19,15 @@ $0.99 from the [AppStore](https://itunes.apple.com/us/app/nodestar-for-stellar/i
   * [StellarBeat.io source](https://github.com/stellarbeat/js-stellar-node-connector)
   * eventually get the data ourselves
 * Network Summary Metrics
-  * number of validators
-  * distribution of validator count in quoum sets
-  * distribution of inner quorum set depth
-  * validator reuse in quorum sets
-* Info on All Validators
+* Validator Clusters
+  * graphically explore validator clusters
+* Validators Detail
 * Specific Quorum Sets
-  * graphically visualize the quorum and inner quorum sets
+  * graphically explore the quorum and inner quorum sets
   * impact metrics of specific validator on a quorum set - [see math below](#math)
 
 ### Coming Soon:
 
-* visualize the entire network
 * compute overall network health metrics
 * incorporate [Stellar White Paper concepts](https://www.stellar.org/papers/stellar-consensus-protocol.pdf) like Dispensable Sets
 
