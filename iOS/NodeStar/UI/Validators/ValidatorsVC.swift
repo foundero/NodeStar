@@ -17,6 +17,7 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = ValidatorCell.desiredHieght
+        ValidatorCell.registerWithTableView(tableView: tableView)
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
     }
     
@@ -28,8 +29,7 @@ class ValidatorsVC: UIViewController, UITableViewDelegate, UITableViewDataSource
         return validators.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: ValidatorCell = tableView.dequeueReusableCell(withIdentifier: "ValidatorCell",
-                                                                for: indexPath) as! ValidatorCell
+        let cell = ValidatorCell.dequeFromTableView(tableView: tableView, indexPath: indexPath)
         cell.updateWithModel(validator: validators[indexPath.row])
         return cell
     }

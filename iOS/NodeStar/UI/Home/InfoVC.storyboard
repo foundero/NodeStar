@@ -14,7 +14,7 @@
             <objects>
                 <tableViewController restorationIdentifier="InfoVC" storyboardIdentifier="InfoVC" title="Definitions" id="966-8a-13k" customClass="InfoVC" customModule="NodeStar" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Ofx-ml-hLu">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="1200"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="2200"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <sections>
@@ -27,7 +27,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="[*]x/y:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VkB-77-5uC">
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Cluster:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VkB-77-5uC">
                                                     <rect key="frame" x="16" y="16" width="91" height="16"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="91" id="iSW-xZ-a4z"/>
@@ -37,11 +37,8 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q0T-as-Bhg">
-                                                    <rect key="frame" x="113" y="16" width="246" height="124.5"/>
-                                                    <string key="text">x - the threshold of the validator's root quorum set
- y - the the number of nodes in the validator's root quorum set (not including subtrees)
-
-* - if there are inner quorum sets</string>
+                                                    <rect key="frame" x="113" y="16" width="246" height="62.5"/>
+                                                    <string key="text">set of validators that have an identical sets of incoming validators and outgoing validators including validator graph traversal</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -58,8 +55,182 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="dCz-wL-ayk">
+                                        <rect key="frame" x="0.0" y="208" width="375" height="180"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="dCz-wL-ayk" id="NT6-E6-1Ec">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Direct:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="I6i-tB-KDV">
+                                                    <rect key="frame" x="16" y="16" width="91" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="91" id="AFp-Pi-nST"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="only uses validators in the validator's quorum set, does not traverse the validator graph" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yJ1-f2-29J">
+                                                    <rect key="frame" x="113" y="16" width="246" height="47"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="yJ1-f2-29J" firstAttribute="trailing" secondItem="NT6-E6-1Ec" secondAttribute="trailingMargin" id="06K-OE-OJa"/>
+                                                <constraint firstItem="yJ1-f2-29J" firstAttribute="leading" secondItem="I6i-tB-KDV" secondAttribute="trailing" constant="6" id="1VD-gJ-a2w"/>
+                                                <constraint firstItem="yJ1-f2-29J" firstAttribute="top" secondItem="NT6-E6-1Ec" secondAttribute="topMargin" constant="5" id="IhO-fV-loD"/>
+                                                <constraint firstItem="I6i-tB-KDV" firstAttribute="top" secondItem="NT6-E6-1Ec" secondAttribute="topMargin" constant="5" id="MQ9-RR-Kl8"/>
+                                                <constraint firstItem="I6i-tB-KDV" firstAttribute="leading" secondItem="NT6-E6-1Ec" secondAttribute="leadingMargin" id="VaA-FI-79c"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="yJ1-f2-29J" secondAttribute="bottom" constant="5" id="abx-5c-OMn"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="I6i-tB-KDV" secondAttribute="bottom" constant="5" id="cGo-08-Xj8"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="ldx-6i-frO">
+                                        <rect key="frame" x="0.0" y="388" width="375" height="180"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="ldx-6i-frO" id="GFC-mv-Tdr">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Indirect:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ddt-k4-FoD">
+                                                    <rect key="frame" x="16" y="16" width="91" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="91" id="ZNz-a5-jKl"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="uses validators in the validator's quorum set and traverses the validator graph" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ikf-Ac-Fcn">
+                                                    <rect key="frame" x="113" y="16" width="246" height="31.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="Ikf-Ac-Fcn" secondAttribute="bottom" constant="5" id="6w4-Wc-cD8"/>
+                                                <constraint firstItem="ddt-k4-FoD" firstAttribute="leading" secondItem="GFC-mv-Tdr" secondAttribute="leadingMargin" id="JtM-be-0n1"/>
+                                                <constraint firstItem="Ikf-Ac-Fcn" firstAttribute="trailing" secondItem="GFC-mv-Tdr" secondAttribute="trailingMargin" id="W8Y-RI-p9D"/>
+                                                <constraint firstItem="ddt-k4-FoD" firstAttribute="top" secondItem="GFC-mv-Tdr" secondAttribute="topMargin" constant="5" id="WBA-aw-lph"/>
+                                                <constraint firstItem="Ikf-Ac-Fcn" firstAttribute="leading" secondItem="ddt-k4-FoD" secondAttribute="trailing" constant="6" id="Xaj-Gh-l7q"/>
+                                                <constraint firstItem="Ikf-Ac-Fcn" firstAttribute="top" secondItem="GFC-mv-Tdr" secondAttribute="topMargin" constant="5" id="ypf-iW-jS5"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="ddt-k4-FoD" secondAttribute="bottom" constant="5" id="ys7-dD-3HD"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="nXV-Lu-8S3">
+                                        <rect key="frame" x="0.0" y="568" width="375" height="180"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nXV-Lu-8S3" id="HI3-sn-M1h">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Incoming:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3iI-NC-0ee">
+                                                    <rect key="frame" x="16" y="16" width="91" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="91" id="aJH-47-DHF"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="set of validators that eventually reference this valiator by traversing the validator graph" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zKe-ll-0ZG">
+                                                    <rect key="frame" x="113" y="16" width="246" height="47"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="3iI-NC-0ee" firstAttribute="leading" secondItem="HI3-sn-M1h" secondAttribute="leadingMargin" id="D39-9S-sjK"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="3iI-NC-0ee" secondAttribute="bottom" constant="5" id="Tnv-oZ-dwo"/>
+                                                <constraint firstItem="3iI-NC-0ee" firstAttribute="top" secondItem="HI3-sn-M1h" secondAttribute="topMargin" constant="5" id="el0-LJ-sAH"/>
+                                                <constraint firstItem="zKe-ll-0ZG" firstAttribute="leading" secondItem="3iI-NC-0ee" secondAttribute="trailing" constant="6" id="fFP-r6-Qen"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="zKe-ll-0ZG" secondAttribute="bottom" constant="5" id="k1O-fz-IOH"/>
+                                                <constraint firstItem="zKe-ll-0ZG" firstAttribute="trailing" secondItem="HI3-sn-M1h" secondAttribute="trailingMargin" id="nQH-4d-klx"/>
+                                                <constraint firstItem="zKe-ll-0ZG" firstAttribute="top" secondItem="HI3-sn-M1h" secondAttribute="topMargin" constant="5" id="z7r-We-QUE"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="xbn-SW-qzg">
+                                        <rect key="frame" x="0.0" y="748" width="375" height="180"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xbn-SW-qzg" id="FRj-CD-owC">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Outgoing" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8CB-FX-bY8">
+                                                    <rect key="frame" x="16" y="16" width="91" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="91" id="LB6-bK-yfm"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="set of validators this validator eventually references by traversing the validator graph" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="re7-Mx-dcc">
+                                                    <rect key="frame" x="113" y="16" width="246" height="47"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="8CB-FX-bY8" firstAttribute="top" secondItem="FRj-CD-owC" secondAttribute="topMargin" constant="5" id="9s5-AX-So8"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="re7-Mx-dcc" secondAttribute="bottom" constant="5" id="BGf-hs-pyt"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="8CB-FX-bY8" secondAttribute="bottom" constant="5" id="V0m-a9-kLc"/>
+                                                <constraint firstItem="8CB-FX-bY8" firstAttribute="leading" secondItem="FRj-CD-owC" secondAttribute="leadingMargin" id="hMv-dN-iHe"/>
+                                                <constraint firstItem="re7-Mx-dcc" firstAttribute="leading" secondItem="8CB-FX-bY8" secondAttribute="trailing" constant="6" id="jco-nE-4c0"/>
+                                                <constraint firstItem="re7-Mx-dcc" firstAttribute="top" secondItem="FRj-CD-owC" secondAttribute="topMargin" constant="5" id="pHD-Ld-il8"/>
+                                                <constraint firstItem="re7-Mx-dcc" firstAttribute="trailing" secondItem="FRj-CD-owC" secondAttribute="trailingMargin" id="tka-rx-Zo5"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="jL9-2l-4Ng">
+                                        <rect key="frame" x="0.0" y="928" width="375" height="180"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jL9-2l-4Ng" id="GaO-k1-z9z">
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="[*]x/y:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="37n-N3-ZAn">
+                                                    <rect key="frame" x="16" y="16" width="91" height="16"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="91" id="WK0-BH-EYg"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f77-eN-TSf">
+                                                    <rect key="frame" x="113" y="16" width="246" height="124.5"/>
+                                                    <string key="text">x - the threshold of the validator's root quorum set
+ y - the the number of nodes in the validator's root quorum set (not including subtrees)
+
+* - if there are inner quorum sets</string>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                    <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="f77-eN-TSf" firstAttribute="top" secondItem="GaO-k1-z9z" secondAttribute="topMargin" constant="5" id="84b-kF-ibX"/>
+                                                <constraint firstItem="f77-eN-TSf" firstAttribute="trailing" secondItem="GaO-k1-z9z" secondAttribute="trailingMargin" id="aH0-ST-2j6"/>
+                                                <constraint firstItem="37n-N3-ZAn" firstAttribute="leading" secondItem="GaO-k1-z9z" secondAttribute="leadingMargin" id="c0N-6H-AUr"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="f77-eN-TSf" secondAttribute="bottom" constant="5" id="goc-Ck-nD1"/>
+                                                <constraint firstItem="37n-N3-ZAn" firstAttribute="top" secondItem="GaO-k1-z9z" secondAttribute="topMargin" constant="5" id="oU7-Km-qKW"/>
+                                                <constraint firstItem="f77-eN-TSf" firstAttribute="leading" secondItem="37n-N3-ZAn" secondAttribute="trailing" constant="6" id="qsa-L7-YBb"/>
+                                                <constraint firstAttribute="bottomMargin" relation="greaterThanOrEqual" secondItem="37n-N3-ZAn" secondAttribute="bottom" constant="5" id="vRW-Sa-nG9"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="150" id="Ugd-p2-zT5">
-                                        <rect key="frame" x="0.0" y="208" width="375" height="150"/>
+                                        <rect key="frame" x="0.0" y="1108" width="375" height="150"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Ugd-p2-zT5" id="FFc-c7-D7U">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="149.5"/>
@@ -75,10 +246,10 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Kh-N6-dwg">
-                                                    <rect key="frame" x="113" y="16" width="246" height="93.5"/>
+                                                    <rect key="frame" x="113" y="16" width="246" height="109"/>
                                                     <string key="text">n - number of unique (leaf) validators in a quorum set
 
-n' - number of validators that the quorum set indirectly depends by traversing the validator graph</string>
+n' - number of validators that the quorum set indirectly depends on by traversing the validator graph - also called outgoing or eventual validators</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -95,11 +266,11 @@ n' - number of validators that the quorum set indirectly depends by traversing t
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="150" id="rtz-Lr-Iez">
-                                        <rect key="frame" x="0.0" y="358" width="375" height="150"/>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="rtz-Lr-Iez">
+                                        <rect key="frame" x="0.0" y="1258" width="375" height="180"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="rtz-Lr-Iez" id="wfo-Rc-qdn">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="149.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="u,u':" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AGf-nE-ZMW">
@@ -112,10 +283,10 @@ n' - number of validators that the quorum set indirectly depends by traversing t
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AJP-58-6lR">
-                                                    <rect key="frame" x="113" y="16" width="246" height="109"/>
+                                                    <rect key="frame" x="113" y="16" width="246" height="124.5"/>
                                                     <string key="text">usages - number validators (possibly including this one) whose quorum sets directly use this validator
 
-usages' - number of validators that indirectly depend on this validator (traverses validator graph)</string>
+usages' - number of validators that indirectly depend on this validator by traversing the validator graph - also incoming validators or eventual usages</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -133,7 +304,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="gac-BJ-aa4">
-                                        <rect key="frame" x="0.0" y="508" width="375" height="79"/>
+                                        <rect key="frame" x="0.0" y="1438" width="375" height="79"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="gac-BJ-aa4" id="Mn8-mM-32p">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
@@ -167,7 +338,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="uWK-np-Aly">
-                                        <rect key="frame" x="0.0" y="587" width="375" height="79"/>
+                                        <rect key="frame" x="0.0" y="1517" width="375" height="79"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="uWK-np-Aly" id="2K4-DY-WH9">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
@@ -201,7 +372,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="AP8-5f-l5g">
-                                        <rect key="frame" x="0.0" y="666" width="375" height="79"/>
+                                        <rect key="frame" x="0.0" y="1596" width="375" height="79"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AP8-5f-l5g" id="FNz-OH-tU3">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
@@ -234,11 +405,11 @@ usages' - number of validators that indirectly depend on this validator (travers
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="Za8-Ve-i6L">
-                                        <rect key="frame" x="0.0" y="745" width="375" height="79"/>
+                                    <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="180" id="Za8-Ve-i6L">
+                                        <rect key="frame" x="0.0" y="1675" width="375" height="180"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Za8-Ve-i6L" id="1Cd-5D-VF8">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="179.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="self ref:" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QNA-ok-Fet">
@@ -250,8 +421,9 @@ usages' - number of validators that indirectly depend on this validator (travers
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="validators that reference themselves within their quorum set" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jey-II-LiE">
-                                                    <rect key="frame" x="113" y="16" width="246" height="31.5"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jey-II-LiE">
+                                                    <rect key="frame" x="113" y="16" width="246" height="93.5"/>
+                                                    <string key="text">validators - validators that reference themselves within their quorum set  clusters - clusters that reference themselves including validator graph traversal</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -269,7 +441,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="1aW-VU-7jc">
-                                        <rect key="frame" x="0.0" y="824" width="375" height="79"/>
+                                        <rect key="frame" x="0.0" y="1855" width="375" height="79"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1aW-VU-7jc" id="aQn-B8-3M6">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
@@ -303,7 +475,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="Rxc-Hz-8GL">
-                                        <rect key="frame" x="0.0" y="903" width="375" height="79"/>
+                                        <rect key="frame" x="0.0" y="1934" width="375" height="79"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Rxc-Hz-8GL" id="Tn9-WD-sIB">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
@@ -337,7 +509,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="79" id="klq-ue-vki">
-                                        <rect key="frame" x="0.0" y="982" width="375" height="79"/>
+                                        <rect key="frame" x="0.0" y="2013" width="375" height="79"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="klq-ue-vki" id="mFL-PC-jGz">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="78.5"/>
@@ -371,7 +543,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="100" id="AO0-uo-cHw">
-                                        <rect key="frame" x="0.0" y="1061" width="375" height="100"/>
+                                        <rect key="frame" x="0.0" y="2092" width="375" height="100"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AO0-uo-cHw" id="uT6-Ni-c8h">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="99.5"/>
@@ -412,7 +584,7 @@ usages' - number of validators that indirectly depend on this validator (travers
                             <outlet property="delegate" destination="966-8a-13k" id="Vxa-os-jMS"/>
                         </connections>
                     </tableView>
-                    <size key="freeformSize" width="375" height="1200"/>
+                    <size key="freeformSize" width="375" height="2200"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ykf-un-GJM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -191,22 +191,22 @@ class NodeView: UIView {
         }
         
         if selected {
-        // Draw the metrics as concentric circles on each node
-        for (index, (metric, color)) in [(quorumMetrics.affect, nodeStarBlue),
-                                         (quorumMetrics.require, UIColor.red),
-                                         (quorumMetrics.influence, nodeStarGreen)].enumerated()
-        {
-            let radius =  CGFloat( halfSize - (desiredLineWidth*CGFloat(index + 1) - desiredLineWidth/2.0) )
-            let circlePathInner = UIBezierPath(
-                arcCenter: CGPoint(x:bounds.size.width/2.0,y:bounds.size.height/2.0),
-                radius:radius,
-                startAngle: CGFloat(-Double.pi/2.0),
-                endAngle:CGFloat(Double.pi * 2 * metric - Double.pi/2.0),
-                clockwise: true)
-            color.setStroke()
-            circlePathInner.lineWidth = desiredLineWidth
-            circlePathInner.stroke()
-        }
+            // Draw the metrics as concentric circles on each node
+            for (index, (metric, color)) in [(quorumMetrics.affect, nodeStarBlue),
+                                             (quorumMetrics.require, UIColor.red),
+                                             (quorumMetrics.influence, nodeStarGreen)].enumerated()
+            {
+                let radius =  CGFloat( halfSize - (desiredLineWidth*CGFloat(index + 1) - desiredLineWidth/2.0) )
+                let circlePathInner = UIBezierPath(
+                    arcCenter: CGPoint(x:bounds.size.width/2.0,y:bounds.size.height/2.0),
+                    radius:radius,
+                    startAngle: CGFloat(-Double.pi/2.0),
+                    endAngle:CGFloat(Double.pi * 2 * metric - Double.pi/2.0),
+                    clockwise: true)
+                color.setStroke()
+                circlePathInner.lineWidth = desiredLineWidth
+                circlePathInner.stroke()
+            }
         }
     }
 }

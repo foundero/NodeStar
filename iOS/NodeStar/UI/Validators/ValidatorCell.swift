@@ -30,15 +30,30 @@ class ValidatorCell: UITableViewCell {
         publicKeyLabel.text = "pk: " + validator.publicKey
         verifiedCheckmark.isHidden = !validator.verified
         
-        nodesLabel.text = "n=\(validator.quorumSet.uniqueValidators.count),\(validator.uniqueEventualValidators.count)"
-        depthLabel.text = "d=\(validator.quorumSet.maxDepth)"
-        let thresholdString = "\(validator.quorumSet.threshold)/\(validator.quorumSet.quorumNodes.count)"
-        if ( validator.quorumSet.maxDepth ) > 1 {
-            rootThresholdLabel.text = "*" + thresholdString
+        if validator.quorumSet == nil {
+            rootThresholdLabel.text = "?/?"
+            nodesLabel.text = "n=?,?"
+            depthLabel.text = "d=?"
         }
         else {
-            rootThresholdLabel.text = thresholdString
+            nodesLabel.text = "n=\(validator.quorumSet.uniqueValidators.count),\(validator.uniqueEventualValidators.count)"
+            depthLabel.text = "d=\(validator.quorumSet.maxDepth)"
+            let thresholdString = "\(validator.quorumSet.threshold)/\(validator.quorumSet.quorumNodes.count)"
+            if ( validator.quorumSet.maxDepth ) > 1 {
+                rootThresholdLabel.text = "*" + thresholdString
+            }
+            else {
+                rootThresholdLabel.text = thresholdString
+            }
         }
-        usagesLabel.text = "u=\(validator.usagesInValidatorQuorumSets()),\(validator.usagesEventual())"
+        usagesLabel.text = "u=\(validator.uniqueDependents.count),\(validator.uniqueEventualDependents.count)"
+    }
+    
+    class func registerWithTableView(tableView: UITableView) {
+        tableView.register(UINib(nibName: "ValidatorCell", bundle: nil), forCellReuseIdentifier: "ValidatorCell")
+    }
+    class func dequeFromTableView(tableView: UITableView, indexPath: IndexPath) -> ValidatorCell {
+        return tableView.dequeueReusableCell(withIdentifier: "ValidatorCell",
+                                                                for: indexPath) as! ValidatorCell
     }
 }

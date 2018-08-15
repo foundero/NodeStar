@@ -13,6 +13,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     
     let stellarbeatURLPath: String = "https://stellarbeat.io/nodes/raw"
     var validators: [Validator] = []
+    var clusters: [Cluster] = []
     
     // Charts
     @IBOutlet var nodesChart: BarChartView!
@@ -29,6 +30,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     // Selectable Cells
     @IBOutlet var fromCell: UITableViewCell!
     @IBOutlet var validatorsCell: UITableViewCell!
+    @IBOutlet var clustersCell: UITableViewCell!
     @IBOutlet var nodesSelectedCell: UITableViewCell!
     @IBOutlet var nodesNSelectedCell: UITableViewCell!
     @IBOutlet var depthSelectedCell: UITableViewCell!
@@ -100,8 +102,8 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         footerView.backgroundColor = nodeStarBlue
         footerView.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
         footerView.setTitleColor(UIColor.white, for: UIControlState.normal)
-        footerView.setTitle("View Validators", for: UIControlState.normal)
-        footerView.addTarget(self, action: #selector(pushAllValidatorsVC), for: .touchUpInside)
+        footerView.setTitle("View Clusters", for: UIControlState.normal)
+        footerView.addTarget(self, action: #selector(pushClustersVC), for: .touchUpInside)
         view.addSubview(footerView)
         view.addConstraint(NSLayoutConstraint(item: footerView,
                                               attribute: .bottom,
@@ -214,6 +216,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             updatedCell.detailTextLabel?.text = ""
             fromCell.detailTextLabel?.text = ""
             validatorsCell.detailTextLabel?.text = ""
+            clustersCell.detailTextLabel?.text = ""
             nodesAverageCell.detailTextLabel?.text = ""
             nodesMaxCell.detailTextLabel?.text = ""
             depthAverageCell.detailTextLabel?.text = ""
@@ -240,8 +243,8 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                 chartAddValidator(chart: nodesChart, validator: v, key: v.quorumSet.allValidatorsCount)
                 chartAddValidator(chart: nodesNChart, validator: v, key: v.uniqueEventualValidators.count)
                 chartAddValidator(chart: depthChart, validator: v, key: v.quorumSet.maxDepth)
-                chartAddValidator(chart: usageChart, validator: v, key: v.usagesInValidatorQuorumSets())
-                chartAddValidator(chart: usageNChart, validator: v, key: v.usagesEventual())
+                chartAddValidator(chart: usageChart, validator: v, key: v.uniqueDependents.count)
+                chartAddValidator(chart: usageNChart, validator: v, key: v.uniqueEventualDependents.count)
                 
                 // Reuse
                 if v.quorumSet.allValidatorsCount != v.quorumSet.uniqueValidators.count {
@@ -264,6 +267,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             updatedCell.detailTextLabel?.text = dateFormatter.string(from: updatedMax )
             fromCell.detailTextLabel?.text = "stellarbeat.io"
             validatorsCell.detailTextLabel?.text = "\(validators.count)"
+            clustersCell.detailTextLabel?.text = "\(clusters.count)"
             updateMaxAndAverage(chart: nodesChart, averageCell: nodesAverageCell, maxCell: nodesMaxCell)
             updateMaxAndAverage(chart: nodesNChart, averageCell: nodesNAverageCell, maxCell: nodesNMaxCell)
             updateMaxAndAverage(chart: depthChart, averageCell: depthAverageCell, maxCell: depthMaxCell)
@@ -350,10 +354,12 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     }
     
     // MARK: User Interaction
-    @objc func pushAllValidatorsVC() {
-        let vc = ValidatorsVC.newVC()
-        vc.title = "All Validators"
-        vc.validators = QuorumManager.validators
+    @objc func pushClustersVC() {
+        if clusters.count == 0 {
+            return
+        }
+        let vc = ClusterVC.newVC()
+        vc.clusters = clusters
         navigationController?.pushViewController(vc, animated: true)
     }
     @objc func tappedDefinitionsButton() {
@@ -380,15 +386,16 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                         try JSONSerialization.jsonObject(with: data!,options: []) as? [[String: AnyObject]] {
                         
                         print("Updating \(stellarbeatURLPath) Got JSON")
-                        //print("ASynchronous\(jsonResult)")
                         var tempNodes: [Validator] = []
                         for jsonNode in jsonNodes {
                             let node: Validator? = Validator.nodeFromDictionary(dict: jsonNode)
                             if node != nil { tempNodes.append(node!) }
                         }
                         print("Parsed Validator Nodes: \(tempNodes.count)")
+                        // Sort them
                         QuorumManager.validators = tempNodes
-                        self.validators = tempNodes
+                        self.validators = QuorumManager.validators
+                        self.clusters = Cluster.buildClusters()
                         DispatchQueue.main.async{
                             self.updateTableView()
                             self.refreshControl?.endRefreshing()
@@ -457,7 +464,19 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         }
         if cell == validatorsCell {
             // Validators
-            pushAllValidatorsVC()
+            let vc = ValidatorsVC.newVC()
+            vc.title = "All Validators"
+            vc.validators = QuorumManager.validators
+            navigationController?.pushViewController(vc, animated: true)
+        }
+        if cell == clustersCell {
+            // Clusters
+            if clusters.count == 0 {
+                return
+            }
+            let vc = ClusterVC.newVC()
+            vc.clusters = clusters
+            navigationController?.pushViewController(vc, animated: true)
         }
         if cell == selfRefCell {
             // Self Ref Validators
@@ -482,6 +501,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
         let cell = tableView.cellForRow(at: indexPath)
         let selectableCells = [fromCell,
                                validatorsCell,
+                               clustersCell,
                                nodesSelectedCell,
                                nodesNSelectedCell,
                                depthSelectedCell,

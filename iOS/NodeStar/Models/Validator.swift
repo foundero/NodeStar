@@ -59,16 +59,25 @@ class Validator {
         return node
     }
     
-    // Return number of validators (including self) that use this validator in their quorum set
-    func usagesInValidatorQuorumSets() -> Int {
-        var usages: Int = 0
+    // Return validators (including self) that use this validator in their quorum set
+    lazy var uniqueDependents: Set<String> = {
+        var set: Set<String> = []
         for validator in QuorumManager.validators {
             if validator.quorumSet.uniqueValidators.contains(publicKey) {
-                usages += 1
+                set.formUnion([validator.publicKey])
             }
         }
-        return usages
-    }
+        return set
+    }()
+    lazy var uniqueEventualDependents: Set<String> = {
+        var set: Set<String> = []
+        for validator in QuorumManager.validators {
+            if validator.uniqueEventualValidators.contains(publicKey) {
+                set.formUnion([validator.publicKey])
+            }
+        }
+        return set
+    }()
     
     // Traverses validator graph
     lazy var uniqueEventualValidators: Set<String> = {
@@ -83,15 +92,5 @@ class Validator {
                 recurseEventualValidators(validator: newV, touched: &touched)
             }
         }
-    }
-    // Number of validators who eventually depend on this validator
-    func usagesEventual() -> Int {
-        var usages: Int = 0
-        for validator in QuorumManager.validators {
-            if validator.uniqueEventualValidators.contains(publicKey) {
-                usages += 1
-            }
-        }
-        return usages
     }
 }

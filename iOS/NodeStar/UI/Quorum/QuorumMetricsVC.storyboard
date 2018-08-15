@@ -187,7 +187,7 @@ on Validator: [XXX]</string>
                                                     <rect key="frame" x="16" y="11" width="343" height="178"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="178" id="J83-Vu-DF3"/>
+                                                        <constraint firstAttribute="height" priority="999" constant="178" id="J83-Vu-DF3"/>
                                                     </constraints>
                                                 </view>
                                             </subviews>

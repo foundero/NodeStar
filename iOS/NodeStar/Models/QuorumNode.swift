@@ -10,7 +10,11 @@ import Foundation
 
 
 class QuorumManager {
-    static var validators: [Validator] = []
+    static var validators: [Validator] = [] {
+        didSet {
+            validators = sortedValidators(validatorsToSort: validators)
+        }
+    }
     static func validatorForId(id: String) -> Validator? {
         for v in validators {
             if v.publicKey == id {
@@ -26,6 +30,28 @@ class QuorumManager {
             }
         }
         return "?"
+    }
+    static func sortedValidators(validatorsToSort: [Validator]) -> [Validator] {
+        return validatorsToSort.sorted {
+            if $0.uniqueEventualDependents.count != $1.uniqueEventualDependents.count {
+                return $0.uniqueEventualDependents.count > $1.uniqueEventualDependents.count
+            }
+            if $0.uniqueEventualValidators.count != $1.uniqueEventualValidators.count {
+                return $0.uniqueEventualValidators.count > $1.uniqueEventualValidators.count
+            }
+            if $0.name != nil {
+                if $1.name != nil {
+                    return $0.name! < $1.name!
+                }
+                return true
+            }
+            else if $1.name != nil {
+                return false
+            }
+            else {
+                return $0.publicKey < $1.publicKey
+            }
+        }
     }
 }
 

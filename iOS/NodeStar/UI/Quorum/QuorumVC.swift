@@ -13,7 +13,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     
     @IBOutlet var verticalStackView: UIStackView!
     var rowStackViews: [UIStackView] = []
-    var nodeLinesOverlayView: NodeLinesOverlayView!
+    var linesOverlayView: LinesOverlayView!
     var nodeViews: [NodeView] = []
     var selectedNodeView: NodeView! { didSet { redrawSelectNodeView() } }
     
@@ -43,10 +43,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         super.viewDidLoad()
         
         title = "Quorum Set - " + QuorumManager.handleForNodeId(id: validator.publicKey)
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "",
-                                                           style:.plain,
-                                                           target: nil,
-                                                           action: nil)
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style:.plain, target: nil, action: nil)
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "detail",
                                                             style:.plain,
                                                             target: self,
@@ -86,8 +83,8 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         }
         
         // Setup the view to draw lines on
-        nodeLinesOverlayView = NodeLinesOverlayView()
-        nodeLinesOverlayView.overlayOnView(view)
+        linesOverlayView = LinesOverlayView()
+        linesOverlayView.overlayOnView(view)
     }
     override var prefersStatusBarHidden: Bool {
         return true
@@ -237,11 +234,11 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     
     override func viewDidLayoutSubviews() {
         // Draw the lines between nodes
-        nodeLinesOverlayView.clearLines()
+        linesOverlayView.clearLines()
         for nv in nodeViews {
             if let pnv: NodeView = nv.parentNodeView {
                 // Draw from pnv to nv
-                nodeLinesOverlayView.addLine(from: pnv, to: nv)
+                linesOverlayView.addLine(from: pnv, to: nv)
             }
         }
         
@@ -351,8 +348,8 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)," +
             "\(validatorToShow.uniqueEventualValidators.count)"
         depthLabel.text = "d=\(validatorToShow.quorumSet.maxDepth)"
-        usagesLabel.text = "u=\(validatorToShow.usagesInValidatorQuorumSets())," +
-            "\(validatorToShow.quorumSet.quorumNodes.count)"
+        usagesLabel.text = "u=\(validatorToShow.uniqueDependents.count)," +
+            "\(validatorToShow.uniqueEventualDependents.count)"
         showQuorumNodeInfo(node: validatorToShow.quorumSet)
     }
     private func showQuorumNodeInfo(node: QuorumNode) {

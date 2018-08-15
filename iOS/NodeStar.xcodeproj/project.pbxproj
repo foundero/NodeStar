@@ -19,18 +19,22 @@
 		1F473AB0211A72B60028D59C /* QuorumMetricsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */; };
 		1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */; };
 		1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */; };
-		1F80518221238CF1006E4679 /* NetworkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F80518121238CF1006E4679 /* NetworkVC.swift */; };
-		1F80518421238CFF006E4679 /* NetworkVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F80518321238CFF006E4679 /* NetworkVC.storyboard */; };
+		1F5714CE21240EDD00C5CFE3 /* Cluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5714CD21240EDD00C5CFE3 /* Cluster.swift */; };
+		1F80518221238CF1006E4679 /* ClusterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F80518121238CF1006E4679 /* ClusterVC.swift */; };
+		1F80518421238CFF006E4679 /* ClusterVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F80518321238CFF006E4679 /* ClusterVC.storyboard */; };
 		1FAF1EA4211B7AA100265F91 /* InfoVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FAF1EA3211B7AA100265F91 /* InfoVC.swift */; };
 		1FAF1EA6211B7AAE00265F91 /* InfoVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FAF1EA5211B7AAE00265F91 /* InfoVC.storyboard */; };
 		1FB8D061210FB04700B75F04 /* QuorumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D060210FB04700B75F04 /* QuorumVC.swift */; };
 		1FB8D063210FB15700B75F04 /* QuorumVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */; };
 		1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FB8D064210FB2F600B75F04 /* NodeView.swift */; };
 		1FC3A48621127D2A005A0011 /* ValidatorsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC3A48521127D2A005A0011 /* ValidatorsVC.swift */; };
+		1FCBA13B212479DC0061C176 /* ClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBA13A212479DC0061C176 /* ClusterView.swift */; };
+		1FCBA13D2124B4070061C176 /* ClusterDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCBA13C2124B4070061C176 /* ClusterDetailVC.swift */; };
+		1FCBA1412124BA7A0061C176 /* ValidatorCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1FCBA1402124BA7A0061C176 /* ValidatorCell.xib */; };
 		1FCD808A211D321500C768A4 /* MathVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FCD8089211D321500C768A4 /* MathVC.swift */; };
 		1FCD808C211D322400C768A4 /* MathVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1FCD808B211D322400C768A4 /* MathVC.storyboard */; };
 		1FDD6B3221122CDB00F1FB9C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDD6B3121122CDB00F1FB9C /* Extensions.swift */; };
-		1FDD6B3421122E2A00F1FB9C /* NodeLinesOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */; };
+		1FDD6B3421122E2A00F1FB9C /* LinesOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FDD6B3321122E2A00F1FB9C /* LinesOverlayView.swift */; };
 		1FEC7E12210A93FF00BB2758 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FEC7E11210A93FF00BB2758 /* Validator.swift */; };
 		55DD6A5B4E2C3369A720839D /* Pods_NodeStar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 873D46F080E6CFDD824268E9 /* Pods_NodeStar.framework */; };
 /* End PBXBuildFile section */
@@ -50,18 +54,22 @@
 		1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumMetricsVC.storyboard; sourceTree = "<group>"; };
 		1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorDetailVC.storyboard; sourceTree = "<group>"; };
 		1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorsVC.storyboard; sourceTree = "<group>"; };
-		1F80518121238CF1006E4679 /* NetworkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkVC.swift; sourceTree = "<group>"; };
-		1F80518321238CFF006E4679 /* NetworkVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NetworkVC.storyboard; sourceTree = "<group>"; };
+		1F5714CD21240EDD00C5CFE3 /* Cluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cluster.swift; sourceTree = "<group>"; };
+		1F80518121238CF1006E4679 /* ClusterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterVC.swift; sourceTree = "<group>"; };
+		1F80518321238CFF006E4679 /* ClusterVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ClusterVC.storyboard; sourceTree = "<group>"; };
 		1FAF1EA3211B7AA100265F91 /* InfoVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoVC.swift; sourceTree = "<group>"; };
 		1FAF1EA5211B7AAE00265F91 /* InfoVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = InfoVC.storyboard; sourceTree = "<group>"; };
 		1FB8D060210FB04700B75F04 /* QuorumVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumVC.swift; sourceTree = "<group>"; };
 		1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumVC.storyboard; sourceTree = "<group>"; };
 		1FB8D064210FB2F600B75F04 /* NodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeView.swift; sourceTree = "<group>"; };
 		1FC3A48521127D2A005A0011 /* ValidatorsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorsVC.swift; sourceTree = "<group>"; };
+		1FCBA13A212479DC0061C176 /* ClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterView.swift; sourceTree = "<group>"; };
+		1FCBA13C2124B4070061C176 /* ClusterDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterDetailVC.swift; sourceTree = "<group>"; };
+		1FCBA1402124BA7A0061C176 /* ValidatorCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ValidatorCell.xib; sourceTree = "<group>"; };
 		1FCD8089211D321500C768A4 /* MathVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathVC.swift; sourceTree = "<group>"; };
 		1FCD808B211D322400C768A4 /* MathVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = MathVC.storyboard; sourceTree = "<group>"; };
 		1FDD6B3121122CDB00F1FB9C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeLinesOverlayView.swift; sourceTree = "<group>"; };
+		1FDD6B3321122E2A00F1FB9C /* LinesOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinesOverlayView.swift; sourceTree = "<group>"; };
 		1FEC7E11210A93FF00BB2758 /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
 		29DA4391E07257DD4AA369F0 /* Pods-NodeStar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NodeStar.release.xcconfig"; path = "Pods/Target Support Files/Pods-NodeStar/Pods-NodeStar.release.xcconfig"; sourceTree = "<group>"; };
 		444602A633AB6F1E11E5BD6E /* Pods-NodeStar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NodeStar.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NodeStar/Pods-NodeStar.debug.xcconfig"; sourceTree = "<group>"; };
@@ -114,6 +122,7 @@
 			children = (
 				1F42FE73210A5DF4000050AA /* QuorumNode.swift */,
 				1FEC7E11210A93FF00BB2758 /* Validator.swift */,
+				1F5714CD21240EDD00C5CFE3 /* Cluster.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -158,10 +167,9 @@
 				1FC3A48521127D2A005A0011 /* ValidatorsVC.swift */,
 				1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */,
 				1F42FE78210A7EB6000050AA /* ValidatorCell.swift */,
+				1FCBA1402124BA7A0061C176 /* ValidatorCell.xib */,
 				1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */,
 				1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */,
-				1F80518121238CF1006E4679 /* NetworkVC.swift */,
-				1F80518321238CFF006E4679 /* NetworkVC.storyboard */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -172,9 +180,13 @@
 				1FB8D060210FB04700B75F04 /* QuorumVC.swift */,
 				1FB8D062210FB15700B75F04 /* QuorumVC.storyboard */,
 				1FB8D064210FB2F600B75F04 /* NodeView.swift */,
-				1FDD6B3321122E2A00F1FB9C /* NodeLinesOverlayView.swift */,
+				1FDD6B3321122E2A00F1FB9C /* LinesOverlayView.swift */,
 				1F473AAD211A71C60028D59C /* QuorumMetricsVC.swift */,
 				1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */,
+				1F80518121238CF1006E4679 /* ClusterVC.swift */,
+				1F80518321238CFF006E4679 /* ClusterVC.storyboard */,
+				1FCBA13A212479DC0061C176 /* ClusterView.swift */,
+				1FCBA13C2124B4070061C176 /* ClusterDetailVC.swift */,
 			);
 			path = Quorum;
 			sourceTree = "<group>";
@@ -264,6 +276,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1FB8D063210FB15700B75F04 /* QuorumVC.storyboard in Resources */,
+				1FCBA1412124BA7A0061C176 /* ValidatorCell.xib in Resources */,
 				1F42FE6A210A4E7A000050AA /* LaunchScreen.storyboard in Resources */,
 				1F42FE67210A4E7A000050AA /* Assets.xcassets in Resources */,
 				1F473AB0211A72B60028D59C /* QuorumMetricsVC.storyboard in Resources */,
@@ -271,7 +284,7 @@
 				1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */,
 				1FAF1EA6211B7AAE00265F91 /* InfoVC.storyboard in Resources */,
 				1F42FE65210A4E7A000050AA /* Main.storyboard in Resources */,
-				1F80518421238CFF006E4679 /* NetworkVC.storyboard in Resources */,
+				1F80518421238CFF006E4679 /* ClusterVC.storyboard in Resources */,
 				1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -339,18 +352,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1FCBA13B212479DC0061C176 /* ClusterView.swift in Sources */,
 				1FEC7E12210A93FF00BB2758 /* Validator.swift in Sources */,
 				1FDD6B3221122CDB00F1FB9C /* Extensions.swift in Sources */,
 				1F42FE74210A5DF4000050AA /* QuorumNode.swift in Sources */,
-				1F80518221238CF1006E4679 /* NetworkVC.swift in Sources */,
+				1F80518221238CF1006E4679 /* ClusterVC.swift in Sources */,
 				1FB8D065210FB2F600B75F04 /* NodeView.swift in Sources */,
 				1F42FE72210A5176000050AA /* HomeVC.swift in Sources */,
 				1F473AAE211A71C60028D59C /* QuorumMetricsVC.swift in Sources */,
+				1FCBA13D2124B4070061C176 /* ClusterDetailVC.swift in Sources */,
 				1FC3A48621127D2A005A0011 /* ValidatorsVC.swift in Sources */,
 				1F42FE5E210A4E7A000050AA /* AppDelegate.swift in Sources */,
 				1FCD808A211D321500C768A4 /* MathVC.swift in Sources */,
+				1F5714CE21240EDD00C5CFE3 /* Cluster.swift in Sources */,
 				1F42FE7B210A83E3000050AA /* ValidatorDetailVC.swift in Sources */,
-				1FDD6B3421122E2A00F1FB9C /* NodeLinesOverlayView.swift in Sources */,
+				1FDD6B3421122E2A00F1FB9C /* LinesOverlayView.swift in Sources */,
 				1FB8D061210FB04700B75F04 /* QuorumVC.swift in Sources */,
 				1FAF1EA4211B7AA100265F91 /* InfoVC.swift in Sources */,
 				1F42FE79210A7EB6000050AA /* ValidatorCell.swift in Sources */,
