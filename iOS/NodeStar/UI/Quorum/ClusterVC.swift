@@ -40,9 +40,19 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
         createRow(row: 2)
         showNodes(showClusters: clusters, bestCount: Cluster.bestClusterIncomingCount(clusters: clusters))
         
+        // Offset rows a bit so line from bottom to top don't go through middle row nodes
+        let bottomOdd = rowStackViews[2].arrangedSubviews.count % 2
+        let middleOdd = rowStackViews[1].arrangedSubviews.count % 2
+        let topOdd = rowStackViews[0].arrangedSubviews.count % 2
+        if bottomOdd == middleOdd && middleOdd == topOdd {
+            rowStackViews[2].layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 15)
+            rowStackViews[1].layoutMargins = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 0)
+        }
+        
+        
         // Setup the view to draw lines on
         linesOverlayView = LinesOverlayView()
-        linesOverlayView.overlayOnView(view)
+        linesOverlayView.overlayOnView(view, belowSubview: verticalStackView)
         
         // Select best cluster
         let bestCluster = clusters.last
@@ -83,31 +93,32 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
         stackView.isLayoutMarginsRelativeArrangement = true
         
         // Give it a background that changes color based on row
+        // But put it behind view
         let background = UIView(frame: CGRect.null)
         background.translatesAutoresizingMaskIntoConstraints = false
-        stackView.addSubview(background)
-        stackView.addConstraint(NSLayoutConstraint(item: background,
+        view.insertSubview(background, at: 0)
+        view.addConstraint(NSLayoutConstraint(item: background,
                                                    attribute: .top,
                                                    relatedBy: .equal,
                                                    toItem: stackView,
                                                    attribute: .top,
                                                    multiplier: 1.0,
                                                    constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background,
+        view.addConstraint(NSLayoutConstraint(item: background,
                                                    attribute: .leading,
                                                    relatedBy: .equal,
                                                    toItem: stackView,
                                                    attribute: .leading,
                                                    multiplier: 1.0,
                                                    constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background,
+        view.addConstraint(NSLayoutConstraint(item: background,
                                                    attribute: .trailing,
                                                    relatedBy: .equal,
                                                    toItem: stackView,
                                                    attribute: .trailing,
                                                    multiplier: 1.0,
                                                    constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background,
+        view.addConstraint(NSLayoutConstraint(item: background,
                                                    attribute: .bottom,
                                                    relatedBy: .equal,
                                                    toItem: stackView,
@@ -153,14 +164,16 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
             cv.cluster = c
             cv.update()
             cv.delegate = self
-            var row = 1
             if c.incoming.count == 0 {
-                row = 2
+                cv.row = 2
             }
             else if c.incoming.count == bestCount {
-                row = 0
+                cv.row = 0
             }
-            rowStackViews[row].addArrangedSubview(cv)
+            else {
+                cv.row = 1
+            }
+            rowStackViews[cv.row].addArrangedSubview(cv)
             clusterViews.append(cv)
         }
     }

@@ -11,6 +11,7 @@ import UIKit
 class LinesOverlayView: UIView {
     
     private var paths: [UIBezierPath] = [] { didSet { setNeedsDisplay() } }
+    private var arrowPaths: [UIBezierPath] = [] { didSet { setNeedsDisplay() } }
     
     init() {
         super.init(frame: CGRect.null)
@@ -30,9 +31,14 @@ class LinesOverlayView: UIView {
     }
     
     // MARK: Public Methods
-    func overlayOnView(_ view: UIView) {
+    func overlayOnView(_ view: UIView, belowSubview: UIView? = nil) {
         translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(self)
+        if belowSubview != nil {
+            view.insertSubview(self, belowSubview: belowSubview!)
+        }
+        else {
+            view.addSubview(self)
+        }
         NSLayoutConstraint.activate([
             leadingAnchor.constraint(equalTo: view.leadingAnchor),
             trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -67,47 +73,82 @@ class LinesOverlayView: UIView {
         // Make sure autolayout is done first
         superview?.layoutIfNeeded()
         
-        // Create path from pnv to nv
-        let path = UIBezierPath()
-        path.lineWidth = 0.5
-        let arrowHeight: CGFloat = 12.0
+        // Constants
+        let arrowLength: CGFloat = 8.0
+        let arrowWidth: CGFloat = 5.0
         
-        let fromTopY = max(0, (from.bounds.size.height - from.bounds.size.width)) / 2.0
-        let fromTop = CGPoint(x: from.bounds.size.width/2.0, y: fromTopY)
-        let toBottom = CGPoint(x: to.bounds.size.width/2.0, y: to.bounds.size.height + arrowHeight)
+        
+        // Create path from pnv to nv
+        var fromAngle: CGFloat = 0
+        var toAngle: CGFloat = 0
+        var cp1RadiusAdd: CGFloat = arrowLength * 5
+        var cp2RadiusAdd: CGFloat = arrowLength * 5
         if from === to {
-             let diameter = min(from.bounds.size.width, from.bounds.size.height)
-             let cp1 = CGPoint(x: from.bounds.size.width/2.0 + 1*diameter, y: -0.6*diameter)
-             let cp2 = CGPoint(x: from.bounds.size.width/2.0 + 0.8*diameter, y: diameter*1.8)
-             path.move(to: convert(fromTop, from: from))
-             path.addCurve(to: convert(toBottom, from: to),
-             controlPoint1: convert(cp1, from: from),
-             controlPoint2: convert(cp2, from: from))
+            // to self
+            fromAngle = CGFloat(0.0)
+            toAngle = CGFloat(Double.pi*1.0/4.0)
+            cp1RadiusAdd = arrowLength * 2
+            cp2RadiusAdd = arrowLength * 3
+        }
+        else if from.row == 1 && to.row == 1 {
+            // to the right
+            fromAngle = CGFloat(-Double.pi*1.0/4.0)
+            toAngle = CGFloat(Double.pi*3.0/4.0)
         }
         else {
-            let cp1 = CGPoint(x: fromTop.x, y: fromTopY - 30)
-            path.move(to: convert(fromTop, from: from))
-            path.addQuadCurve(to: convert(toBottom, from: to), controlPoint: convert(cp1, from: from))
+            // to a node above
+            fromAngle = CGFloat(-Double.pi/2.0)
+            toAngle = CGFloat(Double.pi/2.0)
         }
-        // Add it to list - which will eventually redraw (setNeedsDisplay)
-        paths.append(path)
+        let fromPoint = pointOnCircle(view: from, radians: fromAngle)
+        let toPoint = pointOnCircle(view: to, radians: toAngle)
+        let toPointWithArrow = pointOnCircle(view: to, radiusAdd: arrowLength, radians: toAngle)
+        let cp1 = pointOnCircle(view: from, radiusFactor: 1, radiusAdd: cp1RadiusAdd, radians: fromAngle)
+        let cp2 = pointOnCircle(view: to, radiusFactor: 1, radiusAdd: cp2RadiusAdd, radians: toAngle)
         
-        // Add the arrow
-        let arrowBottom = convert(toBottom, from: to)
-        let arrowTop = CGPoint(x: arrowBottom.x, y: arrowBottom.y-arrowHeight)
-        let arrowPath = UIBezierPath.bezierPathWithArrowFromPoint(startPoint: arrowBottom,
-                                                                  endPoint: arrowTop,
+        let path = UIBezierPath()
+        path.lineWidth = 0.5
+        if from.row==2 && to.row==0 {
+            // might interset with node or other lines
+            path.setLineDash([2,2], count: 2, phase: 0.0)
+        }
+        path.move(to: convert(fromPoint, from: from))
+        path.addCurve(to: convert(toPointWithArrow, from: to),
+                      controlPoint1: convert(cp1, from: from),
+                      controlPoint2: convert(cp2, from: to))
+        
+        let arrowPath = UIBezierPath.bezierPathWithArrowFromPoint(startPoint: convert(toPointWithArrow, from: to),
+                                                                  endPoint: convert(toPoint, from: to),
                                                                   tailWidth: 0,
-                                                                  headWidth: 10,
-                                                                  headLength: arrowHeight)
-        paths.append(arrowPath)
+                                                                  headWidth: arrowWidth,
+                                                                  headLength: arrowLength)
+
+        // Add paths - which will eventually redraw (setNeedsDisplay)
+        paths.append(path)
+        arrowPaths.append(arrowPath)
     }
     
     // MARK: Drawign
     override func draw(_ rect: CGRect) {
         UIColor.darkGray.setStroke()
+        UIColor.darkGray.setFill()
         for path in paths {
             path.stroke()
         }
+        for path in arrowPaths {
+            path.stroke()
+            path.fill()
+        }
+    }
+    
+    // MARK: Math
+    private func pointOnCircle(view: UIView,
+                               radiusFactor: CGFloat = 1.0,
+                               radiusAdd: CGFloat = 0.0,
+                               radians: CGFloat) -> CGPoint {
+        let r: CGFloat = radiusFactor * (radiusAdd + min(view.bounds.size.width/2.0, view.bounds.size.height/2.0))
+        let x: CGFloat = view.bounds.size.width/2.0 + r * cos(radians)
+        let y: CGFloat = view.bounds.size.height/2.0 + r * sin(radians)
+        return CGPoint(x: x, y: y)
     }
 }

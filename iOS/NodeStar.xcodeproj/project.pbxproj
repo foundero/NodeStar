@@ -220,7 +220,6 @@
 				1F42FE57210A4E7A000050AA /* Frameworks */,
 				1F42FE58210A4E7A000050AA /* Resources */,
 				CEDC0883A71DA1A9108ED561 /* [CP] Embed Pods Frameworks */,
-				447E24AF733A8D86BEA38CAF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -292,21 +291,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		447E24AF733A8D86BEA38CAF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NodeStar/Pods-NodeStar-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		A3DB16F219979AE538F6FD1D /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

@@ -17,6 +17,7 @@ protocol ClusterViewDelegate {
 class ClusterView: UIView {
     var delegate: ClusterViewDelegate?
     var cluster: Cluster!
+    var row: Int = 0
     var parentClusterView: ClusterView?
     var selected: Bool = false { didSet { setNeedsDisplay() } }
     
