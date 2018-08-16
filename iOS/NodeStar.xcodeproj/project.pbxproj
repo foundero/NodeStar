@@ -17,7 +17,6 @@
 		1F42FE7B210A83E3000050AA /* ValidatorDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */; };
 		1F473AAE211A71C60028D59C /* QuorumMetricsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F473AAD211A71C60028D59C /* QuorumMetricsVC.swift */; };
 		1F473AB0211A72B60028D59C /* QuorumMetricsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */; };
-		1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */; };
 		1F473AB4211A77810028D59C /* ValidatorsVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */; };
 		1F5714CE21240EDD00C5CFE3 /* Cluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5714CD21240EDD00C5CFE3 /* Cluster.swift */; };
 		1F80518221238CF1006E4679 /* ClusterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F80518121238CF1006E4679 /* ClusterVC.swift */; };
@@ -52,7 +51,6 @@
 		1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidatorDetailVC.swift; sourceTree = "<group>"; };
 		1F473AAD211A71C60028D59C /* QuorumMetricsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuorumMetricsVC.swift; sourceTree = "<group>"; };
 		1F473AAF211A72B60028D59C /* QuorumMetricsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = QuorumMetricsVC.storyboard; sourceTree = "<group>"; };
-		1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorDetailVC.storyboard; sourceTree = "<group>"; };
 		1F473AB3211A77800028D59C /* ValidatorsVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = ValidatorsVC.storyboard; sourceTree = "<group>"; };
 		1F5714CD21240EDD00C5CFE3 /* Cluster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cluster.swift; sourceTree = "<group>"; };
 		1F80518121238CF1006E4679 /* ClusterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterVC.swift; sourceTree = "<group>"; };
@@ -169,7 +167,6 @@
 				1F42FE78210A7EB6000050AA /* ValidatorCell.swift */,
 				1FCBA1402124BA7A0061C176 /* ValidatorCell.xib */,
 				1F42FE7A210A83E3000050AA /* ValidatorDetailVC.swift */,
-				1F473AB1211A770C0028D59C /* ValidatorDetailVC.storyboard */,
 			);
 			path = Validators;
 			sourceTree = "<group>";
@@ -220,7 +217,6 @@
 				1F42FE57210A4E7A000050AA /* Frameworks */,
 				1F42FE58210A4E7A000050AA /* Resources */,
 				CEDC0883A71DA1A9108ED561 /* [CP] Embed Pods Frameworks */,
-				BFD86A152E39404980D6047F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -285,7 +281,6 @@
 				1FAF1EA6211B7AAE00265F91 /* InfoVC.storyboard in Resources */,
 				1F42FE65210A4E7A000050AA /* Main.storyboard in Resources */,
 				1F80518421238CFF006E4679 /* ClusterVC.storyboard in Resources */,
-				1F473AB2211A770C0028D59C /* ValidatorDetailVC.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,21 +303,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BFD86A152E39404980D6047F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NodeStar/Pods-NodeStar-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CEDC0883A71DA1A9108ED561 /* [CP] Embed Pods Frameworks */ = {

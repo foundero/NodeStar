@@ -55,6 +55,7 @@ class Validator {
         node.quorumSet = parsedQuorumSet
         
         node.rawData = dict
+        node.rawData["quorumSet"] = nil
         
         return node
     }

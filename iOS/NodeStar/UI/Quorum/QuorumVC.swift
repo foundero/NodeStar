@@ -90,7 +90,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         return true
     }
     @objc func tappedInfoButton() {
-        let vc = ValidatorDetailVC.newVC()
+        let vc = ValidatorDetailVC()
         vc.validator = validator
         navigationController?.pushViewController(vc, animated: true)
     }
@@ -101,7 +101,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
             validatorToPush = validator
         }
         if validatorToPush != nil {
-            let vc = ValidatorDetailVC.newVC()
+            let vc = ValidatorDetailVC()
             vc.validator = validatorToPush
             navigationController?.pushViewController(vc, animated: true)
         }
