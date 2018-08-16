@@ -84,7 +84,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         
         // Setup the view to draw lines on
         linesOverlayView = LinesOverlayView()
-        linesOverlayView.overlayOnView(view)
+        linesOverlayView.overlayOnView(view, belowSubview: verticalStackView)
     }
     override var prefersStatusBarHidden: Bool {
         return true
@@ -112,6 +112,19 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         vc.quorumNode = nodeForMetrics(node: selectedNodeView.quorumNode)
         navigationController?.pushViewController(vc, animated: true)
     }
+    @IBAction func tappedDirectIncomingButton() {
+        let vc = ValidatorsVC.newVC()
+        let handle = QuorumManager.handleForNodeId(id: validator.publicKey)
+        vc.title = "Direct Incoming Validators of \(handle)"
+        vc.validators = QuorumManager.orderedValidatorsForPublicKeySet(set: validator.uniqueDependents)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    @IBAction func tappedClusterButton() {
+        let vc = ClusterVC.newVC()
+        vc.clusters = QuorumManager.clusters
+        vc.selectClusterForInitialValidator = validator
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
     // MARK: -- Visualize Nodes
     func createRow(row: Int) {
@@ -133,35 +146,15 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         let maxDepth = validator.quorumSet.maxDepth
         let backgroundAlpha: CGFloat = (CGFloat(maxDepth + 1) - CGFloat(row)) / CGFloat(maxDepth + 1)
         background.backgroundColor = UIColor.brown.withAlphaComponent(backgroundAlpha)
-        stackView.addSubview(background)
-        stackView.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .top,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .top,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .leading,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .leading,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .trailing,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .trailing,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .bottom,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .bottom,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
+        view.insertSubview(background, at: 0)
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .top, relatedBy: .equal,
+                                              toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .leading, relatedBy: .equal,
+                                              toItem: stackView, attribute: .leading, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .trailing, relatedBy: .equal,
+                                              toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .bottom, relatedBy: .equal,
+                                              toItem: stackView, attribute: .bottom, multiplier: 1.0, constant: 0.0))
         
         // Give the row a label
         let rowLabel = UILabel(frame: CGRect.null)
@@ -176,20 +169,12 @@ class QuorumVC: UIViewController, NodeViewDelegate {
         rowLabel.font = UIFont.systemFont(ofSize: 10.0)
         rowLabel.backgroundColor = UIColor.white
         stackView.addSubview(rowLabel)
-        stackView.addConstraint(NSLayoutConstraint(item: rowLabel,
-                                                   attribute: .top,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .top,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: rowLabel,
-                                                   attribute: .trailing,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .trailing,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
+        stackView.addConstraint(
+            NSLayoutConstraint(item: rowLabel, attribute: .top, relatedBy: .equal,
+                               toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
+        stackView.addConstraint(
+            NSLayoutConstraint(item: rowLabel, attribute: .trailing, relatedBy: .equal,
+                               toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
         
         // Add the row to the view
         rowStackViews.append(stackView)
@@ -241,6 +226,7 @@ class QuorumVC: UIViewController, NodeViewDelegate {
                 linesOverlayView.addLine(from: pnv, to: nv)
             }
         }
+        linesOverlayView.addIntroLine(to: nodeViews.first!)
         
         // Update the font sizes to be consistent per row
         for rowStackView in rowStackViews {

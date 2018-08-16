@@ -65,28 +65,10 @@ class ClusterDetailVC: UITableViewController {
     }
     lazy private var sectionValidators: [[Validator]] = {
         var tempSectionValidators: [[Validator]] = []
-        tempSectionValidators.append(orderedValidatorsForSet(set: cluster.nodes))
-        tempSectionValidators.append(orderedValidatorsForSet(set: cluster.incoming))
-        tempSectionValidators.append(orderedValidatorsForSet(set: cluster.outgoing))
+        tempSectionValidators.append(QuorumManager.orderedValidatorsForPublicKeySet(set: cluster.nodes))
+        tempSectionValidators.append(QuorumManager.orderedValidatorsForPublicKeySet(set: cluster.incoming))
+        tempSectionValidators.append(QuorumManager.orderedValidatorsForPublicKeySet(set: cluster.outgoing))
         return tempSectionValidators
     }()
-    private func orderedValidatorsForSet(set: Set<String>) -> ([Validator]) {
-        var validators: [Validator] = []
-        var unknownValidators: [Validator] = []
-        for publicKey in set {
-            if let validator = QuorumManager.validatorForId(id: publicKey) {
-                validators.append(validator)
-            }
-            else {
-                let validator = Validator()
-                validator.publicKey = publicKey
-                unknownValidators.append(validator)
-            }
-        }
-        validators = QuorumManager.sortedValidators(validatorsToSort: validators)
-        unknownValidators = QuorumManager.sortedValidators(validatorsToSort: unknownValidators)
-        validators.append(contentsOf: unknownValidators)
-        return validators
-    }
 }
 

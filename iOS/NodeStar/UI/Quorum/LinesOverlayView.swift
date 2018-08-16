@@ -69,6 +69,24 @@ class LinesOverlayView: UIView {
         paths.append(path)
     }
     
+    func addIntroLine(to: NodeView) {
+        // Make sure autolayout is done first
+        superview?.layoutIfNeeded()
+        
+        // Create path from pnv to nv
+        let path = UIBezierPath()
+        let toTopY = max(0, (to.bounds.size.height - to.bounds.size.width)) / 2.0
+        let toTop = CGPoint(x: to.bounds.size.width/2.0, y: toTopY)
+        let controlPoint = CGPoint(x: toTop.x, y: toTop.y - 30)
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addQuadCurve(to: convert(toTop, from: to), controlPoint: convert(controlPoint, from: to))
+        path.lineWidth = 0.5
+        path.setLineDash([8,6], count: 2, phase: 0.0)
+        
+        // Add it to list - which will eventually redraw (setNeedsDisplay)
+        paths.append(path)
+    }
+    
     func addLine(from: ClusterView, to: ClusterView) {
         // Make sure autolayout is done first
         superview?.layoutIfNeeded()

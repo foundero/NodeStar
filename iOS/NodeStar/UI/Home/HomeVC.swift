@@ -396,6 +396,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                         QuorumManager.validators = tempNodes
                         self.validators = QuorumManager.validators
                         self.clusters = Cluster.buildClusters()
+                        QuorumManager.clusters = self.clusters
                         DispatchQueue.main.async{
                             self.updateTableView()
                             self.refreshControl?.endRefreshing()

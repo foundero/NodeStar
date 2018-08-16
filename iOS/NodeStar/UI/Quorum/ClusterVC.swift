@@ -11,6 +11,7 @@ import UIKit
 class ClusterVC: UIViewController, ClusterViewDelegate {
 
     var clusters: [Cluster] = []
+    var selectClusterForInitialValidator: Validator? = nil
     
     @IBOutlet var verticalStackView: UIStackView!
     var rowStackViews: [UIStackView] = []
@@ -54,12 +55,16 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
         linesOverlayView = LinesOverlayView()
         linesOverlayView.overlayOnView(view, belowSubview: verticalStackView)
         
-        // Select best cluster
-        let bestCluster = clusters.last
-        let bestClusterView = clusterViews.first {
-            return $0.cluster === bestCluster
-        }!
-        selectedClusterView = bestClusterView
+        // Select a cluster
+        var clusterToSelect = clusters.last
+        if selectClusterForInitialValidator != nil {
+            clusterToSelect = clusters.first {
+                return $0.nodes.contains(selectClusterForInitialValidator!.publicKey)
+            }!
+        }
+        selectedClusterView = clusterViews.first {
+            $0.cluster === clusterToSelect
+        }
     }
     override var prefersStatusBarHidden: Bool {
         return true
@@ -97,34 +102,14 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
         let background = UIView(frame: CGRect.null)
         background.translatesAutoresizingMaskIntoConstraints = false
         view.insertSubview(background, at: 0)
-        view.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .top,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .top,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        view.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .leading,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .leading,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        view.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .trailing,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .trailing,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        view.addConstraint(NSLayoutConstraint(item: background,
-                                                   attribute: .bottom,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .bottom,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .top, relatedBy: .equal,
+                                              toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .leading, relatedBy: .equal,
+                                              toItem: stackView, attribute: .leading, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .trailing, relatedBy: .equal,
+                                              toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
+        view.addConstraint(NSLayoutConstraint(item: background, attribute: .bottom, relatedBy: .equal,
+                                              toItem: stackView, attribute: .bottom, multiplier: 1.0, constant: 0.0))
         
         // Give the row a label
         let rowLabel = UILabel(frame: CGRect.null)
@@ -137,20 +122,12 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
         rowLabel.font = UIFont.systemFont(ofSize: 10.0)
         rowLabel.backgroundColor = UIColor.white
         stackView.addSubview(rowLabel)
-        stackView.addConstraint(NSLayoutConstraint(item: rowLabel,
-                                                   attribute: .top,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .top,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
-        stackView.addConstraint(NSLayoutConstraint(item: rowLabel,
-                                                   attribute: .trailing,
-                                                   relatedBy: .equal,
-                                                   toItem: stackView,
-                                                   attribute: .trailing,
-                                                   multiplier: 1.0,
-                                                   constant: 0.0))
+        stackView.addConstraint(
+            NSLayoutConstraint(item: rowLabel, attribute: .top, relatedBy: .equal,
+                               toItem: stackView, attribute: .top, multiplier: 1.0, constant: 0.0))
+        stackView.addConstraint(
+            NSLayoutConstraint(item: rowLabel, attribute: .trailing, relatedBy: .equal,
+                               toItem: stackView, attribute: .trailing, multiplier: 1.0, constant: 0.0))
         
         // Add the row to the view
         rowStackViews.append(stackView)

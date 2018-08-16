@@ -15,6 +15,7 @@ class QuorumManager {
             validators = sortedValidators(validatorsToSort: validators)
         }
     }
+    static var clusters: [Cluster] = []
     static func validatorForId(id: String) -> Validator? {
         for v in validators {
             if v.publicKey == id {
@@ -52,6 +53,24 @@ class QuorumManager {
                 return $0.publicKey < $1.publicKey
             }
         }
+    }
+    static func orderedValidatorsForPublicKeySet(set: Set<String>) -> ([Validator]) {
+        var validators: [Validator] = []
+        var unknownValidators: [Validator] = []
+        for publicKey in set {
+            if let validator = QuorumManager.validatorForId(id: publicKey) {
+                validators.append(validator)
+            }
+            else {
+                let validator = Validator()
+                validator.publicKey = publicKey
+                unknownValidators.append(validator)
+            }
+        }
+        validators = QuorumManager.sortedValidators(validatorsToSort: validators)
+        unknownValidators = QuorumManager.sortedValidators(validatorsToSort: unknownValidators)
+        validators.append(contentsOf: unknownValidators)
+        return validators
     }
 }
 
