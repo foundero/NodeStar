@@ -26,9 +26,9 @@ Note: does not work for quorum set with leaf validators used more than once
   \item $Q_i$ is a Quorum Set function - possibly an inner quorum set function
   \item $Q_{r}$ is the threshold of Quorum Set
   \item $M_{c}$ set of direct children of QuorumSet excluding $a$
-  \item $M_{q}$ set of inner quorum set children of QuorumSet excluding $a$
-  \item $M_{v}$ set of validator children of QuorumSet excluding $a$
-  \item $M_{xt}$ set of $true$ children of type x
+  \item $M_{q}$ set of direct inner quorum set children of QuorumSet excluding $a$
+  \item $M_{v}$ set of direct validator children of QuorumSet excluding $a$
+  \item $M_{xt}$ set of $true$ children of type $x \in \{c,q,v\}$
   \item $M_{ctr}$ set of true children where cardinality $>=Q_r$
 \end{itemize}
 
@@ -40,7 +40,7 @@ Recursive Calculation (all combinations of Quorum Set children):
     simple binomial combinations 10 \& 11,
     combinations complement 2,
     combinations cardinality 3
-  \item Normal Case: use equations 5-8, we just need to compute
+  \item Normal Case: use equations 5-8, so just compute
     $\cardinality{C(Qt|1)}$ and $\cardinality{C(Qt|0)}$
 \end{itemize}
 
@@ -67,7 +67,7 @@ Recursive Calculation (all combinations of Quorum Set children):
 \end{align}
 
 
-\textbf{Recursive Hybrid Binomial}\\\par
+\textbf{Recursive Hybrid Binomial:}\\\par
 Binomials for validators and all combinations for inner quorum sets
 
 
@@ -87,6 +87,7 @@ Binomials for validators and all combinations for inner quorum sets
            \binom{ \cardinality{M_v} }{ v }
            \prod_{i=0}^{ \cardinality{M_q} } C(Q(q \in M_{qt})_i|0)
 \end{align}
+
 
 
 

@@ -23,11 +23,12 @@
 
 
 \textbf{Simple Quorum:}\\\par
-$Q_{simple}(r,n,n_t)$ is a Quorum Set function that without inner quorum sets
+$Q_{simple}(r,n,n_t)$ is a Quorum Set function with no inner quorum sets
 \begin{itemize}
   \item $r$ is the threshold for $Q_{simple}$ to be $true$
-  \item $n$ the count of nodes referenced by the Quorum Set
-  \item $m = n-1$, the count of nodes excluding $a$
+  \item $n$ is the count of nodes referenced by the Quorum Set
+  \item $n_t$ is the count of true nodes referenced by the Quorum Set
+  \item $m = n-1$, is the count of nodes excluding $a$
 \end{itemize}
 
 \begin{equation}
@@ -44,9 +45,10 @@ Impact Metrics:
 \begin{align}
   Effected(a,Q_{simple}(r,n,n_t)) &= \simpleCombinations \\
   Affect(a,Q_{simple}(r,n,n_t)) &= \frac{ \simpleCombinations{} }{ 2^m } \\
-  Required(a,Q_{simple}(r,n,n_t)) &= \frac{ \simpleCombinations{} }{ \sum_{i=(r-1)}^{m} \binom{m}{i} } \\
+  Require(a,Q_{simple}(r,n,n_t)) &= \frac{ \simpleCombinations{} }{ \sum_{i=(r-1)}^{m} \binom{m}{i} } \\
   Influence(a,Q_{simple}(r,n,n_t)) &= \frac{ \simpleCombinations{} }{ \sum_{i=0}^{r-1} \binom{m}{i} }
 \end{align}
+
 
 
 
