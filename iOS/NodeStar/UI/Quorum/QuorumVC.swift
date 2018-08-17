@@ -17,15 +17,8 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     var nodeViews: [NodeView] = []
     var selectedNodeView: NodeView! { didSet { redrawSelectNodeView() } }
     
-    @IBOutlet weak var cityLabel: UILabel!
-    @IBOutlet weak var nameLabel: UILabel!
-    @IBOutlet weak var verifiedCheckmark: UIView!
-    @IBOutlet weak var publicKeyLabel: UILabel!
-    @IBOutlet weak var quorumSetHashLabel: UILabel!
-    @IBOutlet weak var rootThresholdLabel: UILabel!
-    @IBOutlet weak var nodesLabel: UILabel!
-    @IBOutlet weak var depthLabel: UILabel!
-    @IBOutlet weak var usagesLabel: UILabel!
+    var validatorCell: ValidatorCell!
+    @IBOutlet weak var validatorButton: UIButton!
     @IBOutlet weak var metricChart: BarChartView!
     
     var validator: Validator!
@@ -48,6 +41,14 @@ class QuorumVC: UIViewController, NodeViewDelegate {
                                                             style:.plain,
                                                             target: self,
                                                             action: #selector(tappedInfoButton))
+        
+        // Setup the validator cell
+        let validatorCellNib = UINib(nibName: "ValidatorCell", bundle: nil)
+        validatorCell = validatorCellNib.instantiate(withOwner: nil, options: nil)[0] as! ValidatorCell
+        validatorCell.frame = validatorButton.frame
+        validatorCell.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+        validatorCell.layoutMargins = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+        validatorButton.superview!.insertSubview(validatorCell, belowSubview: validatorButton)
         
         // Setup the chart
         metricChart.leftAxis.enabled = false
@@ -275,19 +276,19 @@ class QuorumVC: UIViewController, NodeViewDelegate {
     
     // MARK: -- Display Detail
     private func showNodeInfo(quorumNode: QuorumNode) {
-        clearInfo()
+        validatorCell.updateClear()
         
         if quorumNode.identifier == validator.quorumSet.identifier {
-            // Root node let - show Validator (because the QuorumNode is a QuorumSetNode in this case)
-            showValidatorInfo(validatorToShow: validator)
+            // Root node - show Validator (because the QuorumNode is a QuorumSetNode in this case)
+            validatorCell.updateWithModel(validator: validator)
         }
         else if let validator: Validator = QuorumManager.validatorForId(id: quorumNode.identifier) {
             // Leaf validator where we have it's fulll Validator info
-            showValidatorInfo(validatorToShow: validator)
+            validatorCell.updateWithModel(validator: validator)
         }
         else {
             // Either a QuorumSetNode or QuorumValidatorNode - either way we don't have much info on it
-            showQuorumNodeInfo(node: quorumNode)
+            validatorCell.updateWithModel(node: quorumNode)
         }
         
         // Update Metrics Chart
@@ -312,54 +313,6 @@ class QuorumVC: UIViewController, NodeViewDelegate {
             }
         }
         return nodeForMetrics
-    }
-    private func clearInfo() {
-        quorumSetHashLabel.text = ""
-        publicKeyLabel.text = " \n "
-        cityLabel.text = ""
-        nameLabel.text = ""
-        nodesLabel.text = ""
-        depthLabel.text = ""
-        usagesLabel.text = ""
-        rootThresholdLabel.text = ""
-        verifiedCheckmark.isHidden = true
-    }
-    private func showValidatorInfo(validatorToShow: Validator) {
-        let validatorHandle = QuorumManager.handleForNodeId(id: validatorToShow.publicKey)
-        nameLabel.text = "\(validatorHandle). \(validatorToShow.name ?? "")"
-        cityLabel.text = validatorToShow.city ?? "[City]"
-        publicKeyLabel.text = "pk: " + validatorToShow.publicKey
-        verifiedCheckmark.isHidden = !validatorToShow.verified
-        
-        nodesLabel.text = "n=\(validatorToShow.quorumSet.uniqueValidators.count)," +
-            "\(validatorToShow.uniqueEventualValidators.count)"
-        depthLabel.text = "d=\(validatorToShow.quorumSet.maxDepth)"
-        usagesLabel.text = "u=\(validatorToShow.uniqueDependents.count)," +
-            "\(validatorToShow.uniqueEventualDependents.count)"
-        showQuorumNodeInfo(node: validatorToShow.quorumSet)
-    }
-    private func showQuorumNodeInfo(node: QuorumNode) {
-        // Limited QuorumNode (QuorumSet or ValidatorNode) info
-        if node is QuorumValidator {
-            publicKeyLabel.text = "pk: " + node.identifier
-            if nameLabel.text == "" {
-                nameLabel.text = "?. Unkonwn Validator"
-            }
-        }
-        else {
-            quorumSetHashLabel.text = "qsh: " + node.identifier
-            if nameLabel.text == "" {
-                nameLabel.text = "Quorum Set"
-            }
-        }
-        
-        let thresholdString = "\(node.threshold)/\(node.quorumNodes.count)"
-        if ( node.maxDepth ) > 1 {
-            rootThresholdLabel.text = "*" + thresholdString
-        }
-        else {
-            rootThresholdLabel.text = thresholdString
-        }
     }
 }
 

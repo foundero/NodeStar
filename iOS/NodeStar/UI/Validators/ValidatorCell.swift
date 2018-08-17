@@ -14,7 +14,7 @@ class ValidatorCell: UITableViewCell {
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var verifiedCheckmark: UIView!
     @IBOutlet weak var publicKeyLabel: UILabel!
-
+    @IBOutlet weak var quorumSetHashLabel: UILabel!
     @IBOutlet weak var rootThresholdLabel: UILabel!
     @IBOutlet weak var nodesLabel: UILabel!
     @IBOutlet weak var depthLabel: UILabel!
@@ -24,10 +24,23 @@ class ValidatorCell: UITableViewCell {
         return 72.0
     }
     
+    open func updateClear() {
+        nameLabel.text = ""
+        cityLabel.text = ""
+        publicKeyLabel.text = ""
+        quorumSetHashLabel.text = ""
+        verifiedCheckmark.isHidden = true
+        rootThresholdLabel.text = ""
+        nodesLabel.text = ""
+        depthLabel.text = ""
+        usagesLabel.text = ""
+    }
+    
     open func updateWithModel(validator: Validator) {
         nameLabel.text = "\(QuorumManager.handleForNodeId(id: validator.publicKey)). \(validator.name ?? "")"
         cityLabel.text = validator.city ?? "[City]"
         publicKeyLabel.text = "pk: " + validator.publicKey
+        quorumSetHashLabel.text = "qsh: " + validator.quorumSet.hashKey
         verifiedCheckmark.isHidden = !validator.verified
         
         if validator.quorumSet == nil {
@@ -47,6 +60,29 @@ class ValidatorCell: UITableViewCell {
             }
         }
         usagesLabel.text = "u=\(validator.uniqueDependents.count),\(validator.uniqueEventualDependents.count)"
+    }
+    open func updateWithModel(node: QuorumNode) {
+        // Limited QuorumNode (QuorumSet or ValidatorNode) info
+        if node is QuorumValidator {
+            publicKeyLabel.text = "pk: " + node.identifier
+            if nameLabel.text == "" {
+                nameLabel.text = "?. Unkonwn Validator"
+            }
+        }
+        else {
+            quorumSetHashLabel.text = "qsh: " + node.identifier
+            if nameLabel.text == "" {
+                nameLabel.text = "Quorum Set"
+            }
+        }
+             
+        let thresholdString = "\(node.threshold)/\(node.quorumNodes.count)"
+        if ( node.maxDepth ) > 1 {
+            rootThresholdLabel.text = "*" + thresholdString
+        }
+        else {
+            rootThresholdLabel.text = thresholdString
+        }
     }
     
     class func registerWithTableView(tableView: UITableView) {
