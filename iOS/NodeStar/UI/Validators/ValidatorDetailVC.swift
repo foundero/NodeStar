@@ -98,6 +98,9 @@ class ValidatorDetailVC: UITableViewController {
         }
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section != 1 {
+            return
+        }
         if indexPath.row == 0 {
             // Cluster
             let vc = ClusterVC.newVC()

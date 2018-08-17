@@ -21,11 +21,11 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="531"/>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7qr-qf-aSg">
-                                <rect key="frame" x="20" y="20" width="120" height="40"/>
+                                <rect key="frame" x="20" y="20" width="120" height="36"/>
                                 <color key="backgroundColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="Csg-uU-vu0"/>
-                                    <constraint firstAttribute="height" constant="40" id="XKy-E4-PQu"/>
+                                    <constraint firstAttribute="height" constant="36" id="XKy-E4-PQu"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                 <state key="normal" title="Direct Incoming"/>
@@ -34,11 +34,11 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="saE-wW-Tda">
-                                <rect key="frame" x="235" y="20" width="120" height="40"/>
+                                <rect key="frame" x="235" y="20" width="120" height="36"/>
                                 <color key="backgroundColor" red="0.095696954089999994" green="0.50426705380000003" blue="0.91710168120000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="Zff-n0-KOR"/>
-                                    <constraint firstAttribute="height" constant="40" id="f8x-2Z-md2"/>
+                                    <constraint firstAttribute="height" constant="36" id="f8x-2Z-md2"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                 <state key="normal" title="Cluster"/>
