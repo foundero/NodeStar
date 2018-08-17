@@ -49,6 +49,7 @@ class LinesOverlayView: UIView {
     
     func clearLines() {
         paths = []
+        arrowPaths = []
     }
     
     func addLine(from: NodeView, to: NodeView) {

@@ -21,7 +21,7 @@ class ValidatorCell: UITableViewCell {
     @IBOutlet weak var usagesLabel: UILabel!
     
     class var desiredHieght: CGFloat {
-        return 72.0
+        return 70.0
     }
     
     open func updateClear() {
@@ -40,7 +40,7 @@ class ValidatorCell: UITableViewCell {
         nameLabel.text = "\(QuorumManager.handleForNodeId(id: validator.publicKey)). \(validator.name ?? "")"
         cityLabel.text = validator.city ?? "[City]"
         publicKeyLabel.text = "pk: " + validator.publicKey
-        quorumSetHashLabel.text = "qsh: " + validator.quorumSet.hashKey
+        quorumSetHashLabel.text = "qsh: \(validator.quorumSet?.hashKey ?? "")"
         verifiedCheckmark.isHidden = !validator.verified
         
         if validator.quorumSet == nil {
