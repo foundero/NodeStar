@@ -103,16 +103,15 @@ class LinesOverlayView: UIView {
         var cp1RadiusAdd: CGFloat = arrowLength * 5
         var cp2RadiusAdd: CGFloat = arrowLength * 5
         if from === to {
-            // to self
-            fromAngle = CGFloat(0.0)
-            toAngle = CGFloat(Double.pi*1.0/4.0)
-            cp1RadiusAdd = arrowLength * 2
-            cp2RadiusAdd = arrowLength * 3
+            // to self - dont draw use internal + text
+            return
         }
         else if from.row == 1 && to.row == 1 {
             // to the right
-            fromAngle = CGFloat(-Double.pi*1.0/4.0)
+            fromAngle = CGFloat(Double.pi*1.0/4.0)
             toAngle = CGFloat(Double.pi*3.0/4.0)
+            cp1RadiusAdd = arrowLength * 3
+            cp2RadiusAdd = arrowLength * 3
         }
         else {
             // to a node above

@@ -36,6 +36,12 @@ class Cluster {
         }
         return tempOutgoing
     }()
+    lazy var incomingCountWithoutSelf: Int = {
+        if outgoingClusters.contains(where: {$0===self}) {
+            return incoming.count - nodes.count
+        }
+        return incoming.count
+    }()
     
     class func buildClusters() -> [Cluster] {
         // Create the raw set of clusters
@@ -81,6 +87,9 @@ class Cluster {
         
         // Order them
         clusters.sort {
+            if $0.incomingCountWithoutSelf != $1.incomingCountWithoutSelf {
+                return $0.incomingCountWithoutSelf < $1.incomingCountWithoutSelf
+            }
             if $0.incoming.count != $1.incoming.count {
                 return $0.incoming.count < $1.incoming.count
             }

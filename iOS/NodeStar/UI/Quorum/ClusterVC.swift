@@ -141,7 +141,7 @@ class ClusterVC: UIViewController, ClusterViewDelegate {
             cv.cluster = c
             cv.update()
             cv.delegate = self
-            if c.incoming.count == 0 {
+            if c.incomingCountWithoutSelf == 0 {
                 cv.row = 2
             }
             else if c.incoming.count == bestCount {

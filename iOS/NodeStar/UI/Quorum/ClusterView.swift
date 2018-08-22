@@ -70,7 +70,7 @@ class ClusterView: UIView {
         
         countLabel = UILabel(frame: CGRect.null)
         countLabel.translatesAutoresizingMaskIntoConstraints = false
-        countLabel.font = UIFont.systemFont(ofSize: 17)
+        countLabel.font = UIFont.systemFont(ofSize: 10)
         countLabel.adjustsFontSizeToFitWidth = true
         countLabel.minimumScaleFactor = 0.3
         countLabel.textAlignment = NSTextAlignment.center
@@ -113,7 +113,12 @@ class ClusterView: UIView {
     // MARK: Public Methods
     func update() {
         countLabel.text = "\(cluster.nodes.count)"
-        incomingLabel.text = "\(cluster.incoming.count)"
+        if cluster.outgoingClusters.contains(where: {$0===cluster}) {
+            incomingLabel.text = "\(cluster.incomingCountWithoutSelf)+\(cluster.nodes.count)"
+        }
+        else {
+            incomingLabel.text = "\(cluster.incoming.count)+0"
+        }
         setNeedsDisplay()
     }
     
@@ -130,10 +135,10 @@ class ClusterView: UIView {
     // MARK: Drawing
     override func draw(_ rect: CGRect) {
         if selected {
-            countLabel.font = UIFont.boldSystemFont(ofSize: 17)
+            countLabel.font = UIFont.boldSystemFont(ofSize: 10)
         }
         else {
-            countLabel.font = UIFont.systemFont(ofSize: 17)
+            countLabel.font = UIFont.systemFont(ofSize: 10)
         }
         drawRingFittingInsideView()
     }
