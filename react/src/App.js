@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import logo from './media/images/icon-large.png';
+import githubLogo from './media/images/GitHub-Mark-Light-120px-plus.png';
 import './App.css';
 
 import {
@@ -46,6 +47,27 @@ class App extends Component {
         <div className="App">
 
           <header className="header">
+      
+      
+          
+          <div className="header-right">
+            <ul>
+              <li>
+                <a href="https://github.com/foundero/NodeStar">
+                  <span>View on GitHub</span>
+                  <img className='github' src={githubLogo} alt="NodeStar on GitHub" />
+                </a>
+              </li>
+              <li>
+                <a className='appstore' href="https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8">
+                </a>
+              </li>
+            </ul>
+          </div>
+      
+      
+          <div className='header-middle'>
+      
             <img src={logo} className="logo" alt="NodeStar Logo" />
             <h1 className="title">NodeStar</h1>
             <h2 className="subtitle">A Stellar Quorum Explorer</h2>
@@ -55,11 +77,14 @@ class App extends Component {
               <li><NavLink to="/clusters">Clusters</NavLink></li>
               <li><NavLink to="/math">Math</NavLink></li>
             </ul>
+          </div>
+                
+                
           </header>
 
           <div className="content">
             <Route exact path="/" component={SummaryPage}/>
-            <Route path="/validators"
+            <Route path="/validators/:publicKey?"
                    render={(props) => <ValidatorPage {...props} validators={this.state.validators} />}
                    />
             <Route path="/clusters" component={ClusterPage}/>

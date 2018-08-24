@@ -2,25 +2,105 @@ body {
   background-color: #222;
   margin: 0;
 }
-h1, h2, h3, p, ul, li {
+h1, h2, h3, p, ul, li, a {
   font-family: sans-serif;
 }
-ul.header li {
-  display: inline;
+li {
   list-style-type: none;
-  margin: 0;
 }
+
+
+header.header {
+  background-color: #222;
+  padding-top: 20px;
+  width:1000px;
+  margin-left: auto;
+  margin-right: auto;
+  color: white;
+}
+
+.header-right {
+  text-align: right;
+  float: right;
+  margin-right: 10px;
+  width: 200px;
+}
+.header-right li {
+  margin-right:10px;
+  margin-bottom:10px;
+}
+.header-right span {
+  height:20px;
+  vertical-align: middle;
+}
+.header a {
+  color: #FFF;
+  font-weight: normal;
+  text-decoration: none;
+}
+.header-middle {
+  margin-left:200px;
+  margin-right:200px;
+}
+.appstore {
+  display:inline-block;
+  overflow:hidden;
+  background:url(https://linkmaker.itunes.apple.com/assets/shared/badges/en-us/appstore-lrg.svg)  no-repeat;
+  width:135px;
+  height:40px;
+  background-size:contain;
+}
+.github {
+  margin-left: 4px;
+  width:20px;
+  height:20px;
+  vertical-align: middle;
+}
+.verified-icon {
+  margin-left: 4px;
+  width:20px;
+  height:20px;
+  vertical-align: bottom;
+}
+
+.header .active {
+  background-color: #0099FF;
+}
+
 ul.header {
   background-color: #222;
   padding: 0;
 }
+ul.header li {
+  display: inline;
+  margin: 0;
+}
 ul.header li a {
-  color: #FFF;
   font-weight: normal;
   text-decoration: none;
   padding: 20px;
   display: inline-block;
 }
+
+.App {
+  text-align: center;
+}
+
+.logo {
+  height: 80px;
+}
+
+.title {
+  font-size: 1.3em;
+  font-weight: bold;
+  line-height: 4px;
+}
+.subtitle {
+  font-size: 1.0em;
+  font-weight: normal;
+  margin-bottom: 8px;
+}
+
 .content {
   background-color: #FFF;
   padding: 0px;
@@ -36,49 +116,25 @@ ul.header li a {
   margin: 10px;
 }
 
-.header .active {
-  background-color: #0099FF;
-}
-
 .content ul {
   padding: 0px;
   margin: 10px;
 }
 .content li {
-  list-style-type: none;
   text-align:left;
 }
 .content li.active {
   color: #0099FF;
 }
 
-.App {
-  text-align: center;
-}
-
-.logo {
-  height: 80px;
-}
-
-.header {
-  background-color: #222;
-  padding-top: 20px;
-  color: white;
-}
-
-.title {
-  font-size: 1.3em;
-  font-weight: bold;
-  line-height: 4px;
-}
-.subtitle {
-  font-size: 1.0em;
-  font-weight: normal;
-  margin-bottom: 8px;
-}
 
 div.page{
   width:100%;
+}
+
+div.card{
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .left{
@@ -89,7 +145,7 @@ div.page{
 }
 .middle{
   width:50%;
-  background:red;
+  background:#dbdbdb;
   float:left;
   height:100%;
 }
@@ -104,5 +160,13 @@ div.page{
   background:green;
   float:left;
   height:100%;
+}
+
+li.bold {
+  font-weight: bold;
+}
+li.small {
+  word-break: break-all;
+  font-size: 0.6em;
 }
 

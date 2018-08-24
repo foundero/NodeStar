@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Graph from 'react-graph-vis';
-
+import validatorHelper from '../ValidatorHelper.js';
 
 var options = {
   physics: { enabled: false },
@@ -55,7 +55,14 @@ class QuorumViewer extends Component {
                  getNetwork={network => this.setState({network }) }
                  options={options}
                  events={events}
-                 style={{width: "500px", height: "300px" }} />
+                 style={{
+                   width: '494px',
+                   height: '300px',
+                   border: '1px solid #bab8b8',
+                   'border-radius': '10px',
+                   'background-color': 'white',
+                   'margin-left': '2px'
+                 }} />
         
     );
   }
@@ -68,15 +75,6 @@ class QuorumViewer extends Component {
 
 export default QuorumViewer;
 
-function validatorHandleForPublicKey(validators, publicKey) {
-  for ( var i=0; i<validators.length; i++ ) {
-    if ( validators[i].publicKey === publicKey ) {
-      return i+1
-    }
-  }
-  return "?"
-}
-
 
 
 function quorumGraph(validators, validator) {
@@ -84,13 +82,13 @@ function quorumGraph(validators, validator) {
     return {nodes: [], edges: []};
   }
   var rootId = "0"+validator.publicKey
-  var nodes = [{id: rootId, label: validatorHandleForPublicKey(validators, validator.publicKey), color:'#cbdaf2'}];
+  var nodes = [{id: rootId, label: validatorHelper.validatorHandleForPublicKey(validators, validator.publicKey), color:'#cbdaf2'}];
   var edges = [];
   var quorumSet = validator['quorumSet'];
   if (quorumSet !== null) {
     quorumSet['validators'].forEach( (v,index) => {
       if (index > quorumSet['validators'].length/2) return;
-      nodes.push( {id: v, label: validatorHandleForPublicKey(validators, v), color:'#cbdaf2' } );
+      nodes.push( {id: v, label: validatorHelper.validatorHandleForPublicKey(validators, v), color:'#cbdaf2' } );
       edges.push( {from: rootId, to: v} );
     });
     quorumSet['innerQuorumSets'].forEach(innerQS => {
@@ -99,13 +97,13 @@ function quorumGraph(validators, validator) {
       edges.push( {from: rootId, to: innerQSId} );
       
       innerQS['validators'].forEach(innerV => {
-        nodes.push( {id: innerV, label: validatorHandleForPublicKey(validators, innerV), color:'#cbdaf2'} );
+        nodes.push( {id: innerV, label: validatorHelper.validatorHandleForPublicKey(validators, innerV), color:'#cbdaf2'} );
         edges.push( {from: innerQSId, to: innerV} );
       });
     });
     quorumSet['validators'].forEach( (v,index) => {
       if (index <= quorumSet['validators'].length/2) return;
-      nodes.push( {id: v, label: validatorHandleForPublicKey(validators, v), color:'#cbdaf2' } );
+      nodes.push( {id: v, label: validatorHelper.validatorHandleForPublicKey(validators, v), color:'#cbdaf2' } );
       edges.push( {from: rootId, to: v} );
     });
   }
