@@ -1,0 +1,108 @@
+body {
+  background-color: #222;
+  margin: 0;
+}
+h1, h2, h3, p, ul, li {
+  font-family: sans-serif;
+}
+ul.header li {
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+}
+ul.header {
+  background-color: #222;
+  padding: 0;
+}
+ul.header li a {
+  color: #FFF;
+  font-weight: normal;
+  text-decoration: none;
+  padding: 20px;
+  display: inline-block;
+}
+.content {
+  background-color: #FFF;
+  padding: 0px;
+  margin: 0px;
+  width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+}
+
+.content h1, h2, h3 {
+  padding: 0px;
+  margin: 10px;
+}
+
+.header .active {
+  background-color: #0099FF;
+}
+
+.content ul {
+  padding: 0px;
+  margin: 10px;
+}
+.content li {
+  list-style-type: none;
+  text-align:left;
+}
+.content li.active {
+  color: #0099FF;
+}
+
+.App {
+  text-align: center;
+}
+
+.logo {
+  height: 80px;
+}
+
+.header {
+  background-color: #222;
+  padding-top: 20px;
+  color: white;
+}
+
+.title {
+  font-size: 1.3em;
+  font-weight: bold;
+  line-height: 4px;
+}
+.subtitle {
+  font-size: 1.0em;
+  font-weight: normal;
+  margin-bottom: 8px;
+}
+
+div.page{
+  width:100%;
+}
+
+.left{
+  width:25%;
+  background:#cedbef;
+  float:left;
+  height:100%;
+}
+.middle{
+  width:50%;
+  background:red;
+  float:left;
+  height:100%;
+}
+.middle-and-right{
+  width:75%;
+  background:green;
+  float:left;
+  height:100%;
+}
+.right{
+  width:25%;
+  background:green;
+  float:left;
+  height:100%;
+}
+
