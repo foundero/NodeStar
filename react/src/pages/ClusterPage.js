@@ -10,14 +10,12 @@ class ClusterPage extends Component {
   }
 
   handleClick(i) {
-    console.log('clicked: '+(i+1));
     this.setState({
       'selectedValidator': this.props.validators[i]
     });
   }
 
   render() {
-    console.log('render Cluster Page')
     return (
       <div className="page">
         <div className="left">

@@ -6,7 +6,6 @@ import math3 from '../media/images/math3.tex.png';
 class MathPage extends Component {
 
   render() {
-    console.log('render Cluster Page')
     return (
       <div className="page">
         <h3>NodeStar Math</h3>

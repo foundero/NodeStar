@@ -6,7 +6,9 @@ import './App.css';
 import {
   Route,
   NavLink,
-  HashRouter
+  HashRouter,
+  Switch,
+  Redirect
 } from "react-router-dom";
 import ClusterPage from "./pages/ClusterPage";
 import SummaryPage from "./pages/SummaryPage";
@@ -17,7 +19,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      validators: []
+      validators: [],
+      routes: {
+        validators: "/validators"
+      }
     };
   }
 
@@ -31,14 +36,26 @@ class App extends Component {
     .then( (json) => {
       console.log('parsed json');
       this.setState({
-        'validators': json
+        'validators': json,
+        'routes': this.state.routes
       });
     });
   }
 
   componentDidMount() {
-    console.log('mounted');
+    console.log('mounted app');
     this.getQuorumData();
+  }
+
+  storeRoutePath(routeKey, path) {
+    if ( path === this.state.routes[routeKey] ) { return; }
+          
+    var routes = this.state.routes;
+    routes[routeKey] = path;
+    this.setState({
+      'validators': this.state.validators,
+      'routes': routes
+    });
   }
 
   render() {
@@ -47,8 +64,6 @@ class App extends Component {
         <div className="App">
 
           <header className="header">
-      
-      
           
           <div className="header-right">
             <ul>
@@ -72,8 +87,8 @@ class App extends Component {
             <h1 className="title">NodeStar</h1>
             <h2 className="subtitle">A Stellar Quorum Explorer</h2>
             <ul className="header">
-              <li><NavLink exact to="/">Summary</NavLink></li>
-              <li><NavLink to="/validators">Validators</NavLink></li>
+              <li><NavLink to="/summary">Summary</NavLink></li>
+              <li><NavLink to={this.state.routes.validators}>Validators</NavLink></li>
               <li><NavLink to="/clusters">Clusters</NavLink></li>
               <li><NavLink to="/math">Math</NavLink></li>
             </ul>
@@ -83,12 +98,15 @@ class App extends Component {
           </header>
 
           <div className="content">
-            <Route exact path="/" component={SummaryPage}/>
-            <Route path="/validators/:publicKey?"
-                   render={(props) => <ValidatorPage {...props} validators={this.state.validators} />}
+            <Switch>
+            <Route path="/summary" component={SummaryPage}/>
+            <Route path="/validators/:publicKey?/:blah?/:quorumNodeId?"
+                   render={(props) => <ValidatorPage {...props} validators={this.state.validators} onStoreRoutePath={(routeKey, path) => this.storeRoutePath(routeKey, path)} />}
                    />
             <Route path="/clusters" component={ClusterPage}/>
             <Route path="/math" component={MathPage}/>
+            <Redirect to="/summary"/>
+            </Switch>
           </div>
         </div>
       </HashRouter>

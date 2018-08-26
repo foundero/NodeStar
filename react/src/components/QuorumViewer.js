@@ -22,28 +22,20 @@ var options = {
     width : "500px",
     height : "300px"
 };
- 
-var events = {
-    select: function(event) {
-        var { nodes } = event;
-        console.log("selected" + nodes);
-    }
-};
+
 
 
 
 class QuorumViewer extends Component {
-  
-  constructor(props) {
-    super(props);
-    this.state = {
-      
-      selectedNode: null
-    };
-  }
-  
-  setNetworkInstance = nw => {
-      this.network = nw;
+
+  selectQuorumNode(event) {
+      var { nodes } = event;
+      if ( nodes.length === 0 ) {
+        this.props.onSelectQuorumNode(null);
+      }
+      else {
+        this.props.onSelectQuorumNode(nodes);
+      }
   }
   
   render() {
@@ -54,41 +46,47 @@ class QuorumViewer extends Component {
           <Graph graph={graph}
                  getNetwork={network => this.setState({network }) }
                  options={options}
-                 events={events}
+                 events={{ select: (event) => {
+                   this.selectQuorumNode(event)
+                 }}}
                  style={{
                    width: '494px',
                    height: '300px',
                    border: '1px solid #bab8b8',
-                   'border-radius': '10px',
-                   'background-color': 'white',
-                   'margin-left': '2px'
+                   'borderRadius': '10px',
+                   'backgroundColor': 'white',
+                   'marginLeft': '2px'
                  }} />
         
     );
   }
   
   componentDidUpdate() {
-    console.log('quorum graph did update');
-    this.state.network.fit()
+    this.state.network.fit();
+    if ( this.props.selectedQuorumNode ) {
+      this.state.network.selectNodes([this.props.selectedQuorumNode]);
+    }
+    else {
+      this.state.network.selectNodes([]);
+    }
   }
 }
 
 export default QuorumViewer;
 
 
-
 function quorumGraph(validators, validator) {
   if (validator == null) {
     return {nodes: [], edges: []};
   }
-  var rootId = "0"+validator.publicKey
-  var nodes = [{id: rootId, label: validatorHelper.validatorHandleForPublicKey(validators, validator.publicKey), color:'#cbdaf2'}];
+  var rootId = validator.quorumSet ? validator.quorumSet.hashKey : validator.publicKey; 
+  var nodes = [{id: rootId, label: validatorHelper.validatorAndHandleForPublicKey(validators, validator.publicKey).handle, color:'#cbdaf2'}];
   var edges = [];
   var quorumSet = validator['quorumSet'];
   if (quorumSet !== null) {
     quorumSet['validators'].forEach( (v,index) => {
       if (index > quorumSet['validators'].length/2) return;
-      nodes.push( {id: v, label: validatorHelper.validatorHandleForPublicKey(validators, v), color:'#cbdaf2' } );
+      nodes.push( {id: v, label: validatorHelper.validatorAndHandleForPublicKey(validators, v).handle, color:'#cbdaf2' } );
       edges.push( {from: rootId, to: v} );
     });
     quorumSet['innerQuorumSets'].forEach(innerQS => {
@@ -97,13 +95,13 @@ function quorumGraph(validators, validator) {
       edges.push( {from: rootId, to: innerQSId} );
       
       innerQS['validators'].forEach(innerV => {
-        nodes.push( {id: innerV, label: validatorHelper.validatorHandleForPublicKey(validators, innerV), color:'#cbdaf2'} );
+        nodes.push( {id: innerV, label: validatorHelper.validatorAndHandleForPublicKey(validators, innerV).handle, color:'#cbdaf2'} );
         edges.push( {from: innerQSId, to: innerV} );
       });
     });
     quorumSet['validators'].forEach( (v,index) => {
       if (index <= quorumSet['validators'].length/2) return;
-      nodes.push( {id: v, label: validatorHelper.validatorHandleForPublicKey(validators, v), color:'#cbdaf2' } );
+      nodes.push( {id: v, label: validatorHelper.validatorAndHandleForPublicKey(validators, v).handle, color:'#cbdaf2' } );
       edges.push( {from: rootId, to: v} );
     });
   }
