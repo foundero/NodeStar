@@ -100,12 +100,18 @@ class App extends Component {
           <div className="content">
             <Switch>
             <Route path="/summary" component={SummaryPage}/>
-            <Route path="/validators/:publicKey?/:blah?/:quorumNodeId?"
-                   render={(props) => <ValidatorPage {...props} validators={this.state.validators} onStoreRoutePath={(routeKey, path) => this.storeRoutePath(routeKey, path)} />}
-                   />
+            <Route
+              path="/validators/:publicKey?/:blah?/:quorumNodeId?"
+              render={(props) =>
+                <ValidatorPage {...props}
+                  validators={this.state.validators}
+                  onStoreRoutePath={ (routeKey, path) =>
+                    this.storeRoutePath(routeKey, path)
+                  } />
+              } />
             <Route path="/clusters" component={ClusterPage}/>
             <Route path="/math" component={MathPage}/>
-            <Redirect to="/summary"/>
+            <Redirect to="/validators"/>
             </Switch>
           </div>
         </div>

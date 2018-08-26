@@ -151,13 +151,13 @@ div.card{
 }
 .middle-and-right{
   width:75%;
-  background:green;
+  background:#dbdbdb;
   float:left;
   height:100%;
 }
 .right{
   width:25%;
-  background:green;
+  background:#cedbef;
   float:left;
   height:100%;
 }

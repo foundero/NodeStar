@@ -2,8 +2,25 @@ import React, { Component } from 'react';
 import QuorumViewer from '../components/QuorumViewer.js'
 import validatorHelper from '../ValidatorHelper.js';
 import verified from '../media/images/icon-verified.png';
+import { SegmentedControl } from 'segmented-control'
 
 class ValidatorPage extends Component {
+
+  directToggle(isDirect) {
+
+  }
+  outgoingToggle(isOutgoing) {
+
+  }
+
+  selectDefault() {
+    var validators = this.props.validators;
+    if (!this.selectedValidator() &&  validators.length > 0) {
+      var newPath = '/validators/' + this.props.validators[0].publicKey
+      this.props.onStoreRoutePath('validators', newPath);
+      this.props.history.push(newPath);
+    }
+  }
 
   selectedValidator() {
     var validators = this.props.validators;
@@ -16,7 +33,8 @@ class ValidatorPage extends Component {
   }
 
   selectedQuorumNode() {
-    return validatorHelper.quorumNodeForId(this.selectedValidator(), decodeURIComponent(this.props.match.params.quorumNodeId));
+    var quorumNodeId = decodeURIComponent(this.props.match.params.quorumNodeId);
+    return validatorHelper.quorumNodeForId(this.selectedValidator(), quorumNodeId);
   }
 
   handleClick(i) {
@@ -27,11 +45,12 @@ class ValidatorPage extends Component {
   }
   handleSelectedQuorumNode(id) {
     var newPath = null;
-    if ( id === null || id.length === 0 ) {
+    if ( id === null  ) {
       newPath = '/validators/' + this.props.match.params.publicKey;
     }
     else {
-      newPath = '/validators/' + this.props.match.params.publicKey + '/quorum-node/' + encodeURIComponent(id[0]);
+      var quorumNodeId = encodeURIComponent(id);
+      newPath = '/validators/' + this.props.match.params.publicKey + '/quorum-node/' + quorumNodeId;
     }
     if ( newPath === this.props.location.pathname ) { return; }
     this.props.onStoreRoutePath('validators', newPath);
@@ -41,6 +60,8 @@ class ValidatorPage extends Component {
   render() {
     const selectedValidator = this.selectedValidator();
     const selectedNode = this.selectedQuorumNode();
+    var relatedValidators = [];
+    if (selectedValidator) { relatedValidators = [this.selectedValidator()]; }
     var selectedNodeName = null;
     var selectedNodeId = null;
     var selectedNodeIdString = null;
@@ -120,7 +141,7 @@ class ValidatorPage extends Component {
           <div>
           <h3>Quorum Set</h3>
           <QuorumViewer validators={this.props.validators}
-                        validator={this.selectedValidator()}
+                        validator={selectedValidator}
                         onSelectQuorumNode={(id) => this.handleSelectedQuorumNode(id)}
                         selectedQuorumNode={selectedNodeId} />
           </div>
@@ -136,6 +157,12 @@ class ValidatorPage extends Component {
             {selectedNode !== null &&
               <ul>
                 <li className='bold'>{selectedNodeName}</li>
+                {selectedNode.threshold &&
+                  <li>Threshold: {selectedNode.threshold}</li>
+                }
+                {selectedNode.threshold &&
+                  <li>Children: {selectedNode.validators.length+selectedNode.innerQuorumSets.length}</li>
+                }
                 <li className='small'>{selectedNodeIdString}</li>
               </ul>
             }
@@ -145,19 +172,47 @@ class ValidatorPage extends Component {
           
         <div className="right">
           <h3>Related Validators</h3>
-          <p>Coming Soon...</p>
+          <SegmentedControl
+            name="directToggle"
+            options={[
+              { label: "indirect", value: false },
+              { label: "direct", value: true, default: true}
+            ]}
+            setValue={newValue => this.directToggle(newValue)}
+            style={{ width: '200px', color: '#0099FF', margin: '0px' }}
+          />
+          <SegmentedControl
+            name="outgoingToggle"
+            options={[
+              { label: "incoming", value: false},
+              { label: "outgoing", value: true, default: true }
+            ]}
+            setValue={newValue => this.outgoingToggle(newValue)}
+            style={{ width: '200px', color: '#0099FF', margin: '0px' }}
+          />
+
+          {this.props.validators !== null &&
+          <ul>
+            { relatedValidators.map( (item) =>
+                <li key={item.publicKey}>
+                  {validatorHelper.validatorAndHandleForPublicKey(this.props.validators,
+          item.publicKey).handle}. {item.name ? item.name : "[name]" }
+                </li>
+              )}
+          </ul>
+          }
+
         </div>
       </div>
     );
   }
 
+  componentWillMount() {
+    this.props.onStoreRoutePath('validators', this.props.location.pathname);
+    this.selectDefault();
+  }
   componentDidUpdate() {
-    if (!this.selectedValidator()) {
-      var validators = this.props.validators;
-      if ( validators.length > 0 && this.props.match.params.publicKey == null ) {
-        this.props.history.push('/validators/' + validators[0].publicKey);
-      }
-    }
+    this.selectDefault();
   }
 }
 
