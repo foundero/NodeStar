@@ -63,6 +63,12 @@ header.header {
   vertical-align: bottom;
 }
 
+.verified-icon-list {
+  margin-left: 4px;
+  width:12px;
+  height:12px;
+}
+
 .header .active {
   background-color: #0099FF;
 }
@@ -170,3 +176,6 @@ li.small {
   font-size: 0.6em;
 }
 
+.content .segmented-control > label {
+  line-height: 1.7em;
+}

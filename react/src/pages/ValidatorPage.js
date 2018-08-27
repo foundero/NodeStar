@@ -3,14 +3,29 @@ import QuorumViewer from '../components/QuorumViewer.js'
 import validatorHelper from '../ValidatorHelper.js';
 import verified from '../media/images/icon-verified.png';
 import { SegmentedControl } from 'segmented-control'
+import update from 'immutability-helper';
 
 class ValidatorPage extends Component {
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      directToggle: true,
+      outgoingToggle: true
+    };
+  }
   directToggle(isDirect) {
-
+    this.setState(
+      update(this.state, {
+        directToggle: {$set: isDirect}
+      })
+    );
   }
   outgoingToggle(isOutgoing) {
-
+    this.setState(
+      update(this.state, {
+        outgoingToggle: {$set: isOutgoing}
+      })
+    );
   }
 
   selectDefault() {
@@ -37,8 +52,8 @@ class ValidatorPage extends Component {
     return validatorHelper.quorumNodeForId(this.selectedValidator(), quorumNodeId);
   }
 
-  handleClick(i) {
-    var newPath = '/validators/' + this.props.validators[i].publicKey
+  handleValidatorClick(validatorId) {
+    var newPath = '/validators/' + validatorId
     if ( newPath === this.props.location.pathname ) { return; }
     this.props.onStoreRoutePath('validators', newPath);
     this.props.history.push(newPath);
@@ -61,111 +76,59 @@ class ValidatorPage extends Component {
     const selectedValidator = this.selectedValidator();
     const selectedNode = this.selectedQuorumNode();
     var relatedValidators = [];
-    if (selectedValidator) { relatedValidators = [this.selectedValidator()]; }
-    var selectedNodeName = null;
-    var selectedNodeId = null;
-    var selectedNodeIdString = null;
-    if ( selectedNode ) {
-      selectedNodeId = selectedNode.hashKey;
-      selectedNodeName = "Inner Quorum Set";
-      selectedNodeIdString = selectedNode.hashKey ?
-        "qsh: " + selectedNode.hashKey :
-        "pk: " + selectedNode.publicKey;
-      if ( selectedNode.publicKey ) {
-        selectedNodeId = selectedNode.publicKey;
-        const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(this.props.validators,
-          selectedNode.publicKey);
-        if ( validator ) {
-          selectedNodeName = handle + ". " + (validator.name ? validator.name : "[name]");
+    if (selectedValidator) {
+      var set = null;
+      if (this.state.directToggle) {
+        if (this.state.outgoingToggle) {
+          set = selectedValidator.directValidatorSet;
         }
         else {
-          selectedNodeName = "?. [uknown validator]";
+          set = selectedValidator.directIncomingValidatorSet;
         }
       }
-      else if ( selectedNode.hashKey === selectedValidator.quorumSet.hashKey ) {
-        selectedNodeName = "Root Quorum Set";
+      else {
+        if (this.state.outgoingToggle) {
+          set = selectedValidator.indirectValidatorSet;
+        }
+        else {
+          set = selectedValidator.indirectIncomingValidatorSet;
+        }
       }
-      
+      relatedValidators = validatorHelper.sortSet(this.props.validators, set);
     }
-    
+
     return (
       <div className="page">
         <div className="left">
           <h3>Validators</h3>
-          {this.props.validators !== null &&
           <ul>
-            {
-              this.props.validators.map( (item,index) =>
-                <li key={item.publicKey}
-                    onClick={() => this.handleClick(index)}
-                    className={item === selectedValidator ? 'active' : 'not-active'}
-                  >
-                  {index+1}. {item.name ? item.name : "[name]" }
-                  </li>
-              )}
+            { this.props.validators.map( (validator) =>
+              <ValidatorRow
+                key={validator.publicKey}
+                validators={this.props.validators}
+                validatorId={validator.publicKey}
+                selectedValidator={selectedValidator}
+                onClick={() => this.handleValidatorClick(validator.publicKey)}/>
+            )}
           </ul>
-          }
         </div>
 
         <div className="middle">
           <div className="card">
           <h2>Validator</h2>
-            { selectedValidator !== null &&
-              <ul>
-                <li className='bold'>
-                  {validatorHelper.validatorAndHandleForPublicKey(this.props.validators, 
-                    selectedValidator.publicKey).handle}.
-                  {' '}
-                  {selectedValidator.name ? selectedValidator.name : "[name]"}
-                  {selectedValidator.verified ?
-                    <img src={verified} className="verified-icon" alt="Verified Icon" />
-                    :
-                    ''
-                  }
-                </li>
-                <li>
-                  {selectedValidator.city ? selectedValidator.city : "[city]"}
-                  {", "}
-                  {selectedValidator.country ? selectedValidator.country : "[country]"}</li>
-                <li>{selectedValidator.latitude}, {selectedValidator.longitude}</li>
-                <li>
-                  {selectedValidator.ip}
-                  {selectedValidator.host ? ", " + selectedValidator.host : ""}
-                </li>
-                <li className='small'>{selectedValidator.version}</li>
-                <li className='small'>PK: {selectedValidator.publicKey}</li>
-              </ul>
-            }
+            <ValidatorDetail validators={this.props.validators} validator={selectedValidator} />
           </div>
 
           <div>
-          <h3>Quorum Set</h3>
-          <QuorumViewer validators={this.props.validators}
-                        validator={selectedValidator}
-                        onSelectQuorumNode={(id) => this.handleSelectedQuorumNode(id)}
-                        selectedQuorumNode={selectedNodeId} />
+            <h3>Quorum Set</h3>
+            <QuorumViewer validators={this.props.validators}
+                          validator={selectedValidator}
+                          onSelectQuorumNode={(id) => this.handleSelectedQuorumNode(id)}
+                          selectedQuorumNode={selectedNode} />
           </div>
 
           <div className="card">
-            <h3>Quorum Node Impact</h3>
-            {selectedNode === null &&
-              <ul>
-                <li className='bold'>None selected...</li>
-                <li className='small'>{selectedNodeIdString}</li>
-              </ul>
-            }
-            {selectedNode !== null &&
-              <ul>
-                <li className='bold'>{selectedNodeName}</li>
-                {selectedNode.threshold &&
-                  <li>Threshold: {selectedNode.threshold}</li>
-                }
-                {selectedNode.threshold &&
-                  <li>Children: {selectedNode.validators.length+selectedNode.innerQuorumSets.length}</li>
-                }
-                <li className='small'>{selectedNodeIdString}</li>
-              </ul>
-            }
+            <QuorumNode validators={this.props.validators} validator={selectedValidator} node={selectedNode}/>
             
           </div>
         </div>
@@ -191,16 +154,16 @@ class ValidatorPage extends Component {
             style={{ width: '200px', color: '#0099FF', margin: '0px' }}
           />
 
-          {this.props.validators !== null &&
           <ul>
-            { relatedValidators.map( (item) =>
-                <li key={item.publicKey}>
-                  {validatorHelper.validatorAndHandleForPublicKey(this.props.validators,
-          item.publicKey).handle}. {item.name ? item.name : "[name]" }
-                </li>
-              )}
+            { relatedValidators.map( (validatorId) =>
+              <ValidatorRow
+                key={validatorId}
+                validators={this.props.validators}
+                validatorId={validatorId}
+                selectedValidator={selectedValidator}
+                onClick={() => this.handleValidatorClick(validatorId)}/>
+            )}
           </ul>
-          }
 
         </div>
       </div>
@@ -214,6 +177,115 @@ class ValidatorPage extends Component {
   componentDidUpdate() {
     this.selectDefault();
   }
+}
+
+
+
+function ValidatorRow(props) {
+  const validators = props.validators;
+  const validatorId = props.validatorId;
+  const selectedValidator = props.selectedValidator
+  const onClick = props.onClick;
+
+  const selectedValidatorId = selectedValidator ? selectedValidator.publicKey : null;
+  const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(validators, validatorId);
+  return (
+    <li className={selectedValidatorId === validatorId ? 'active' : 'not-active'}
+        onClick={onClick}
+    >
+      {handle}. {validator && validator.name ? validator.name : '[name]'}
+      {validator && validator.verified ?
+        <img src={verified} className="verified-icon-list" alt="Verified Icon" />
+          :
+        ''
+      }
+    </li>
+  );
+}
+
+function ValidatorDetail(props) {
+  const validators = props.validators;
+  const validator = props.validator;
+
+  if (!validator) {
+    return (
+      <ul>
+        <li className='bold'>...</li>
+      </ul>
+    );
+  }
+
+  const {handle} = validatorHelper.validatorAndHandleForPublicKey(validators, validator.publicKey);
+  return (
+    <ul>
+      <li className='bold'>
+        {handle}. {validator.name ? validator.name : "[name]"}
+        {validator.verified ? <img src={verified} className="verified-icon" alt="Verified Icon" /> : '' }
+      </li>
+      <li>
+        {validator.city ? validator.city : "[city]"}
+        {", "}
+        {validator.country ? validator.country : "[country]"}</li>
+      <li>
+        {validator.latitude}, {validator.longitude}
+      </li>
+      <li>
+        {validator.ip}
+        {validator.host ? ", " + validator.host : ""}
+      </li>
+      <li className='small'>{validator.version}</li>
+      <li className='small'>PK: {validator.publicKey}</li>
+    </ul>
+  );
+}
+
+function QuorumNode(props) {
+  const validators = props.validators;
+  const validator = props.validator;
+  const node = props.node;
+
+  if (!node) {
+    return (
+      <ul>
+        <li className='bold'>None selected...</li>
+      </ul>
+    );
+  }
+
+  var name = '';
+  var idString = '';
+  if (node.publicKey) {
+      idString = "pk: " + node.publicKey
+      const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(validators, node.publicKey);
+      if (validator) {
+        name = handle + ". " + (validator.name ? validator.name : "[name]");
+      }
+      else {
+        name = "?. [Uknown Validator]";
+      }
+  }
+  else if ( node.hashKey === validator.quorumSet.hashKey ) {
+    idString = "qsh: " + node.hashKey;
+    name = "Root Quorum Set";
+  }
+  else {
+    idString = "qsh: " + node.hashKey;
+    name = "Inner Quorum Set";
+  }
+
+  return (
+    <ul>
+      <li className='bold'>
+        {name}
+      </li>
+      {node.threshold &&
+        <li>{node.threshold}/{node.validators.length+node.innerQuorumSets.length}</li>
+      }
+      <li className='small'>
+        {idString}
+      </li>
+    </ul>
+  );
 }
 
 export default ValidatorPage;
