@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import QuorumViewer from '../components/QuorumViewer.js'
+import QuorumViewer from '../components/QuorumViewer.js';
+import ValidatorRow from '../components/ValidatorRow.js';
+import ValidatorDetail from '../components/ValidatorDetail.js';
+import QuorumNodeDetail from '../components/QuorumNodeDetail.js';
 import validatorHelper from '../ValidatorHelper.js';
-import verified from '../media/images/icon-verified.png';
-import { SegmentedControl } from 'segmented-control'
+import { SegmentedControl } from 'segmented-control';
 import update from 'immutability-helper';
+
 
 class ValidatorPage extends Component {
   constructor(props) {
@@ -128,7 +131,7 @@ class ValidatorPage extends Component {
           </div>
 
           <div className="card">
-            <QuorumNode validators={this.props.validators} validator={selectedValidator} node={selectedNode}/>
+            <QuorumNodeDetail validators={this.props.validators} validator={selectedValidator} node={selectedNode}/>
             
           </div>
         </div>
@@ -177,115 +180,6 @@ class ValidatorPage extends Component {
   componentDidUpdate() {
     this.selectDefault();
   }
-}
-
-
-
-function ValidatorRow(props) {
-  const validators = props.validators;
-  const validatorId = props.validatorId;
-  const selectedValidator = props.selectedValidator
-  const onClick = props.onClick;
-
-  const selectedValidatorId = selectedValidator ? selectedValidator.publicKey : null;
-  const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(validators, validatorId);
-  return (
-    <li className={selectedValidatorId === validatorId ? 'active' : 'not-active'}
-        onClick={onClick}
-    >
-      {handle}. {validator && validator.name ? validator.name : '[name]'}
-      {validator && validator.verified ?
-        <img src={verified} className="verified-icon-list" alt="Verified Icon" />
-          :
-        ''
-      }
-    </li>
-  );
-}
-
-function ValidatorDetail(props) {
-  const validators = props.validators;
-  const validator = props.validator;
-
-  if (!validator) {
-    return (
-      <ul>
-        <li className='bold'>...</li>
-      </ul>
-    );
-  }
-
-  const {handle} = validatorHelper.validatorAndHandleForPublicKey(validators, validator.publicKey);
-  return (
-    <ul>
-      <li className='bold'>
-        {handle}. {validator.name ? validator.name : "[name]"}
-        {validator.verified ? <img src={verified} className="verified-icon" alt="Verified Icon" /> : '' }
-      </li>
-      <li>
-        {validator.city ? validator.city : "[city]"}
-        {", "}
-        {validator.country ? validator.country : "[country]"}</li>
-      <li>
-        {validator.latitude}, {validator.longitude}
-      </li>
-      <li>
-        {validator.ip}
-        {validator.host ? ", " + validator.host : ""}
-      </li>
-      <li className='small'>{validator.version}</li>
-      <li className='small'>PK: {validator.publicKey}</li>
-    </ul>
-  );
-}
-
-function QuorumNode(props) {
-  const validators = props.validators;
-  const validator = props.validator;
-  const node = props.node;
-
-  if (!node) {
-    return (
-      <ul>
-        <li className='bold'>None selected...</li>
-      </ul>
-    );
-  }
-
-  var name = '';
-  var idString = '';
-  if (node.publicKey) {
-      idString = "pk: " + node.publicKey
-      const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(validators, node.publicKey);
-      if (validator) {
-        name = handle + ". " + (validator.name ? validator.name : "[name]");
-      }
-      else {
-        name = "?. [Uknown Validator]";
-      }
-  }
-  else if ( node.hashKey === validator.quorumSet.hashKey ) {
-    idString = "qsh: " + node.hashKey;
-    name = "Root Quorum Set";
-  }
-  else {
-    idString = "qsh: " + node.hashKey;
-    name = "Inner Quorum Set";
-  }
-
-  return (
-    <ul>
-      <li className='bold'>
-        {name}
-      </li>
-      {node.threshold &&
-        <li>{node.threshold}/{node.validators.length+node.innerQuorumSets.length}</li>
-      }
-      <li className='small'>
-        {idString}
-      </li>
-    </ul>
-  );
 }
 
 export default ValidatorPage;

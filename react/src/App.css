@@ -179,3 +179,16 @@ li.small {
 .content .segmented-control > label {
   line-height: 1.7em;
 }
+
+.self-clear:after {
+  content: "";
+  clear: both;
+  display: table;
+}
+div.half-width {
+  float: left;
+  width: 50%;
+}
+.rv-xy-plot {
+  margin: auto;
+}

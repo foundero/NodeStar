@@ -109,9 +109,9 @@ class App extends Component {
             <h1 className="title">NodeStar</h1>
             <h2 className="subtitle">A Stellar Quorum Explorer</h2>
             <ul className="header">
-              <li><NavLink to="/summary">Summary</NavLink></li>
               <li><NavLink to={this.state.routes.validators}>Validators</NavLink></li>
               <li><NavLink to="/clusters">Clusters</NavLink></li>
+              <li><NavLink to="/summary">Summary</NavLink></li>
               <li><NavLink to="/math">Math</NavLink></li>
             </ul>
           </div>
@@ -121,7 +121,15 @@ class App extends Component {
 
           <div className="content">
             <Switch>
-            <Route path="/summary" component={SummaryPage}/>
+            <Route
+              path="/summary"
+              render={(props) =>
+                <SummaryPage {...props}
+                  validators={this.state.validators}
+                  onStoreRoutePath={ (routeKey, path) =>
+                    this.storeRoutePath(routeKey, path)
+                  } />
+              } />
             <Route
               path="/validators/:publicKey?/:blah?/:quorumNodeId?"
               render={(props) =>

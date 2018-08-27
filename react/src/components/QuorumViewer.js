@@ -20,7 +20,7 @@ var options = {
         border: '#888888',
         highlight: {
           border: '#000000',
-          background: '#679efc'
+          background: '#0099FF'
         }
       }
     },
@@ -33,6 +33,14 @@ var options = {
     height : "300px"
 };
 
+var style = {
+  width: '494px',
+  height: '300px',
+  border: '1px solid #bab8b8',
+  'borderRadius': '10px',
+  'backgroundColor': 'white',
+  'marginLeft': '2px'
+}
 
 
 
@@ -110,14 +118,8 @@ class QuorumViewer extends Component {
                  events={{ select: (event) => {
                    this.selectQuorumNode(event)
                  }}}
-                 style={{
-                   width: '494px',
-                   height: '300px',
-                   border: '1px solid #bab8b8',
-                   'borderRadius': '10px',
-                   'backgroundColor': 'white',
-                   'marginLeft': '2px'
-                 }} />
+                 style={style}
+          />
     );
   }
   
