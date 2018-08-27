@@ -1,10 +1,12 @@
 import React from 'react';
-import validatorHelper from '../ValidatorHelper.js';
+import validatorHelper from '../helpers/ValidatorHelper.js';
 import verified from '../media/images/icon-verified.png';
 
 function ValidatorDetail(props) {
-  const validators = props.validators;
-  const validator = props.validator;
+  const {
+    validators,
+    validator
+  } = props;
 
   if (!validator) {
     return (

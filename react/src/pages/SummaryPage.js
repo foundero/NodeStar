@@ -51,7 +51,10 @@ class SummaryPage extends Component {
 }
 
 function SummaryData(props) {
-  var validators = props.validators;
+  const {
+    validators
+  } = props;
+
   if (!validators || validators.length===0) { return '...'; }
   return (
     <ul>
@@ -63,13 +66,15 @@ function SummaryData(props) {
 }
 
 function Graph(props) {
-  const validators = props.validators;
+  const {
+    validators
+  } = props;
   if (!validators || validators.length===0) { return '...'; }
 
-  var data = {}
-  for (var i=0; i<validators.length; i++) {
-    var v = validators[i];
-    var propertyValue = v[props.propertyKey].size;
+  let data = {}
+  for (let i=0; i<validators.length; i++) {
+    const v = validators[i];
+    const propertyValue = v[props.propertyKey].size;
     if ( propertyValue in data ) {
       data[propertyValue] = data[propertyValue] + 1;
     }
@@ -78,13 +83,12 @@ function Graph(props) {
     }
   }
 
-  var d = [];
-  for (var graphXProperty in data) {
+  let d = [];
+  for (let graphXProperty in data) {
     // skip loop if the property is from prototype
     if (!data.hasOwnProperty(graphXProperty)) continue;
-
-    var graphX = parseInt(graphXProperty,10);
-    var graphY = data[graphXProperty];
+    const graphX = parseInt(graphXProperty,10);
+    const graphY = data[graphXProperty];
     d.push({
       x0:graphX-0.5,
       x:graphX+0.5,

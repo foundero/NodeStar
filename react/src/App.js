@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './media/images/icon-large.png';
 import githubLogo from './media/images/GitHub-Mark-Light-120px-plus.png';
 import './App.css';
-import validatorHelper from './ValidatorHelper.js';
+import validatorHelper from './helpers/ValidatorHelper.js';
 import update from 'immutability-helper';
 
 import {
@@ -37,7 +37,7 @@ class App extends Component {
     })
     .then( (json) => {
       console.log('parsed json');
-      var validators = this.computeMetricsAndOrder(json);
+      let validators = this.computeMetricsAndOrder(json);
       this.setState(update(this.state, {
         validators: {$set: validators}
       }));
@@ -45,21 +45,21 @@ class App extends Component {
   }
 
   computeMetricsAndOrder(validators) {
-    for (var i=0; i<validators.length; i++) {
-      var v = validators[i];
+    for (let i=0; i<validators.length; i++) {
+      const v = validators[i];
       v.directValidatorSet = validatorHelper.directValidatorSet(v);
     }
-    for (var j=0; j<validators.length; j++) {
-      var v2 = validators[j];
-      v2.indirectValidatorSet = validatorHelper.indirectValidatorSet(validators, v2);
+    for (let i=0; i<validators.length; i++) {
+      const v = validators[i];
+      v.indirectValidatorSet = validatorHelper.indirectValidatorSet(validators, v);
     }
-    for (var k=0; k<validators.length; k++) {
-      var v3 = validators[k];
-      v3.directIncomingValidatorSet = validatorHelper.directIncomingValidatorSet(validators, v3);
+    for (let i=0; i<validators.length; i++) {
+      const v = validators[i];
+      v.directIncomingValidatorSet = validatorHelper.directIncomingValidatorSet(validators, v);
     }
-    for (var l=0; l<validators.length; l++) {
-      var v4 = validators[l];
-      v4.indirectIncomingValidatorSet = validatorHelper.indirectIncomingValidatorSet(validators, v4);
+    for (let i=0; i<validators.length; i++) {
+      const v = validators[i];
+      v.indirectIncomingValidatorSet = validatorHelper.indirectIncomingValidatorSet(validators, v);
     }
 
     return validators.sort(validatorHelper.compareValidators);
@@ -73,7 +73,7 @@ class App extends Component {
   storeRoutePath(routeKey, path) {
     if ( path === this.state.routes[routeKey] ) { return; }
           
-    var routes = this.state.routes;
+    let routes = this.state.routes;
     routes[routeKey] = path;
     this.setState(update(this.state, {
       routes: {routeKey: {$set: path}}

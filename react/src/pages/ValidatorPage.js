@@ -3,7 +3,7 @@ import QuorumViewer from '../components/QuorumViewer.js';
 import ValidatorRow from '../components/ValidatorRow.js';
 import ValidatorDetail from '../components/ValidatorDetail.js';
 import QuorumNodeDetail from '../components/QuorumNodeDetail.js';
-import validatorHelper from '../ValidatorHelper.js';
+import validatorHelper from '../helpers/ValidatorHelper.js';
 import { SegmentedControl } from 'segmented-control';
 import update from 'immutability-helper';
 
@@ -32,17 +32,17 @@ class ValidatorPage extends Component {
   }
 
   selectDefault() {
-    var validators = this.props.validators;
+    const validators = this.props.validators;
     if (!this.selectedValidator() &&  validators.length > 0) {
-      var newPath = '/validators/' + this.props.validators[0].publicKey
+      const newPath = '/validators/' + this.props.validators[0].publicKey
       this.props.onStoreRoutePath('validators', newPath);
       this.props.history.push(newPath);
     }
   }
 
   selectedValidator() {
-    var validators = this.props.validators;
-    for ( var i=0; i<validators.length; i++ ) {
+    const validators = this.props.validators;
+    for ( let i=0; i<validators.length; i++ ) {
       if ( validators[i].publicKey === this.props.match.params.publicKey ) {
         return validators[i];
       }
@@ -51,23 +51,23 @@ class ValidatorPage extends Component {
   }
 
   selectedQuorumNode() {
-    var quorumNodeId = decodeURIComponent(this.props.match.params.quorumNodeId);
+    const quorumNodeId = decodeURIComponent(this.props.match.params.quorumNodeId);
     return validatorHelper.quorumNodeForId(this.selectedValidator(), quorumNodeId);
   }
 
   handleValidatorClick(validatorId) {
-    var newPath = '/validators/' + validatorId
+    const newPath = '/validators/' + validatorId
     if ( newPath === this.props.location.pathname ) { return; }
     this.props.onStoreRoutePath('validators', newPath);
     this.props.history.push(newPath);
   }
   handleSelectedQuorumNode(id) {
-    var newPath = null;
+    let newPath = null;
     if ( id === null  ) {
       newPath = '/validators/' + this.props.match.params.publicKey;
     }
     else {
-      var quorumNodeId = encodeURIComponent(id);
+      const quorumNodeId = encodeURIComponent(id);
       newPath = '/validators/' + this.props.match.params.publicKey + '/quorum-node/' + quorumNodeId;
     }
     if ( newPath === this.props.location.pathname ) { return; }
@@ -78,9 +78,9 @@ class ValidatorPage extends Component {
   render() {
     const selectedValidator = this.selectedValidator();
     const selectedNode = this.selectedQuorumNode();
-    var relatedValidators = [];
+    let relatedValidators = [];
     if (selectedValidator) {
-      var set = null;
+      let set = null;
       if (this.state.directToggle) {
         if (this.state.outgoingToggle) {
           set = selectedValidator.directValidatorSet;

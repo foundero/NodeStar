@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Graph from 'react-graph-vis';
-import validatorHelper from '../ValidatorHelper.js';
+import validatorHelper from '../helpers/ValidatorHelper.js';
 
-var options = {
+const options = {
   physics: { enabled: false },
     layout: {
         hierarchical: {
@@ -33,7 +33,7 @@ var options = {
     height : "300px"
 };
 
-var style = {
+const style = {
   width: '494px',
   height: '300px',
   border: '1px solid #bab8b8',
@@ -47,7 +47,7 @@ var style = {
 class QuorumViewer extends Component {
 
   selectQuorumNode(event) {
-      var { nodes } = event;
+      const { nodes } = event;
       if ( !nodes || nodes.length === 0 ) {
         this.props.onSelectQuorumNode(null);
       }
@@ -58,12 +58,14 @@ class QuorumViewer extends Component {
   }
 
   quorumGraph(validators, validator) {
+    // TODO: this doesn't recurse -- so if we have depth>2 we need to refactor this.
+    // but this would be annoying because we handle root specially
     if (validator == null) {
       return {nodes: [], edges: []};
     }
-    var nodes = [];
-    var edges = [];
-    var quorumSet = validator.quorumSet;
+    let nodes = [];
+    let edges = [];
+    const quorumSet = validator.quorumSet;
     if (quorumSet) {
       const children = quorumSet.validators.length + quorumSet.innerQuorumSets.length;
       const rootId = quorumSet.hashKey
@@ -71,28 +73,28 @@ class QuorumViewer extends Component {
         "\n" + quorumSet.threshold + "/" + children;
       nodes.push( {id: rootId+rootId, label: rootLabel} );
 
-      for (var i=0; i<quorumSet.validators.length; i++) {
+      for (let i=0; i<quorumSet.validators.length; i++) {
         if (i > quorumSet.validators.length/2) { continue; }
         const v = quorumSet.validators[i];
         const label = validatorHelper.validatorAndHandleForPublicKey(validators, v).handle;
         nodes.push( {id: rootId+v, label: label } );
         edges.push( {from: rootId+rootId, to:rootId+v} );
       }
-      for (var j=0; j<quorumSet.innerQuorumSets.length; j++) {
+      for (let j=0; j<quorumSet.innerQuorumSets.length; j++) {
         const innerQS = quorumSet.innerQuorumSets[j];
         const innerQSId = innerQS.hashKey;
         const label = innerQS.threshold + "/" + innerQS.validators.length;
         nodes.push( {id: rootId+innerQSId, label: label} );
         edges.push( {from: rootId+rootId, to: rootId+innerQSId} );
         
-        for (var k=0; k<innerQS.validators.length; k++) {
+        for (let k=0; k<innerQS.validators.length; k++) {
           const innerV = innerQS.validators[k];
           const label = validatorHelper.validatorAndHandleForPublicKey(validators, innerV).handle;
           nodes.push( {id: rootId+innerV, label: label} );
           edges.push( {from: rootId+innerQSId, to: rootId+innerV} );
         }
       }
-      for (var l=0; l<quorumSet.validators.length; l++) {
+      for (let l=0; l<quorumSet.validators.length; l++) {
         if (l <= quorumSet.validators.length/2) { continue; }
         const v = quorumSet.validators[l];
         const label = validatorHelper.validatorAndHandleForPublicKey(validators, v).handle;
@@ -109,7 +111,7 @@ class QuorumViewer extends Component {
   
   render() {
     console.log('render quorum graph');
-    var graph = this.quorumGraph(this.props.validators, this.props.validator)
+    const graph = this.quorumGraph(this.props.validators, this.props.validator)
     return (
         
           <Graph graph={graph}

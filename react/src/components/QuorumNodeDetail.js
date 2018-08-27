@@ -1,5 +1,5 @@
 import React from 'react';
-import validatorHelper from '../ValidatorHelper.js';
+import validatorHelper from '../helpers/ValidatorHelper.js';
 import {
   XYPlot,
   XAxis,
@@ -10,9 +10,11 @@ import {
 } from 'react-vis';
 
 function QuorumNodeDetail(props) {
-  const validators = props.validators;
-  const validator = props.validator;
-  const node = props.node;
+  const {
+    validators,
+    validator,
+    node
+  } = props;
 
   if (!node) {
     return (
@@ -45,7 +47,7 @@ function QuorumNodeDetail(props) {
 
   const BarSeries = VerticalBarSeries;
 
-  var impact = impactOfNode(node, validator.quorumSet);
+  let impact = impactOfNode(node, validator.quorumSet);
   impact.falsesGivenNodeTrue = impact.combinations - impact.truthsGivenNodeTrue;
   impact.falsesGivenNodeFalse = impact.combinations - impact.truthsGivenNodeFalse;
   impact.effected = impact.truthsGivenNodeTrue + impact.falsesGivenNodeFalse - impact.combinations;
@@ -163,13 +165,13 @@ function impactOfNode(subjectNode, onNode) {
   // Combinations
   metrics.combinations = Math.pow(2,validatorNodes.length);
   for (let i=0; i<quorumSetNodes.length; i++) {
-    var qsNode = quorumSetNodes[i];
+    const qsNode = quorumSetNodes[i];
     metrics.combinations *= impactOfNode(subjectNode, qsNode).combinations
   }
         
   // For all combinations of qs nodes t/f -- represented by bits in i
   for (let i = 0; i < Math.pow(2,quorumSetNodes.length); i++) {
-    let trueQSNodes = bitcount(i);
+    const trueQSNodes = bitcount(i);
     let neededValidators = onNode.threshold - trueQSNodes - includesSubjectValidator;
     if ( neededValidators < 0 ) {
         neededValidators = 0;
@@ -194,10 +196,10 @@ function impactOfNode(subjectNode, onNode) {
 
       // Now multiply out the qsNodes
       for ( let qsIndex = 0; qsIndex<quorumSetNodes.length; qsIndex++ ) {
-        let qsNode = quorumSetNodes[qsIndex];
-        let innerMetrics = impactOfNode(subjectNode, qsNode);
+        const qsNode = quorumSetNodes[qsIndex];
+        const innerMetrics = impactOfNode(subjectNode, qsNode);
 
-        let truthOfQSNode = i & (1<<qsIndex) > 0; //use qsIndex within i
+        const truthOfQSNode = i & (1<<qsIndex) > 0; //use qsIndex within i
         if ( truthOfQSNode ) {
           // qs node in question is true
           truthsGivenNodeTrue *= innerMetrics.truthsGivenNodeTrue;

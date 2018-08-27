@@ -1,12 +1,14 @@
 import React from 'react';
-import validatorHelper from '../ValidatorHelper.js';
+import validatorHelper from '../helpers/ValidatorHelper.js';
 import verified from '../media/images/icon-verified.png';
 
 function ValidatorRow(props) {
-  const validators = props.validators;
-  const validatorId = props.validatorId;
-  const selectedValidator = props.selectedValidator
-  const onClick = props.onClick;
+  const {
+    validators,
+    validatorId,
+    selectedValidator,
+    onClick
+  } = props;
 
   const selectedValidatorId = selectedValidator ? selectedValidator.publicKey : null;
   const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(validators, validatorId);
