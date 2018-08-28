@@ -33,9 +33,9 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 * incorporate [Stellar White Paper concepts](https://www.stellar.org/papers/stellar-consensus-protocol.pdf) like Dispensable Sets
 
 <p float="left">
-  <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Quorum Set Depth 3" />
-  <img src="iOS/screen-shots/7-quorum-metrics.png" width="200" alt="NodeStar - Quorum Metrics" />
-  <img src="iOS/screen-shots/8-validator-clusters.png" width="200" alt="NodeStar - Validator Clusters" />
+  <img src="iOS/screen-shots/3-quorum-set-depth-3.png" width="200" alt="NodeStar - Stellar Quorum Set Depth 3" />
+  <img src="iOS/screen-shots/7-quorum-metrics.png" width="200" alt="NodeStar - Stellar Quorum Metrics" />
+  <img src="iOS/screen-shots/8-validator-clusters.png" width="200" alt="NodeStar - Stellar Validator Clusters" />
 </p>
 <p float="left">
   <img src="iOS/screen-shots/4-summary-1.png" width="200" alt="NodeStar - Node Count Histogram" />
@@ -59,6 +59,11 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 
 * hosted on github pages
 * not as full featured (or pretty) as iOS
+
+<p float="left">
+  <img src="react/screen-shots/1-validators.png" width="300" alt="NodeStar - Stellar Validators" />
+  <img src="react/screen-shots/2-clusters.png" width="300" alt="NodeStar - Stellar Clusters" />
+</p>
 
 <hr/>
 
