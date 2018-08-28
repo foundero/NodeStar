@@ -60,6 +60,8 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 * hosted on github pages
 * not as full featured (or pretty) as iOS
 
+<hr/>
+
 
 ## Math
 
