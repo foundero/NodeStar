@@ -1,5 +1,5 @@
 import React from 'react';
-import validatorHelper from '../helpers/ValidatorHelper.js';
+import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import {
   XYPlot,
   XAxis,
@@ -10,6 +10,7 @@ import {
 } from 'react-vis';
 
 function QuorumNodeDetail(props) {
+  console.log('render QuorumNodeDetail');
   const {
     validators,
     validator,
@@ -28,7 +29,7 @@ function QuorumNodeDetail(props) {
   let idString = '';
   if (node.publicKey) {
       idString = "pk: " + node.publicKey
-      const {validator, handle} = validatorHelper.validatorAndHandleForPublicKey(validators, node.publicKey);
+      const {validator, handle} = validatorHelpers.validatorAndHandleForPublicKey(validators, node.publicKey);
       if (validator) {
         name = handle + ". " + (validator.name ? validator.name : "[name]");
       }
@@ -103,9 +104,9 @@ function QuorumNodeDetail(props) {
 
       <ul>
         <li className='bold'>Effected: {impact.effected}</li>
-        <li className='bold'>Affect: {impact.affect}</li>
-        <li className='bold'>Require: {impact.require}</li>
-        <li className='bold'>Influence: {impact.influence}</li>
+        <li className='bold'>Affect: {impact.affect.toFixed(0) + '%'}</li>
+        <li className='bold'>Require: {impact.require.toFixed(0) + '%'}</li>
+        <li className='bold'>Influence: {impact.influence.toFixed(0) + '%'}</li>
         <li>Combinations: {impact.combinations}</li>
         <li>True | Node True: {impact.truthsGivenNodeTrue}</li>
         <li>True | Node False: {impact.truthsGivenNodeFalse}</li>

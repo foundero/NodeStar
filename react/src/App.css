@@ -12,7 +12,7 @@ li {
 
 header.header {
   background-color: #222;
-  padding-top: 20px;
+  padding-top: 10px;
   width:1000px;
   margin-left: auto;
   margin-right: auto;
@@ -23,6 +23,7 @@ header.header {
   text-align: right;
   float: right;
   margin-right: 10px;
+  margin-top: 20px;
   width: 200px;
 }
 .header-right li {
@@ -71,21 +72,27 @@ header.header {
 
 .header .active {
   background-color: #0099FF;
+  color: #FFF;
 }
 
 ul.header {
-  background-color: #222;
-  padding: 0;
+  padding: 0px;
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 ul.header li {
   display: inline;
-  margin: 0;
+  margin: 0px;
 }
 ul.header li a {
   font-weight: normal;
   text-decoration: none;
-  padding: 20px;
+  padding: 12px;
   display: inline-block;
+  background-color: #f7f7f7;
+  color: #333;
+  width: 90px;
+  margin: 1px;
 }
 
 .App {
@@ -97,14 +104,17 @@ ul.header li a {
 }
 
 .title {
+  margin-top: 0px;
+  margin-bottom: 6px;
+  line-height: 10px;
   font-size: 1.3em;
   font-weight: bold;
-  line-height: 4px;
 }
 .subtitle {
+  margin-top: 0px;
+  margin-bottom: 3px;
   font-size: 1.0em;
   font-weight: normal;
-  margin-bottom: 8px;
 }
 
 .content {
@@ -129,8 +139,16 @@ ul.header li a {
 .content li {
   text-align:left;
 }
-.content li.active {
-  color: #0099FF;
+.content .active {
+  color: #000;
+  font-weight: bold;
+}
+.content a {
+  font-size: 0.9em;
+  text-decoration: none;
+  color: #0000DD;
+}
+.content a:visited {
 }
 
 
@@ -145,25 +163,25 @@ div.card{
 
 .left{
   width:25%;
-  background:#cedbef;
+  background:#e3edfc;
   float:left;
   height:100%;
 }
 .middle{
   width:50%;
-  background:#dbdbdb;
+  background:#FFF;
   float:left;
   height:100%;
 }
 .middle-and-right{
   width:75%;
-  background:#dbdbdb;
+  background:#FFF;
   float:left;
   height:100%;
 }
 .right{
   width:25%;
-  background:#cedbef;
+  background:#e3edfc;
   float:left;
   height:100%;
 }

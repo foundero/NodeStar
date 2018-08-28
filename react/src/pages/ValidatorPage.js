@@ -1,19 +1,18 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import QuorumViewer from '../components/QuorumViewer.js';
 import ValidatorRow from '../components/ValidatorRow.js';
 import ValidatorDetail from '../components/ValidatorDetail.js';
 import QuorumNodeDetail from '../components/QuorumNodeDetail.js';
 import RelatedValidators from '../components/RelatedValidators.js';
-import validatorHelper from '../helpers/ValidatorHelper.js';
+import validatorHelpers from '../helpers/ValidatorHelpers.js';
 
 
-class ValidatorPage extends Component {
+class ValidatorPage extends PureComponent {
 
   selectDefault() {
     const validators = this.props.validators;
-    if (!this.selectedValidator() &&  validators.length > 0) {
-      const newPath = '/validators/' + this.props.validators[0].publicKey
-      this.props.onStoreRoutePath('validators', newPath);
+    if (!this.props.match.params.publicKey && !this.selectedValidator() &&  validators.length > 0) {
+      const newPath = '/validators/' + this.props.validators[0].publicKey;
       this.props.history.push(newPath);
     }
   }
@@ -30,15 +29,9 @@ class ValidatorPage extends Component {
 
   selectedQuorumNode() {
     const quorumNodeId = decodeURIComponent(this.props.match.params.quorumNodeId);
-    return validatorHelper.quorumNodeForId(this.selectedValidator(), quorumNodeId);
+    return validatorHelpers.quorumNodeForId(this.selectedValidator(), quorumNodeId);
   }
 
-  handleValidatorClick(validatorId) {
-    const newPath = '/validators/' + validatorId
-    if ( newPath === this.props.location.pathname ) { return; }
-    this.props.onStoreRoutePath('validators', newPath);
-    this.props.history.push(newPath);
-  }
   handleSelectedQuorumNode(id) {
     let newPath = null;
     if ( id === null  ) {
@@ -49,11 +42,11 @@ class ValidatorPage extends Component {
       newPath = '/validators/' + this.props.match.params.publicKey + '/quorum-node/' + quorumNodeId;
     }
     if ( newPath === this.props.location.pathname ) { return; }
-    this.props.onStoreRoutePath('validators', newPath);
     this.props.history.push(newPath);
   }
 
   render() {
+  console.log('render ValidatorPage');
     const selectedValidator = this.selectedValidator();
     const selectedNode = this.selectedQuorumNode();
 
@@ -95,14 +88,12 @@ class ValidatorPage extends Component {
         
         <RelatedValidators
           validators={this.props.validators}
-          validator={selectedValidator}
-          onClick={(v) => this.handleValidatorClick(v)} />  
+          validator={selectedValidator} />  
       </div>
     );
   }
 
   componentWillMount() {
-    this.props.onStoreRoutePath('validators', this.props.location.pathname);
     this.selectDefault();
   }
   componentDidUpdate() {

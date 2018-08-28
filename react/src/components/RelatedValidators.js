@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import validatorHelper from '../helpers/ValidatorHelper.js';
+import React, { PureComponent } from 'react';
+import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import ValidatorRow from '../components/ValidatorRow.js';
 import update from 'immutability-helper';
 import { SegmentedControl } from 'segmented-control';
 
-class RelatedValidators extends Component {
+class RelatedValidators extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,10 +28,10 @@ class RelatedValidators extends Component {
   }
 
   render() {
+    console.log('render RelatedValidators');
     const {
       validators,
       validator,
-      onClick,
       forCluster
     } = this.props;
 
@@ -58,7 +58,7 @@ class RelatedValidators extends Component {
           set = validator.indirectIncomingValidatorSet;
         }
       }
-      relatedValidators = validatorHelper.sortSet(this.props.validators, set);
+      relatedValidators = validatorHelpers.sortSet(this.props.validators, set);
     }
 
 
@@ -92,8 +92,7 @@ class RelatedValidators extends Component {
               key={validatorId}
               validators={validators}
               validatorId={validatorId}
-              selectedValidator={selectedValidator}
-              onClick={() => onClick(validatorId)} />
+              selectedValidator={selectedValidator} />
           )}
         </ul>
       </div>

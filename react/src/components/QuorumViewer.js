@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Graph from 'react-graph-vis';
-import validatorHelper from '../helpers/ValidatorHelper.js';
+import validatorHelpers from '../helpers/ValidatorHelpers.js';
 
 const options = {
   physics: { enabled: false },
@@ -29,22 +29,22 @@ const options = {
       dragView: false,
       zoomView: false
     },
-    width : "494px",
+    width : "480px",
     height : "300px"
 };
 
 const style = {
-  width: '494px',
+  width: '480px',
   height: '300px',
   border: '1px solid #bab8b8',
   'borderRadius': '10px',
-  'backgroundColor': 'white',
-  'marginLeft': '2px'
+  'backgroundColor': '#f7f7f7',
+  'margin': 'auto'
 }
 
 
 
-class QuorumViewer extends Component {
+class QuorumViewer extends PureComponent {
 
   selectQuorumNode(event) {
       const { nodes } = event;
@@ -69,14 +69,14 @@ class QuorumViewer extends Component {
     if (quorumSet) {
       const children = quorumSet.validators.length + quorumSet.innerQuorumSets.length;
       const rootId = quorumSet.hashKey
-      const rootLabel = validatorHelper.validatorAndHandleForPublicKey(validators, validator.publicKey).handle +
+      const rootLabel = validatorHelpers.validatorAndHandleForPublicKey(validators, validator.publicKey).handle +
         "\n" + quorumSet.threshold + "/" + children;
       nodes.push( {id: rootId+rootId, label: rootLabel} );
 
       for (let i=0; i<quorumSet.validators.length; i++) {
         if (i > quorumSet.validators.length/2) { continue; }
         const v = quorumSet.validators[i];
-        const label = validatorHelper.validatorAndHandleForPublicKey(validators, v).handle;
+        const label = validatorHelpers.validatorAndHandleForPublicKey(validators, v).handle;
         nodes.push( {id: rootId+v, label: label } );
         edges.push( {from: rootId+rootId, to:rootId+v} );
       }
@@ -89,7 +89,7 @@ class QuorumViewer extends Component {
         
         for (let k=0; k<innerQS.validators.length; k++) {
           const innerV = innerQS.validators[k];
-          const label = validatorHelper.validatorAndHandleForPublicKey(validators, innerV).handle;
+          const label = validatorHelpers.validatorAndHandleForPublicKey(validators, innerV).handle;
           nodes.push( {id: rootId+innerV, label: label} );
           edges.push( {from: rootId+innerQSId, to: rootId+innerV} );
         }
@@ -97,20 +97,20 @@ class QuorumViewer extends Component {
       for (let l=0; l<quorumSet.validators.length; l++) {
         if (l <= quorumSet.validators.length/2) { continue; }
         const v = quorumSet.validators[l];
-        const label = validatorHelper.validatorAndHandleForPublicKey(validators, v).handle;
+        const label = validatorHelpers.validatorAndHandleForPublicKey(validators, v).handle;
         nodes.push( {id: rootId+v, label: label } );
         edges.push( {from: rootId+rootId, to: rootId+v} );
       }
     }
     else {
-      const rootLabel = validatorHelper.validatorAndHandleForPublicKey(validators, validator.publicKey).handle;
+      const rootLabel = validatorHelpers.validatorAndHandleForPublicKey(validators, validator.publicKey).handle;
       nodes.push( {id: validator.publicKey, label: rootLabel} );
     }
     return {nodes: nodes, edges: edges};
   }
   
   render() {
-    console.log('render quorum graph');
+    console.log('render QuorumViewer');
     const graph = this.quorumGraph(this.props.validators, this.props.validator)
     return (
         

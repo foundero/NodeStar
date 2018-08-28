@@ -1,5 +1,5 @@
 import React from 'react';
-import validatorHelper from '../helpers/ValidatorHelper.js';
+import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import verified from '../media/images/icon-verified.png';
 
 function ValidatorDetail(props) {
@@ -16,7 +16,7 @@ function ValidatorDetail(props) {
     );
   }
 
-  const {handle} = validatorHelper.validatorAndHandleForPublicKey(validators, validator.publicKey);
+  const {handle} = validatorHelpers.validatorAndHandleForPublicKey(validators, validator.publicKey);
   return (
     <ul>
       <li className='bold'>

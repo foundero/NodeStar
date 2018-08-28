@@ -6,10 +6,12 @@
     "immutability-helper": "^2.7.1",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
+    "react-ga": "^2.5.3",
     "react-graph-vis": "^1.0.2",
     "react-router-dom": "^4.3.1",
     "react-scripts": "1.1.4",
     "react-vis": "^1.10.7",
+    "react-with-analytics": "0.0.5",
     "segmented-control": "^0.1.10"
   },
   "scripts": {

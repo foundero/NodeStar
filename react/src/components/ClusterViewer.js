@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Graph from 'react-graph-vis';
 
 const options = {
@@ -29,22 +29,22 @@ const options = {
       dragView: false,
       zoomView: false
     },
-    width : "494px",
+    width : "480px",
     height : "500px"
 };
 
 const style = {
-  width: '494px',
+  width: '480px',
   height: '500px',
   border: '1px solid #bab8b8',
   'borderRadius': '10px',
-  'backgroundColor': 'white',
-  'marginLeft': '2px'
+  'backgroundColor': '#f7f7f7',
+  'margin': 'auto'
 }
 
 
 
-class ClusterViewer extends Component {
+class ClusterViewer extends PureComponent {
 
   selectClusterNode(event) {
     const { nodes } = event;
@@ -77,7 +77,7 @@ class ClusterViewer extends Component {
   }
   
   render() {
-    console.log('render cluster graph');
+    console.log('render ClusterViewer');
     const graph = this.clusterGraph(this.props.clusters)
     return (
           <Graph graph={graph}
