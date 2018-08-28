@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import logo from './media/images/icon-large.png';
 import githubLogo from './media/images/GitHub-Mark-Light-120px-plus.png';
 import './App.css';
@@ -21,13 +21,26 @@ import MathPage from "./pages/MathPage";
 
 initAnalytics('UA-124733101-1');
 
-class Root extends Component {
+class Root extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       validators: [],
       clusters: []
     };
+    this.routes= {
+      'validators': '/validators',
+      'clusters': '/clusters'
+    };
+  }
+
+  updateRoutes() {
+    if (this.props.location.pathname.startsWith('/validators')) {
+      this.routes.validators = this.props.location.pathname;
+    }
+    if (this.props.location.pathname.startsWith('/clusters')) {
+      this.routes.clusters = this.props.location.pathname;
+    }
   }
 
   getQuorumData() {
@@ -54,6 +67,9 @@ class Root extends Component {
   }
 
   render() {
+    console.log('render App');
+    this.updateRoutes();
+
     return (
         <div className="App">
 
@@ -81,8 +97,8 @@ class Root extends Component {
             <h1 className="title">NodeStar</h1>
             <h2 className="subtitle">A Stellar Quorum Explorer</h2>
             <ul className="header">
-              <li><NavLink to="/validators">Validators</NavLink></li>
-              <li><NavLink to="/clusters">Clusters</NavLink></li>
+              <li><NavLink to={this.routes['validators']}>Validators</NavLink></li>
+              <li><NavLink to={this.routes['clusters']}>Clusters</NavLink></li>
               <li><NavLink to="/summary">Summary</NavLink></li>
               <li><NavLink to="/math">Math</NavLink></li>
             </ul>

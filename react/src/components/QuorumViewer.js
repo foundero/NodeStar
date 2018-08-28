@@ -51,7 +51,7 @@ class QuorumViewer extends PureComponent {
       if ( !nodes || nodes.length === 0 ) {
         this.props.onSelectQuorumNode(null);
       }
-      else {
+      else if ( this.props.validator.quorumSet ) {
         const id = nodes[0].slice(this.props.validator.quorumSet.hashKey.length);
         this.props.onSelectQuorumNode(id);
       }

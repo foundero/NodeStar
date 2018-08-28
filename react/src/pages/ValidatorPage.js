@@ -46,7 +46,7 @@ class ValidatorPage extends PureComponent {
   }
 
   render() {
-  console.log('render ValidatorPage');
+    console.log('render ValidatorPage');
     const selectedValidator = this.selectedValidator();
     const selectedNode = this.selectedQuorumNode();
 
@@ -90,7 +90,6 @@ class ValidatorPage extends PureComponent {
       </div>
     );
   }
-
   componentWillMount() {
     this.selectDefault();
   }
