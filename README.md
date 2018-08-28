@@ -2,18 +2,19 @@
 
 This project aims to better visualize the Stellar network and its quorum sets. It includes:
 
-* [iOS App - NodeStar](#ios-app---nodestar)
+* iOS App - [App Store](https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8)
+* React.js Web App - [https://nodestar.info](https://nodestar.info)
 * [Math](#math)
 
 Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are-indicators-of-a-healthy-stellar-network/7)
 
 <hr/>
 
-## iOS App - NodeStar
+## NodeStar - iOS App
 
-$0.99 from the [AppStore](https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8) or free if you [install from source](#install-from-source).
+[Install from App Store](https://itunes.apple.com/us/app/nodestar-for-stellar/id1425168670?mt=8) or [install from source](#install-from-source).
 
-### V1.1
+### V1.1.3
 * Parses Validator and Quorum Set Info
   * from [StellarBeat.io raw data](https://stellarbeat.io/nodes/dataset) -- Thanks StellarBeat!
   * [StellarBeat.io source](https://github.com/stellarbeat/js-stellar-node-connector)
@@ -50,6 +51,15 @@ $0.99 from the [AppStore](https://itunes.apple.com/us/app/nodestar-for-stellar/i
 * run from xcode
 
 <hr/>
+
+
+## NodeStar - React.js Web App
+
+[https://nodestar.info](https://nodestar.info)
+
+* hosted on github pages
+* not as full featured (or pretty) as iOS
+
 
 ## Math
 
