@@ -59,9 +59,7 @@ class ValidatorPage extends PureComponent {
               <ValidatorRow
                 key={validator.publicKey}
                 validators={this.props.validators}
-                validatorId={validator.publicKey}
-                selectedValidator={selectedValidator}
-                onClick={() => this.handleValidatorClick(validator.publicKey)} />
+                validatorId={validator.publicKey} />
             )}
           </ul>
         </div>

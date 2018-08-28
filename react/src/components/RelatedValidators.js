@@ -36,10 +36,6 @@ class RelatedValidators extends PureComponent {
     } = this.props;
 
     let relatedValidators = [];
-    let selectedValidator = validator;
-    if ( forCluster===true) {
-      selectedValidator = null;
-    }
     if (validator) {
       let set = null;
       if (this.state.directToggle && forCluster!==true) {
@@ -91,8 +87,7 @@ class RelatedValidators extends PureComponent {
             <ValidatorRow
               key={validatorId}
               validators={validators}
-              validatorId={validatorId}
-              selectedValidator={selectedValidator} />
+              validatorId={validatorId} />
           )}
         </ul>
       </div>

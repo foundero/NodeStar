@@ -63,8 +63,7 @@ class ClusterPage extends PureComponent {
               <ValidatorRow
                 key={validatorId}
                 validators={this.props.validators}
-                validatorId={validatorId}
-                selectedValidator={null} />
+                validatorId={validatorId} />
             )}
           </ul>
         </div>

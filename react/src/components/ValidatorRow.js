@@ -6,11 +6,10 @@ import { NavLink } from "react-router-dom";
 function ValidatorRow(props) {
   const {
     validators,
-    validatorId,
-    selectedValidator
+    validatorId
   } = props;
   const {validator, handle} = validatorHelpers.validatorAndHandleForPublicKey(validators, validatorId);
-  
+
   if ( !validator ) {
     return (<li>?</li>);
   }
