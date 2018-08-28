@@ -23,7 +23,8 @@ class App extends Component {
     this.state = {
       validators: [],
       routes: {
-        validators: "/validators"
+        validators: "/validators",
+        clusters: "/clusters"
       }
     };
   }
@@ -72,11 +73,8 @@ class App extends Component {
 
   storeRoutePath(routeKey, path) {
     if ( path === this.state.routes[routeKey] ) { return; }
-          
-    let routes = this.state.routes;
-    routes[routeKey] = path;
     this.setState(update(this.state, {
-      routes: {routeKey: {$set: path}}
+      routes: {[routeKey]: {$set: path}}
     }));
   }
 
@@ -110,7 +108,7 @@ class App extends Component {
             <h2 className="subtitle">A Stellar Quorum Explorer</h2>
             <ul className="header">
               <li><NavLink to={this.state.routes.validators}>Validators</NavLink></li>
-              <li><NavLink to="/clusters">Clusters</NavLink></li>
+              <li><NavLink to={this.state.routes.clusters}>Clusters</NavLink></li>
               <li><NavLink to="/summary">Summary</NavLink></li>
               <li><NavLink to="/math">Math</NavLink></li>
             </ul>
@@ -131,7 +129,7 @@ class App extends Component {
                   } />
               } />
             <Route
-              path="/validators/:publicKey?/:blah?/:quorumNodeId?"
+              path="/validators/:publicKey?/:static?/:quorumNodeId?"
               render={(props) =>
                 <ValidatorPage {...props}
                   validators={this.state.validators}
@@ -139,7 +137,15 @@ class App extends Component {
                     this.storeRoutePath(routeKey, path)
                   } />
               } />
-            <Route path="/clusters" component={ClusterPage}/>
+            <Route
+              path="/clusters/:clusterId?"
+              render={(props) =>
+                <ClusterPage {...props}
+                  validators={this.state.validators}
+                  onStoreRoutePath={ (routeKey, path) =>
+                    this.storeRoutePath(routeKey, path)
+                  } />
+              } />
             <Route path="/math" component={MathPage}/>
             <Redirect to="/validators"/>
             </Switch>

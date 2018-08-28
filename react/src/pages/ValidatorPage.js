@@ -3,33 +3,11 @@ import QuorumViewer from '../components/QuorumViewer.js';
 import ValidatorRow from '../components/ValidatorRow.js';
 import ValidatorDetail from '../components/ValidatorDetail.js';
 import QuorumNodeDetail from '../components/QuorumNodeDetail.js';
+import RelatedValidators from '../components/RelatedValidators.js';
 import validatorHelper from '../helpers/ValidatorHelper.js';
-import { SegmentedControl } from 'segmented-control';
-import update from 'immutability-helper';
 
 
 class ValidatorPage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      directToggle: true,
-      outgoingToggle: true
-    };
-  }
-  directToggle(isDirect) {
-    this.setState(
-      update(this.state, {
-        directToggle: {$set: isDirect}
-      })
-    );
-  }
-  outgoingToggle(isOutgoing) {
-    this.setState(
-      update(this.state, {
-        outgoingToggle: {$set: isOutgoing}
-      })
-    );
-  }
 
   selectDefault() {
     const validators = this.props.validators;
@@ -78,27 +56,6 @@ class ValidatorPage extends Component {
   render() {
     const selectedValidator = this.selectedValidator();
     const selectedNode = this.selectedQuorumNode();
-    let relatedValidators = [];
-    if (selectedValidator) {
-      let set = null;
-      if (this.state.directToggle) {
-        if (this.state.outgoingToggle) {
-          set = selectedValidator.directValidatorSet;
-        }
-        else {
-          set = selectedValidator.directIncomingValidatorSet;
-        }
-      }
-      else {
-        if (this.state.outgoingToggle) {
-          set = selectedValidator.indirectValidatorSet;
-        }
-        else {
-          set = selectedValidator.indirectIncomingValidatorSet;
-        }
-      }
-      relatedValidators = validatorHelper.sortSet(this.props.validators, set);
-    }
 
     return (
       <div className="page">
@@ -111,7 +68,7 @@ class ValidatorPage extends Component {
                 validators={this.props.validators}
                 validatorId={validator.publicKey}
                 selectedValidator={selectedValidator}
-                onClick={() => this.handleValidatorClick(validator.publicKey)}/>
+                onClick={() => this.handleValidatorClick(validator.publicKey)} />
             )}
           </ul>
         </div>
@@ -135,40 +92,11 @@ class ValidatorPage extends Component {
             
           </div>
         </div>
-          
-        <div className="right">
-          <h3>Related Validators</h3>
-          <SegmentedControl
-            name="directToggle"
-            options={[
-              { label: "indirect", value: false },
-              { label: "direct", value: true, default: true}
-            ]}
-            setValue={newValue => this.directToggle(newValue)}
-            style={{ width: '200px', color: '#0099FF', margin: '0px' }}
-          />
-          <SegmentedControl
-            name="outgoingToggle"
-            options={[
-              { label: "incoming", value: false},
-              { label: "outgoing", value: true, default: true }
-            ]}
-            setValue={newValue => this.outgoingToggle(newValue)}
-            style={{ width: '200px', color: '#0099FF', margin: '0px' }}
-          />
-
-          <ul>
-            { relatedValidators.map( (validatorId) =>
-              <ValidatorRow
-                key={validatorId}
-                validators={this.props.validators}
-                validatorId={validatorId}
-                selectedValidator={selectedValidator}
-                onClick={() => this.handleValidatorClick(validatorId)}/>
-            )}
-          </ul>
-
-        </div>
+        
+        <RelatedValidators
+          validators={this.props.validators}
+          validator={selectedValidator}
+          onClick={(v) => this.handleValidatorClick(v)} />  
       </div>
     );
   }

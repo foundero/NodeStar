@@ -29,7 +29,7 @@ const options = {
       dragView: false,
       zoomView: false
     },
-    width : "500px",
+    width : "494px",
     height : "300px"
 };
 
