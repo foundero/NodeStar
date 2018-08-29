@@ -1,6 +1,7 @@
 import React from 'react';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import verified from '../media/images/icon-verified.png';
+import { NavLink } from "react-router-dom";
 
 function ValidatorDetail(props) {
   const {
@@ -21,7 +22,9 @@ function ValidatorDetail(props) {
     <ul>
       <li className='bold'>
         {handle}. {validator.name ? validator.name : "[name]"}
-        {validator.verified ? <img src={verified} className="verified-icon" alt="Verified Icon" /> : '' }
+        {!!validator.verified && <img src={verified} className="verified-icon" alt="Verified Icon" />}
+        {' - '}
+        <NavLink to={'/clusters/'+validator.clusterId}>cluster</NavLink>
       </li>
       <li>
         {validator.city ? validator.city : "[city]"}

@@ -7,8 +7,8 @@ const options = {
         hierarchical: {
           sortMethod: 'directed',
           direction: 'DU',
-          levelSeparation: 120,//80,
-          nodeSpacing: 100//40
+          levelSeparation: 130,//80,
+          nodeSpacing: 120//40
         }
     },
     edges: {
@@ -21,6 +21,11 @@ const options = {
         highlight: {
           border: '#000000',
           background: '#0099FF'
+        }
+      },
+      scaling: {
+        label: {
+          enabled: true
         }
       }
     },
@@ -68,7 +73,11 @@ class ClusterViewer extends PureComponent {
       let incomingMinusSelf = cluster.incomingMinusSelf;
       let difference = cluster.incoming.size - incomingMinusSelf;
       let sublabel = incomingMinusSelf + '+' + difference;
-      nodes.push( {level: cluster.level, id: i+1, label: cluster.nodes.size + '\n' + sublabel} );
+      nodes.push( {
+        value: cluster.nodes.size,
+        level: cluster.level,
+        id: i+1,
+        label: cluster.nodes.size + '\n' + sublabel} );
       for (let j = 0; j<cluster.outgoingClusters.length; j++) {
         edges.push( {from: i+1, to: cluster.outgoingClusters[j]+1} );
       }

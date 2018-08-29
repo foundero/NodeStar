@@ -88,7 +88,7 @@ class ClusterPage extends PureComponent {
                 <li>Incoming Validators: {selectedCluster.incoming.size}</li>
                 <li>
                   References Self:
-                  {String(selectedCluster.incoming.size === selectedCluster.incomingMinusSelf)}
+                  {String(selectedCluster.incoming.size !== selectedCluster.incomingMinusSelf)}
                 </li>
               </React.Fragment>
             }

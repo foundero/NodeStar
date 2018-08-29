@@ -6,6 +6,7 @@ const clusterHelpers = {
     clustersSort(clusters);
     clustersAddConnections(clusters);
     clusterAddLevels(clusters);
+    validatorsAddCluster(validators, clusters);
     return clusters;
   }
 };
@@ -100,7 +101,7 @@ function clusterAddLevels(clusters) {
   let min = 0;
   for (let i = 0; i<clusters.length; i++) {
     let cluster = clusters[i];
-    if (incomingMinusSelf(cluster) > 0) {
+    if (cluster.incomingMinusSelf > 0) {
       if ( cluster.level <= min ) {
         min = cluster.level-1;
       }
@@ -111,7 +112,7 @@ function clusterAddLevels(clusters) {
     if ( cluster.level < min ) {
       cluster.level = min;
     }
-    if (incomingMinusSelf(cluster) === 0) {
+    if (cluster.incomingMinusSelf === 0) {
       cluster.level = min;
     }
   }
@@ -135,6 +136,19 @@ function clustersMarkLevels(clusters, level, min) {
     }
     if ( allOutgoingMarked || level === min ) {
       cluster.level = level;
+    }
+  }
+}
+
+function validatorsAddCluster(validators, clusters) {
+  for (let v = 0; v<validators.length; v++) {
+    let validator = validators[v];
+    for (let c = 0; c<clusters.length; c++) {
+      let cluster = clusters[c];
+      if (cluster.nodes.has(validator.publicKey)) {
+        validator.clusterId = c+1;
+        break;
+      }
     }
   }
 }
