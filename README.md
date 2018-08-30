@@ -16,8 +16,8 @@ Originally discussed [on Galactic Talk](https://galactictalk.org/d/1521-what-are
 
 ### V1.1.3
 * Parses Validator and Quorum Set Info
-  * from [StellarBeat.io raw data](https://stellarbeat.io/nodes/dataset) -- Thanks StellarBeat!
-  * [StellarBeat.io source](https://github.com/stellarbeat/js-stellar-node-connector)
+  * from [StellarBeat.io](https://stellarbeat.io/nodes/dataset) -- Thanks StellarBeat! [source](https://github.com/stellarbeat/js-stellar-node-connector)
+  * from [QuorumExplorer.com](http://quorumexplorer.com/) -- Thanks QuorumExplorer! [source1](https://github.com/tinco/quorum_explorer) [source2](https://github.com/tinco/stellar-core-go)
   * eventually get the data ourselves
 * Network Summary Metrics
 * Validator Clusters
