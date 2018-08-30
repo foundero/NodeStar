@@ -19,12 +19,20 @@ header.header {
   color: white;
 }
 
+.header-left {
+  text-align: center;
+  float: left;
+  margin-left: 10px;
+  margin-top: 40px;
+  width: 220px;
+}
+
 .header-right {
   text-align: right;
   float: right;
   margin-right: 10px;
   margin-top: 20px;
-  width: 200px;
+  width: 220px;
 }
 .header-right li {
   margin-right:10px;
@@ -194,6 +202,13 @@ li.small {
   font-size: 0.6em;
 }
 
+.header-datasource-text {
+  font-size: 0.8em;
+}
+.header .segmented-control > label {
+  line-height: 2.0em;
+  font-size: 0.8em;
+}
 .content .segmented-control > label {
   line-height: 1.7em;
 }

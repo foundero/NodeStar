@@ -47,6 +47,7 @@ class SummaryPage extends PureComponent {
 
 function SummaryData(props) {
   const {
+    datasource,
     validators,
     clusters
   } = props;
@@ -54,7 +55,12 @@ function SummaryData(props) {
   if (!validators || validators.length===0) { return '...'; }
   return (
     <ul>
-      <li><a href="https://stellarbeat.io">Source: stellarbeat.io</a></li>
+      { datasource === 'stellarbeat' &&
+        <li><a href="https://stellarbeat.io">Data Source: stellarbeat.io</a></li>
+      }
+      { datasource !== 'stellarbeat' &&
+        <li><a href="http://quorumexplorer.com/">Data Source: quorumexplorer.com</a></li>
+      }
       <li><NavLink to="/validators">Validator Count: {validators.length}</NavLink></li>
       <li><NavLink to="/clusters">Cluster Count: {clusters.length}</NavLink></li>
     </ul>

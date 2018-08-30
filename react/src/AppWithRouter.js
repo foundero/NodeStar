@@ -5,6 +5,7 @@ import './App.css';
 import validatorHelpers from './helpers/ValidatorHelpers.js';
 import clusterHelpers from './helpers/ClusterHelpers.js';
 import update from 'immutability-helper';
+import { SegmentedControl } from 'segmented-control';
 import withAnalytics, { initAnalytics } from 'react-with-analytics';
 import {
   Route,
@@ -21,17 +22,35 @@ import MathPage from "./pages/MathPage";
 
 initAnalytics('UA-124733101-1');
 
+const stellarbeat = 'stellarbeat';
+const quorumexplorer = 'quorumexplorer';
+const stellarbeatURL = 'https://uk2bk82620.execute-api.us-east-2.amazonaws.com/prod/stellarbeat';
+const quorumexplorerURL = 'https://uk2bk82620.execute-api.us-east-2.amazonaws.com/prod/quorumexplorer';
+
 class Root extends PureComponent {
+
   constructor(props) {
     super(props);
     this.state = {
+      datasource: 'stellarbeat',
       validators: [],
       clusters: []
     };
     this.routes= {
+      'datasource': 'quorumexplorer',
       'validators': '/validators',
       'clusters': '/clusters'
     };
+    this.data= {
+      stellarbeat: {
+        validators: [],
+        clusters: []
+      },
+      quorumexplorer: {
+        validators: [],
+        clusters: []
+      }
+    }
   }
 
   updateRoutes() {
@@ -43,27 +62,64 @@ class Root extends PureComponent {
     }
   }
 
-  getQuorumData() {
-    console.log('getting data');
-    fetch('https://3jp78txn9h.execute-api.us-east-2.amazonaws.com/prod/stellar-beat-data')
-   	.then( (response) => {
-      console.log('got response');
+
+  datasourceToggle(isStellarbeat) {
+    let data = null;
+    let datasource = null;
+    if ( isStellarbeat ) {
+      data = this.data.stellarbeat;
+      datasource = stellarbeat;
+    }
+    else {
+      data = this.data.quorumexplorer;
+      datasource = quorumexplorer;
+    }
+
+    this.setState(
+      update(this.state, {
+        datasource: {$set: datasource},
+        validators: {$set: data.validators},
+        clusters: {$set: data.clusters},
+      })
+    );
+
+    if ( data.validators.length <= 0 ) {
+      this.getData(datasource);
+    }
+  }
+
+  getData(datasource) {
+    let url = stellarbeatURL;
+    if ( datasource === quorumexplorer ) {
+      url = quorumexplorerURL;
+    }
+    console.log('getting data ' + datasource);
+    fetch(url)
+    .then( (response) => {
+      console.log('got response ' + datasource);
       return response.json();
     })
     .then( (json) => {
-      console.log('parsed json');
+      console.log('parsed json ' + datasource);
+      if ( datasource === quorumexplorer ) {
+        json = validatorHelpers.translatedJsonFromQuorumExplorer(json);
+      }
       let validators = validatorHelpers.calculateValidators(json);
       let clusters = clusterHelpers.calculateClusters(validators);
-      this.setState(update(this.state, {
-        validators: {$set: validators},
-        clusters: {$set: clusters}
-      }));
+      this.data[datasource].validators = validators;
+      this.data[datasource].clusters = clusters;
+      if ( datasource === this.state.datasource ) {
+        this.setState(update(this.state, {
+          validators: {$set: validators},
+          clusters: {$set: clusters}
+        }));
+      }
     });
   }
 
   componentDidMount() {
     console.log('mounted app');
-    this.getQuorumData();
+    this.getData(stellarbeat);
   }
 
   render() {
@@ -75,6 +131,20 @@ class Root extends PureComponent {
 
           <header className="header">
           
+          <div className="header-left">
+            <span className="header-datasource-text">data source</span>
+            <SegmentedControl
+              name="datasourceToggle"
+              options={[
+                { label: "stellarbeat", value: true, default: true },
+                { label: "quorumexplorer", value: false }
+              ]}
+              setValue={newValue => this.datasourceToggle(newValue)}
+              style={{ width: '230px', color: '#0099FF', margin: '0px' }}
+            />
+          </div>
+
+
           <div className="header-right">
             <ul>
               <li>
@@ -113,6 +183,7 @@ class Root extends PureComponent {
               path="/summary"
               render={(props) =>
                 <SummaryPage {...props}
+                  datasource={this.state.datasource}
                   validators={this.state.validators}
                   clusters={this.state.clusters}
                 />

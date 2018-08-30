@@ -1,6 +1,44 @@
 const validatorHelpers = {
+  
+  translatedJsonFromQuorumExplorer: function(json) {
+    let newValidators = [];
+    for (const validatorId in json.nodes) {
+      let v = json.nodes[validatorId];
+      let validator = {}
+      validator.publicKey = validatorId;
+      validator.version = v.version_string;
+      validator.verified = false;
 
-  calculateValidators(validators) {
+      if ( v.address ) {
+        let parts = v.address.split(':');
+        validator.ip = parts[0];
+        validator.port = parts[1];
+      }
+      else {
+        validator.ip = null;
+        validator.port = null;
+      }
+
+      validator.city = null;
+      validator.country = null;
+      validator.latitude = null;
+      validator.longitude = null;
+
+      if ( v.known_info ) {
+        validator.verified = true;
+        validator.name = v.known_info.name;
+        validator.host = v.known_info.host;
+      }
+
+      if ( v.quorum ) {
+        validator.quorumSet = translateQuorumSet(v.quorum, 'virual-hash-key');
+      }
+      newValidators.push(validator);
+    }
+    return newValidators;
+  },
+  
+  calculateValidators: function(validators) {
     for (let i=0; i<validators.length; i++) {
       const v = validators[i];
       v.directValidatorSet = directValidatorSet(v);
@@ -59,6 +97,17 @@ const validatorHelpers = {
 
 /* Private Functions */
 
+function translateQuorumSet(quorumSet, fakehashkey) {
+  let qs = [];
+  qs.hashKey = fakehashkey
+  qs.threshold = quorumSet.threshold;
+  qs.validators = quorumSet.validators;
+  qs.innerQuorumSets = [];
+  for ( let i = 0; i<quorumSet.inner_sets.length; i++ ) {
+    qs.innerQuorumSets.push(translateQuorumSet(quorumSet.inner_sets[i], fakehashkey+'-'+i));
+  }
+  return qs;
+}
 
 function directValidatorSet(validator) {
   let set = new Set([]);

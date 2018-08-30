@@ -26,15 +26,20 @@ function ValidatorDetail(props) {
         {' - '}
         <NavLink to={'/clusters/'+validator.clusterId}>cluster</NavLink>
       </li>
-      <li>
-        {validator.city ? validator.city : "[city]"}
-        {", "}
-        {validator.country ? validator.country : "[country]"}</li>
-      <li>
-        {validator.latitude}, {validator.longitude}
-      </li>
-      <li>
-        {validator.ip}
+      { validator.city && validator.state &&
+        <li>
+          {validator.city ? validator.city : "[city]"}
+          {", "}
+          {validator.country ? validator.country : "[country]"}
+        </li>
+      }
+      { validator.latitude && validator.longitude &&
+        <li>
+          {validator.latitude}, {validator.longitude}
+        </li>
+      }
+      <li className='small'>
+        {validator.ip + ':' + validator.port}
         {validator.host ? ", " + validator.host : ""}
       </li>
       <li className='small'>{validator.version}</li>
