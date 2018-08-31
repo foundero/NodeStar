@@ -59,6 +59,24 @@ const validatorHelpers = {
     return validators.sort(compareValidators);
   },
 
+
+  validatorToURLId(publicKey) {
+    const chars = 6;
+    if (publicKey.length>chars*2) {
+      return publicKey.substring(0,chars) + '..' + publicKey.substring(publicKey.length - chars);
+    }
+    return publicKey;
+  },
+
+  quorumNodeToURLId(id) {
+    const chars = 6;
+    let result = id;
+    if (id && id.length>chars*2) {
+      result = id.substring(0,chars) + '..' + id.substring(id.length - chars);
+    }
+    return encodeURIComponent(result);
+  },
+
   validatorAndHandleForPublicKey: function(validators, publicKey) {
     for ( let i=0; i<validators.length; i++ ) {
       if ( validators[i].publicKey === publicKey ) {
@@ -68,7 +86,7 @@ const validatorHelpers = {
     return { validator: null, handle: "?" };
   },
   
-  quorumNodeForId: function(validator, nodeId) {
+  quorumNodeForURLId: function(validator, nodeId) {
     if ( !validator || !validator.quorumSet || !nodeId ) {
       return null;
     }
@@ -188,12 +206,12 @@ function quorumNodeForIdInQuorumSet(quorumSet, nodeId) {
   if ( !quorumSet || !nodeId ) {
     return null;
   }
-  if ( quorumSet.hashKey === nodeId ) {
+  if ( validatorHelpers.quorumNodeToURLId(quorumSet.hashKey) === nodeId ) {
     return quorumSet;
   }
   for (let i=0; i<quorumSet.validators.length; i++) {
     const v = quorumSet.validators[i];
-    if ( v === nodeId ) {
+    if ( validatorHelpers.quorumNodeToURLId(v) === nodeId ) {
       return { publicKey: v};
     }
   }

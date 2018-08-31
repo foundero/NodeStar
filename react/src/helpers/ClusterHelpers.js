@@ -110,10 +110,33 @@ function clusterAddLevels(clusters) {
   for (let i = 0; i<clusters.length; i++) {
     let cluster = clusters[i];
     if ( cluster.level < min ) {
-      cluster.level = min;
+      cluster.level = min-1;
     }
     if (cluster.incomingMinusSelf === 0) {
       cluster.level = min;
+      if (cluster.incoming.size === 0) {
+        cluster.level = min-1;
+      }
+    }
+    if (cluster.outgoing.size === 0 && i!==0) {
+      cluster.level = min-1;
+    }
+  }
+  // Make sure each cluster is above it's incoming one
+  for (let i = 0; i<clusters.length; i++) {
+    if (clusters[i].incomingMinusSelf !== 0) {
+      for (let j = 0; j<clusters.length; j++) {
+        let iPointsToj = false;
+        for (let k=0; k<clusters[j].outgoingClusters.length; k++) {
+          if (clusters[j].outgoingClusters[k] === i) {
+            iPointsToj = true;
+            break;
+          }
+        }
+        if ( j!==i && iPointsToj && clusters[j].level >= clusters[i].level) {
+          clusters[i].level = clusters[j].level + 1;
+        }
+      }
     }
   }
 }

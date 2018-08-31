@@ -32,7 +32,8 @@ class RelatedValidators extends PureComponent {
     const {
       validators,
       validator,
-      forCluster
+      forCluster,
+      location
     } = this.props;
 
     let relatedValidators = [];
@@ -87,7 +88,8 @@ class RelatedValidators extends PureComponent {
             <ValidatorRow
               key={validatorId}
               validators={validators}
-              validatorId={validatorId} />
+              validatorId={validatorId}
+              location={location} />
           )}
         </ul>
       </div>

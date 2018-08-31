@@ -32,25 +32,26 @@ class Root extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      datasource: 'stellarbeat',
-      validators: [],
-      clusters: []
-    };
-    this.routes= {
-      'datasource': 'quorumexplorer',
-      'validators': '/validators',
-      'clusters': '/clusters'
-    };
-    this.data= {
-      stellarbeat: {
+      'quorumexplorer': {
         validators: [],
         clusters: []
       },
-      quorumexplorer: {
+      'stellarbeat': {
         validators: [],
         clusters: []
       }
+    };
+    this.routes= {
+      'validators': '/validators',
+      'clusters': '/clusters'
+    };
+  }
+
+  data() {
+    if (this.datasource()===quorumexplorer) {
+      return this.state.quorumexplorer;
     }
+    return this.state.stellarbeat;
   }
 
   updateRoutes() {
@@ -62,29 +63,31 @@ class Root extends PureComponent {
     }
   }
 
-
-  datasourceToggle(isStellarbeat) {
-    let data = null;
-    let datasource = null;
-    if ( isStellarbeat ) {
-      data = this.data.stellarbeat;
-      datasource = stellarbeat;
+  datasource() {
+    if (this.props.location.search === this.datasourceQueryString(quorumexplorer)) {
+      return quorumexplorer;
+    }
+    return stellarbeat;
+  }
+  datasourceQueryString(datasource) {
+    if (datasource === quorumexplorer) {
+      return '?ds=qe';
     }
     else {
-      data = this.data.quorumexplorer;
-      datasource = quorumexplorer;
+      return '?ds=sb';
+    }
+  }
+
+  datasourceToggle(isStellarbeat) {
+    console.log('datasource toggle');
+    let desiredQueryString = this.datasourceQueryString(stellarbeat);
+    if (!isStellarbeat) {
+      desiredQueryString = this.datasourceQueryString(quorumexplorer);
     }
 
-    this.setState(
-      update(this.state, {
-        datasource: {$set: datasource},
-        validators: {$set: data.validators},
-        clusters: {$set: data.clusters},
-      })
-    );
-
-    if ( data.validators.length <= 0 ) {
-      this.getData(datasource);
+    if ( desiredQueryString !== this.props.location.search ) {
+      console.log('push querystring');
+      this.props.history.push({search: desiredQueryString});
     }
   }
 
@@ -106,20 +109,26 @@ class Root extends PureComponent {
       }
       let validators = validatorHelpers.calculateValidators(json);
       let clusters = clusterHelpers.calculateClusters(validators);
-      this.data[datasource].validators = validators;
-      this.data[datasource].clusters = clusters;
-      if ( datasource === this.state.datasource ) {
-        this.setState(update(this.state, {
+      this.setState(update(this.state, {
+        [datasource] : {
           validators: {$set: validators},
           clusters: {$set: clusters}
-        }));
-      }
+        }
+      }));
     });
   }
 
   componentDidMount() {
-    console.log('mounted app');
-    this.getData(stellarbeat);
+    console.log('did mount');
+    if ( this.data().validators.length <= 0 ) {
+      this.getData(this.datasource());
+    }
+  }
+  componentDidUpdate() {
+    console.log('did update');
+    if ( this.data().validators.length <= 0 ) {
+      this.getData(this.datasource());
+    }
   }
 
   render() {
@@ -136,9 +145,10 @@ class Root extends PureComponent {
             <SegmentedControl
               name="datasourceToggle"
               options={[
-                { label: "stellarbeat", value: true, default: true },
-                { label: "quorumexplorer", value: false }
+                { label: "stellarbeat", value: true, default: this.datasource()===stellarbeat },
+                { label: "quorumexplorer", value: false, default: this.datasource()===quorumexplorer }
               ]}
+              value={false}
               setValue={newValue => this.datasourceToggle(newValue)}
               style={{ width: '230px', color: '#0099FF', margin: '0px' }}
             />
@@ -167,10 +177,38 @@ class Root extends PureComponent {
             <h1 className="title">NodeStar</h1>
             <h2 className="subtitle">A Stellar Quorum Explorer</h2>
             <ul className="header">
-              <li><NavLink to={this.routes['validators']}>Validators</NavLink></li>
-              <li><NavLink to={this.routes['clusters']}>Clusters</NavLink></li>
-              <li><NavLink to="/summary">Summary</NavLink></li>
-              <li><NavLink to="/math">Math</NavLink></li>
+              <li>
+                <NavLink
+                  to={this.routes['validators']+this.props.location.search}
+                  isActive={(match, location) => location.pathname + location.search === this.routes['validators']+this.props.location.search}
+                >
+                  Validators
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={this.routes['clusters']+this.props.location.search}
+                  isActive={(match, location) => location.pathname + location.search === this.routes['clusters']+this.props.location.search}
+                >
+                  Validators
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={'/summary'+this.props.location.search}
+                  isActive={(match, location) => location.pathname + location.search === 'summary'+this.props.location.search}
+                >
+                  Summary
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to={'/math'+this.props.location.search}
+                  isActive={(match, location) => location.pathname + location.search === 'math'+this.props.location.search}
+                >
+                  Math
+                </NavLink>
+              </li>
             </ul>
           </div>
                 
@@ -183,28 +221,28 @@ class Root extends PureComponent {
               path="/summary"
               render={(props) =>
                 <SummaryPage {...props}
-                  datasource={this.state.datasource}
-                  validators={this.state.validators}
-                  clusters={this.state.clusters}
+                  datasource={this.datasource()}
+                  validators={this.data().validators}
+                  clusters={this.data().clusters}
                 />
               } />
             <Route
               path="/validators/:publicKey?/:static?/:quorumNodeId?"
               render={(props) =>
                 <ValidatorPage {...props}
-                  validators={this.state.validators}
+                  validators={this.data().validators}
                 />
               } />
             <Route
               path="/clusters/:clusterId?"
               render={(props) =>
                 <ClusterPage {...props}
-                  validators={this.state.validators}
-                  clusters={this.state.clusters}
+                  validators={this.data().validators}
+                  clusters={this.data().clusters}
                 />
               } />
             <Route path="/math" component={MathPage}/>
-            <Redirect to="/validators"/>
+            <Redirect to={"/validators"+this.datasourceQueryString(this.datasource())}/>
             </Switch>
           </div>
         </div>

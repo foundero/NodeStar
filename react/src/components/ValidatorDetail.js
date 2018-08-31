@@ -6,7 +6,8 @@ import { NavLink } from "react-router-dom";
 function ValidatorDetail(props) {
   const {
     validators,
-    validator
+    validator,
+    location
   } = props;
 
   if (!validator) {
@@ -19,12 +20,15 @@ function ValidatorDetail(props) {
 
   const {handle} = validatorHelpers.validatorAndHandleForPublicKey(validators, validator.publicKey);
   return (
+    <div className='self-clear'>
+    
+    <div style={{float:'left', width:'350px'}}>
     <ul>
       <li className='bold'>
         {handle}. {validator.name ? validator.name : "[name]"}
         {!!validator.verified && <img src={verified} className="verified-icon" alt="Verified Icon" />}
         {' - '}
-        <NavLink to={'/clusters/'+validator.clusterId}>cluster</NavLink>
+        <NavLink to={'/clusters/'+validator.clusterId+location.search}>cluster</NavLink>
       </li>
       { validator.city && validator.state &&
         <li>
@@ -45,6 +49,18 @@ function ValidatorDetail(props) {
       <li className='small'>{validator.version}</li>
       <li className='small'>PK: {validator.publicKey}</li>
     </ul>
+    </div>
+
+    <div style={{float:'right'}}>
+      <ul>
+        <li className='small'>incoming direct: {validator.directIncomingValidatorSet.size}</li>
+        <li className='small'>incoming indirect: {validator.indirectIncomingValidatorSet.size}</li>
+        <li className='small'>outgoing direct: {validator.directValidatorSet.size}</li>
+        <li className='small'>outgoing indirect: {validator.indirectValidatorSet.size}</li>
+      </ul>
+    </div>
+    
+    </div>
   );
 }
 

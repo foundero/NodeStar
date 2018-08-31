@@ -16,13 +16,13 @@ class ClusterPage extends PureComponent {
     }
     if ( newPath === this.props.location.pathname ) { return; }
 
-    this.props.history.push(newPath);
+    this.props.history.push({pathname: newPath, search: this.props.location.search});
   }
 
   selectDefault() {
     if (!this.selectedClusterId() && this.props.validators.length > 0) {
       const newPath = '/clusters/1'
-      this.props.history.push(newPath);
+      this.props.history.push({pathname: newPath, search: this.props.location.search});
     }
   }
 
@@ -35,7 +35,8 @@ class ClusterPage extends PureComponent {
     console.log('render ClusterPage');
     const {
       validators,
-      clusters
+      clusters,
+      location
     } = this.props;
 
     let validatorsInCluster = [];
@@ -63,7 +64,8 @@ class ClusterPage extends PureComponent {
               <ValidatorRow
                 key={validatorId}
                 validators={this.props.validators}
-                validatorId={validatorId} />
+                validatorId={validatorId}
+                location={location} />
             )}
           </ul>
         </div>
@@ -99,7 +101,8 @@ class ClusterPage extends PureComponent {
         <RelatedValidators
           validators={this.props.validators}
           validator={validator}
-          forCluster={true} />  
+          forCluster={true}
+          location={location} />  
       </div>
     );
   }
