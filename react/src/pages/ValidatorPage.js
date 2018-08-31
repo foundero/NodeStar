@@ -19,6 +19,7 @@ class ValidatorPage extends PureComponent {
 
   selectedValidator() {
     const validators = this.props.validators;
+    if ( !this.props.match.params.publicKey ) return null;
     for ( let i=0; i<validators.length; i++ ) {
       if ( validatorHelpers.validatorToURLId(validators[i].publicKey) ===
         validatorHelpers.validatorToURLId(this.props.match.params.publicKey) )

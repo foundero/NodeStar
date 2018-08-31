@@ -62,6 +62,10 @@ const validatorHelpers = {
 
   validatorToURLId(publicKey) {
     const chars = 6;
+      if ( !publicKey ) {
+        console.log('missing-pub-key');
+      }
+
     if (publicKey.length>chars*2) {
       return publicKey.substring(0,chars) + '..' + publicKey.substring(publicKey.length - chars);
     }
