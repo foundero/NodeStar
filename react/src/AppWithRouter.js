@@ -148,7 +148,6 @@ class Root extends PureComponent {
                 { label: "stellarbeat", value: true, default: this.datasource()===stellarbeat },
                 { label: "quorumexplorer", value: false, default: this.datasource()===quorumexplorer }
               ]}
-              value={false}
               setValue={newValue => this.datasourceToggle(newValue)}
               style={{ width: '230px', color: '#0099FF', margin: '0px' }}
             />
@@ -190,7 +189,7 @@ class Root extends PureComponent {
                   to={this.routes['clusters']+this.props.location.search}
                   isActive={(match, location) => location.pathname + location.search === this.routes['clusters']+this.props.location.search}
                 >
-                  Validators
+                  Clusters
                 </NavLink>
               </li>
               <li>
