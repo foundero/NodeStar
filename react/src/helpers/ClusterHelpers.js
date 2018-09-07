@@ -1,5 +1,17 @@
+// @flow
+import type {Validator} from './ValidatorHelpers.js';
+
+export type Cluster = {
+  nodes: Set<string>,
+  incoming: Set<string>,
+  outgoing: Set<string>,
+  incomingMinusSelf: number,
+  level: number,
+  outgoingClusters: Array<number>
+}
+
 const clusterHelpers = {
-  calculateClusters: function(validators) {
+  calculateClusters: function(validators: Array<Validator>): Array<Cluster> {
     let clusters = [];
     if ( !validators ) return clusters;
     clustersCreate(validators, clusters);
@@ -15,7 +27,7 @@ const clusterHelpers = {
 
 
 
-function clustersCreate(validators, clusters) {
+function clustersCreate(validators: Array<Validator>, clusters: Array<Cluster>) {
   for (let i = 0; i<validators.length; i++) {
     const v = validators[i];
     let foundCluster = matchingCluster(clusters, v);
@@ -26,7 +38,10 @@ function clustersCreate(validators, clusters) {
       clusters.push({
         nodes: new Set([v.publicKey]),
         incoming: v.indirectIncomingValidatorSet,
-        outgoing: v.indirectValidatorSet
+        outgoing: v.indirectValidatorSet,
+        incomingMinusSelf: 0,
+        level: -999,
+        outgoingClusters: []
       });
     }
   }
@@ -36,7 +51,7 @@ function clustersCreate(validators, clusters) {
   }
 }
 
-function clustersSort(clusters) {
+function clustersSort(clusters: Array<Cluster>) {
   clusters.sort(function(a,b) {
     const incomingMinusSelfDiff = b.incomingMinusSelf - a.incomingMinusSelf;
     if (incomingMinusSelfDiff !== 0) return incomingMinusSelfDiff;
@@ -48,7 +63,7 @@ function clustersSort(clusters) {
   });
 }
 
-function clustersAddConnections(clusters) {
+function clustersAddConnections(clusters: Array<Cluster>) {
   for (let i=0; i<clusters.length; i++) {
     let iCluster = clusters[i];
     iCluster.outgoingClusters = [];
@@ -82,7 +97,7 @@ function clustersAddConnections(clusters) {
   }
 }
 
-function clusterAddLevels(clusters) {
+function clusterAddLevels(clusters: Array<Cluster>) {
   // Set them all to 1
   for (let i = 0; i<clusters.length; i++) {
     let cluster = clusters[i];
@@ -141,10 +156,10 @@ function clusterAddLevels(clusters) {
   }
 }
 
-function clustersMarkLevels(clusters, level, min) {
+function clustersMarkLevels(clusters: Array<Cluster>, level: number, min: number) {
   for (let i = 0; i<clusters.length; i++) {
     let cluster = clusters[i];
-    if (cluster.level >= level & cluster.level !== 1 ) continue;
+    if (cluster.level >= level && cluster.level !== 1 ) continue;
     let allOutgoingMarked = true;
     for (let j = 0; j<cluster.outgoingClusters.length; j++) {
       let jIndex = cluster.outgoingClusters[j];
@@ -163,7 +178,7 @@ function clustersMarkLevels(clusters, level, min) {
   }
 }
 
-function validatorsAddCluster(validators, clusters) {
+function validatorsAddCluster(validators: Array<Validator>, clusters: Array<Cluster>) {
   for (let v = 0; v<validators.length; v++) {
     let validator = validators[v];
     for (let c = 0; c<clusters.length; c++) {
@@ -176,7 +191,7 @@ function validatorsAddCluster(validators, clusters) {
   }
 }
 
-function incomingMinusSelf(cluster) {
+function incomingMinusSelf(cluster: Cluster): number {
   let count = cluster.incoming.size;
   if ( isSuperset(cluster.outgoing, cluster.nodes) ) {
     count -= cluster.nodes.size;
@@ -184,7 +199,7 @@ function incomingMinusSelf(cluster) {
   return count;
 }
 
-function matchingCluster(clusters, validator) {
+function matchingCluster(clusters: Array<Cluster>, validator: Validator): ?Cluster {
   for (let i=0; i<clusters.length; i++) {
     let cluster = clusters[i];
     if (
@@ -197,12 +212,12 @@ function matchingCluster(clusters, validator) {
   return null;
 }
 
-function eqSet(a,b) {
+function eqSet(a: Set<any>, b: Set<any>): boolean {
   if ( a.size !== b.size ) return false;
   return isSuperset(a,b);
 }
 
-function isSuperset(a,b) {
+function isSuperset(a: Set<any>, b: Set<any>): boolean {
   for ( let bItem of b) if (!a.has(bItem)) return false;
   return true;
 }

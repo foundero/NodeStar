@@ -1,8 +1,19 @@
+// @flow
+
 import React, { PureComponent } from 'react';
 import SummaryGraph from '../components/SummaryGraph.js'
 import { NavLink } from "react-router-dom";
 
-class SummaryPage extends PureComponent {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+import type {Cluster} from '../helpers/ClusterHelpers.js';
+
+type Props = {
+  datasource: string,
+  validators: Array<Validator>,
+  clusters: Array<Cluster>
+};
+
+class SummaryPage extends PureComponent<Props> {
 
   render() {
     console.log('render SummaryPage');

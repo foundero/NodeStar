@@ -1,3 +1,4 @@
+// @flow
 import React, { PureComponent } from 'react';
 import logo from './media/images/icon-large.png';
 import githubLogo from './media/images/GitHub-Mark-Light-120px-plus.png';
@@ -27,9 +28,25 @@ const quorumexplorer = 'quorumexplorer';
 const stellarbeatURL = 'https://uk2bk82620.execute-api.us-east-2.amazonaws.com/prod/stellarbeat';
 const quorumexplorerURL = 'https://uk2bk82620.execute-api.us-east-2.amazonaws.com/prod/quorumexplorer';
 
-class Root extends PureComponent {
 
-  constructor(props) {
+type Data = {
+  validators: Array<any>,
+  clusters: Array<any>
+};
+
+type Props = any;
+
+type State = {
+  quorumexplorer: Data,
+  stellarbeat: Data
+};
+
+class Root extends PureComponent<Props, State> {
+  state: any;
+  props: any;
+  routes: any;
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       'quorumexplorer': {
@@ -41,13 +58,13 @@ class Root extends PureComponent {
         clusters: []
       }
     };
-    this.routes= {
+    this.routes = {
       'validators': '/validators',
       'clusters': '/clusters'
     };
   }
 
-  data() {
+  data(): Data {
     if (this.datasource()===quorumexplorer) {
       return this.state.quorumexplorer;
     }
@@ -63,13 +80,13 @@ class Root extends PureComponent {
     }
   }
 
-  datasource() {
+  datasource(): string {
     if (this.props.location.search === this.datasourceQueryString(stellarbeat)) {
       return stellarbeat;
     }
     return quorumexplorer;
   }
-  datasourceQueryString(datasource) {
+  datasourceQueryString(datasource: string): string {
     if (datasource === quorumexplorer) {
       return '?ds=qe';
     }
@@ -78,7 +95,7 @@ class Root extends PureComponent {
     }
   }
 
-  datasourceToggle(isStellarbeat) {
+  datasourceToggle(isStellarbeat: boolean) {
     console.log('datasource toggle');
     let desiredQueryString = this.datasourceQueryString(stellarbeat);
     if (!isStellarbeat) {
@@ -91,7 +108,7 @@ class Root extends PureComponent {
     }
   }
 
-  getData(datasource) {
+  getData(datasource: string) {
     let url = stellarbeatURL;
     if ( datasource === quorumexplorer ) {
       url = quorumexplorerURL;

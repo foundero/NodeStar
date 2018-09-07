@@ -1,9 +1,10 @@
+// @flow
 import React from 'react';
 import math1 from '../media/images/math1.tex.png';
 import math2 from '../media/images/math2.tex.png';
 import math3 from '../media/images/math3.tex.png';
 
-function MathPage(props) {
+function MathPage(props: {}) {
   console.log('render MathPath');
 
   return (

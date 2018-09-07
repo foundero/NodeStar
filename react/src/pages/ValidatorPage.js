@@ -1,3 +1,4 @@
+// @flow
 import React, { PureComponent } from 'react';
 import QuorumViewer from '../components/QuorumViewer.js';
 import ValidatorRow from '../components/ValidatorRow.js';
@@ -6,8 +7,17 @@ import QuorumNodeDetail from '../components/QuorumNodeDetail.js';
 import RelatedValidators from '../components/RelatedValidators.js';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 
+import type {Validator} from '../helpers/ValidatorHelpers.js';
 
-class ValidatorPage extends PureComponent {
+type Props = {
+  match: any,
+  history: any,
+  location: any,
+
+  validators: Array<Validator>
+};
+
+class ValidatorPage extends PureComponent<Props> {
 
   selectDefault() {
     const validators = this.props.validators;
@@ -17,7 +27,7 @@ class ValidatorPage extends PureComponent {
     }
   }
 
-  selectedValidator() {
+  selectedValidator(): ?Validator {
     const validators = this.props.validators;
     if ( !this.props.match.params.publicKey ) return null;
     for ( let i=0; i<validators.length; i++ ) {
@@ -30,12 +40,12 @@ class ValidatorPage extends PureComponent {
     return null;
   }
 
-  selectedQuorumNode() {
+  selectedQuorumNode(): ?string {
     const quorumNodeId = this.props.match.params.quorumNodeId;
     return validatorHelpers.quorumNodeForURLId(this.selectedValidator(), quorumNodeId);
   }
 
-  handleSelectedQuorumNode(id) {
+  handleSelectedQuorumNode(id: string) {
     let newPath = null;
     if ( id === null  ) {
       newPath = '/validators/' + this.props.match.params.publicKey;

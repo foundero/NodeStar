@@ -1,6 +1,35 @@
+// @flow
+
+export type QuorumSet = {
+  hashKey: string,
+  threshold: number,
+  validators: Array<string>,
+  innerQuorumSets: Array<QuorumSet>
+}
+export type Validator = {
+  publicKey: string,
+  verified: boolean,
+  version: ?string,
+  ip: ?string,
+  port: ?string,
+  city: ?string,
+  country: ?string,
+  latitude: ?string,
+  longitude: ?string,
+  name: ?string,
+  host: ?string,
+  quorumSet: ?QuorumSet,
+
+  clusterId: number,
+  directValidatorSet: Set<string>,
+  indirectValidatorSet: Set<string>,
+  directIncomingValidatorSet: Set<string>,
+  indirectIncomingValidatorSet: Set<string>,
+};
+
 const validatorHelpers = {
   
-  translatedJsonFromQuorumExplorer: function(json) {
+  translatedJsonFromQuorumExplorer: function(json: any): any {
     let newValidators = [];
     for (const validatorId in json.nodes) {
       let v = json.nodes[validatorId];
@@ -38,7 +67,7 @@ const validatorHelpers = {
     return newValidators;
   },
   
-  calculateValidators: function(validators) {
+  calculateValidators: function(validators: Array<any>): Array<any> {
     for (let i=0; i<validators.length; i++) {
       const v = validators[i];
       v.directValidatorSet = directValidatorSet(v);
@@ -60,7 +89,7 @@ const validatorHelpers = {
   },
 
 
-  validatorToURLId(publicKey) {
+  validatorToURLId: function(publicKey: string): string {
     const chars = 6;
       if ( !publicKey ) {
         console.log('missing-pub-key');
@@ -72,7 +101,7 @@ const validatorHelpers = {
     return publicKey;
   },
 
-  quorumNodeToURLId(id) {
+  quorumNodeToURLId: function(id: string): string {
     const chars = 6;
     let result = id;
     if (id && id.length>chars*2) {
@@ -81,23 +110,25 @@ const validatorHelpers = {
     return encodeURIComponent(result);
   },
 
-  validatorAndHandleForPublicKey: function(validators, publicKey) {
+  validatorAndHandleForPublicKey: function(
+    validators: Array<Validator>, publicKey: string): {validator: ?Validator, handle: string}
+  {
     for ( let i=0; i<validators.length; i++ ) {
       if ( validators[i].publicKey === publicKey ) {
-        return { validator: validators[i], handle: i+1 };
+        return { validator: validators[i], handle: (i+1).toString() };
       }
     }
     return { validator: null, handle: "?" };
   },
   
-  quorumNodeForURLId: function(validator, nodeId) {
+  quorumNodeForURLId: function(validator: any, nodeId: string): ?any {
     if ( !validator || !validator.quorumSet || !nodeId ) {
       return null;
     }
     return quorumNodeForIdInQuorumSet(validator.quorumSet, nodeId);
   },
 
-  sortSet: function(validators, set) {
+  sortSet: function(validators: Array<any>, set: Set<string>): Array<any> {
     if (!set) return [];
     let array = Array.from(set);
     return array.sort( function(a,b) {
@@ -119,8 +150,8 @@ const validatorHelpers = {
 
 /* Private Functions */
 
-function translateQuorumSet(quorumSet, fakehashkey) {
-  let qs = [];
+function translateQuorumSet(quorumSet: any, fakehashkey: string): any {
+  let qs = {};
   qs.hashKey = fakehashkey
   qs.threshold = quorumSet.threshold;
   qs.validators = quorumSet.validators;
@@ -131,7 +162,7 @@ function translateQuorumSet(quorumSet, fakehashkey) {
   return qs;
 }
 
-function directValidatorSet(validator) {
+function directValidatorSet(validator: any): Set<any> {
   let set = new Set([]);
   const quorumSet = validator.quorumSet;
   if (quorumSet) {
@@ -148,13 +179,13 @@ function directValidatorSet(validator) {
   return set;
 }
 
-function indirectValidatorSet(validators, validator) {
+function indirectValidatorSet(validators: Array<any>, validator: any): Set<string> {
   let touched = new Set([]);
   recurseIndirectValidators(validators, validator.publicKey, touched);
   return touched;
 }
 
-function recurseIndirectValidators(validators, validatorId, touched) {
+function recurseIndirectValidators(validators: Array<Validator>, validatorId: string, touched: Set<string>) {
   const v = validatorHelpers.validatorAndHandleForPublicKey(validators, validatorId).validator;
   if (v) {
     const candidates = new Set([...v.directValidatorSet].filter(x => !touched.has(x)));
@@ -167,7 +198,7 @@ function recurseIndirectValidators(validators, validatorId, touched) {
   }
 }
 
-function directIncomingValidatorSet(validators, validator) {
+function directIncomingValidatorSet(validators: Array<Validator>, validator: Validator): Set<string> {
   let set = new Set([]);
   for (let i=0; i<validators.length; i++) {
     const v = validators[i];
@@ -178,7 +209,7 @@ function directIncomingValidatorSet(validators, validator) {
   return set;
 }
 
-function indirectIncomingValidatorSet(validators, validator) {
+function indirectIncomingValidatorSet(validators: Array<Validator>, validator: Validator) {
   let set = new Set([]);
   for (let i=0; i<validators.length; i++) {
     const v = validators[i];
@@ -189,14 +220,18 @@ function indirectIncomingValidatorSet(validators, validator) {
   return set;
 }
 
-function compareValidators(a, b) {
+function compareValidators(a: Validator, b: Validator): number {
   const indirectIncomingDiff = b.indirectIncomingValidatorSet.size - a.indirectIncomingValidatorSet.size;
   if (indirectIncomingDiff !== 0) { return indirectIncomingDiff; }
   const indirectOutgoingDiff = b.indirectValidatorSet.size - a.indirectValidatorSet.size;
   if (indirectOutgoingDiff !== 0) { return indirectOutgoingDiff; }
-  if (a.name) {
-    if (b.name) {
-      return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+  if ( a.name ) {
+    if ( b.name ) {
+      let aName = a.name;
+      let bName = b.name;
+      let aLower = aName.toLowerCase();
+      let bLower = bName.toLowerCase();
+      return aLower.localeCompare(bLower);
     }
     return -1;
   }
@@ -206,7 +241,7 @@ function compareValidators(a, b) {
   return a.publicKey.localeCompare(b.publicKey);
 }
 
-function quorumNodeForIdInQuorumSet(quorumSet, nodeId) {
+function quorumNodeForIdInQuorumSet(quorumSet: QuorumSet, nodeId: string): ?any {
   if ( !quorumSet || !nodeId ) {
     return null;
   }

@@ -1,12 +1,25 @@
+// @flow
 import React, { PureComponent } from 'react';
 import ValidatorRow from '../components/ValidatorRow.js';
 import RelatedValidators from '../components/RelatedValidators.js';
 import ClusterViewer from '../components/ClusterViewer.js';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 
-class ClusterPage extends PureComponent {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+import type {Cluster} from '../helpers/ClusterHelpers.js';
 
-  handleSelectedClusterNode(id) {
+type Props = {
+  match: any,
+  history: any,
+  location: any,
+
+  validators: Array<Validator>,
+  clusters: Array<Cluster>
+};
+
+class ClusterPage extends PureComponent<Props> {
+
+  handleSelectedClusterNode(id: string) {
     let newPath = null;
     if ( id === null  ) {
       newPath = '/clusters'
