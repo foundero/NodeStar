@@ -64,10 +64,10 @@ class Root extends PureComponent {
   }
 
   datasource() {
-    if (this.props.location.search === this.datasourceQueryString(quorumexplorer)) {
-      return quorumexplorer;
+    if (this.props.location.search === this.datasourceQueryString(stellarbeat)) {
+      return stellarbeat;
     }
-    return stellarbeat;
+    return quorumexplorer;
   }
   datasourceQueryString(datasource) {
     if (datasource === quorumexplorer) {
@@ -145,8 +145,8 @@ class Root extends PureComponent {
             <SegmentedControl
               name="datasourceToggle"
               options={[
-                { label: "stellarbeat", value: true, default: this.datasource()===stellarbeat },
-                { label: "quorumexplorer", value: false, default: this.datasource()===quorumexplorer }
+                { label: "quorumexplorer", value: false, default: this.datasource()===quorumexplorer },
+                { label: "stellarbeat", value: true, default: this.datasource()===stellarbeat }
               ]}
               setValue={newValue => this.datasourceToggle(newValue)}
               style={{ width: '230px', color: '#0099FF', margin: '0px' }}
