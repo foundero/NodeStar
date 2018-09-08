@@ -1,9 +1,18 @@
+// @flow
 import React, { PureComponent } from 'react';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import verified from '../media/images/icon-verified.png';
 import { NavLink } from "react-router-dom";
 
-class ValidatorRow extends PureComponent {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+
+type Props = {
+  validators: Array<Validator>,
+  validatorId: string,
+  location: any
+};
+
+class ValidatorRow extends PureComponent<Props> {
 
   isActive() {
     let validatorURLId = validatorHelpers.validatorToURLId(this.props.validatorId);

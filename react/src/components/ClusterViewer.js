@@ -1,5 +1,15 @@
+// @flow
 import React, { PureComponent } from 'react';
 import Graph from 'react-graph-vis';
+
+type State = {
+  network: any
+};
+type Props = {
+  clusters: any,
+  selectedClusterId: ?string,
+  onSelectClusterNode: function // TODO: function(string)
+};
 
 const options = {
   physics: { enabled: false },
@@ -48,10 +58,9 @@ const style = {
 }
 
 
+class ClusterViewer extends PureComponent<Props, State> {
 
-class ClusterViewer extends PureComponent {
-
-  selectClusterNode(event) {
+  selectClusterNode(event: {nodes: ?Array<string>}) {
     const { nodes } = event;
     if ( !nodes || nodes.length === 0 ) {
       this.props.onSelectClusterNode(null);
@@ -61,7 +70,7 @@ class ClusterViewer extends PureComponent {
     }
   }
 
-  clusterGraph(clusters) {
+  clusterGraph(clusters: Array<any>): {nodes: Array<any>, edges: Array<any>} {
     if (clusters == null) {
       return {nodes: [], edges: []};
     }

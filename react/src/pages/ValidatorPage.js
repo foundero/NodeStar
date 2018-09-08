@@ -105,6 +105,7 @@ class ValidatorPage extends PureComponent<Props> {
         <RelatedValidators
           validators={this.props.validators}
           validator={selectedValidator}
+          forCluster={false}
           location={this.props.location}/>  
       </div>
     );

@@ -1,9 +1,18 @@
+// @flow
 import React from 'react';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import verified from '../media/images/icon-verified.png';
 import { NavLink } from "react-router-dom";
 
-function ValidatorDetail(props) {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+
+type Props = {
+  validators: Array<Validator>,
+  validator: ?Validator,
+  location: any
+};
+
+function ValidatorDetail(props: Props) {
   const {
     validators,
     validator,
@@ -30,7 +39,7 @@ function ValidatorDetail(props) {
         {' - '}
         <NavLink to={'/clusters/'+validator.clusterId+location.search}>cluster</NavLink>
       </li>
-      { validator.city && validator.state &&
+      { validator.city && validator.country &&
         <li>
           {validator.city ? validator.city : "[city]"}
           {", "}
@@ -42,10 +51,12 @@ function ValidatorDetail(props) {
           {validator.latitude}, {validator.longitude}
         </li>
       }
-      <li className='small'>
-        {validator.ip + ':' + validator.port}
-        {validator.host ? ", " + validator.host : ""}
-      </li>
+      { validator.ip && validator.port &&
+        <li className='small'>
+          {validator.ip + ':' + validator.port}
+          {validator.host ? ", " + validator.host : ""}
+        </li>
+      }
       <li className='small'>{validator.version}</li>
       <li className='small'>PK: {validator.publicKey}</li>
     </ul>

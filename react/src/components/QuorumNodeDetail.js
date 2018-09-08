@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import {
@@ -9,7 +10,28 @@ import {
   VerticalBarSeries
 } from 'react-vis';
 
-function QuorumNodeDetail(props) {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+
+type Impact = {
+  truthsGivenNodeTrue: number,
+  truthsGivenNodeFalse: number,
+  falsesGivenNodeTrue: number,
+  falsesGivenNodeFalse: number,
+  combinations: number,
+  effected: number,
+  affect: number,
+  require: number,
+  influence: number
+};
+
+type Props = {
+  validators: Array<Validator>,
+  validator: ?Validator,
+  node: any
+};
+
+
+function QuorumNodeDetail(props: Props) {
   console.log('render QuorumNodeDetail');
   const {
     validators,
@@ -17,7 +39,7 @@ function QuorumNodeDetail(props) {
     node
   } = props;
 
-  if (!node) {
+  if (!node || !validator || !validators) {
     return (
       <ul>
         <li className='bold'>No quorum set node selected.</li>
@@ -37,7 +59,7 @@ function QuorumNodeDetail(props) {
         name = "?. [Uknown Validator]";
       }
   }
-  else if ( node.hashKey === validator.quorumSet.hashKey ) {
+  else if ( validator && node.hashKey === validator.quorumSet.hashKey ) {
     idString = "qsh: " + node.hashKey;
     name = "Root Quorum Set";
   }
@@ -49,12 +71,6 @@ function QuorumNodeDetail(props) {
   const BarSeries = VerticalBarSeries;
 
   let impact = impactOfNode(node, validator.quorumSet);
-  impact.falsesGivenNodeTrue = impact.combinations - impact.truthsGivenNodeTrue;
-  impact.falsesGivenNodeFalse = impact.combinations - impact.truthsGivenNodeFalse;
-  impact.effected = impact.truthsGivenNodeTrue + impact.falsesGivenNodeFalse - impact.combinations;
-  impact.affect = 100 * impact.effected / impact.combinations;
-  impact.require = 100 * impact.effected / impact.truthsGivenNodeTrue;
-  impact.influence = 100 * impact.effected / impact.falsesGivenNodeFalse;
 
   return (
     <div>
@@ -119,24 +135,37 @@ function QuorumNodeDetail(props) {
 }
 
 let cache = {};
-function impactOfNode(subjectNode, onNode) {
+function impactOfNode(subjectNode: any, onNode: any): Impact {
   // Check Cache
   if ( cache[idForNode(onNode)] && cache[idForNode(onNode)][idForNode(subjectNode)] )  {
     return cache[idForNode(onNode)][idForNode(subjectNode)];
   }
         
-  let metrics = {
+  let impact = {
     combinations: 0, // Combinations, given node truthiness
     truthsGivenNodeTrue: 0,
-    truthsGivenNodeFalse: 0
+    truthsGivenNodeFalse: 0,
+    falsesGivenNodeFalse: 0,
+    falsesGivenNodeTrue: 0,
+    effected: 0,
+    affect: 0,
+    require: 0,
+    influence: 0
   };
 
   if ( idForNode(subjectNode) === idForNode(onNode) )  {
     // Impact of self on self is identity metrics
-    metrics.combinations = 1;
-    metrics.truthsGivenNodeTrue = 1;
-    metrics.truthsGivenNodeFalse = 0;
-    return metrics
+    return {
+      combinations: 1,
+      truthsGivenNodeTrue: 1,
+      truthsGivenNodeFalse: 0,
+      falsesGivenNodeFalse: 1,
+      falsesGivenNodeTrue: 0,
+      effected: 1,
+      affect: 1,
+      require: 0,
+      influence: 1
+    }
   }
         
   // Split leafs from inner qs at this level and remove subject validator
@@ -164,10 +193,10 @@ function impactOfNode(subjectNode, onNode) {
 
 
   // Combinations
-  metrics.combinations = Math.pow(2,validatorNodes.length);
+  impact.combinations = Math.pow(2,validatorNodes.length);
   for (let i=0; i<quorumSetNodes.length; i++) {
     const qsNode = quorumSetNodes[i];
-    metrics.combinations *= impactOfNode(subjectNode, qsNode).combinations
+    impact.combinations *= impactOfNode(subjectNode, qsNode).combinations
   }
         
   // For all combinations of qs nodes t/f -- represented by bits in i
@@ -200,7 +229,7 @@ function impactOfNode(subjectNode, onNode) {
         const qsNode = quorumSetNodes[qsIndex];
         const innerMetrics = impactOfNode(subjectNode, qsNode);
 
-        const truthOfQSNode = i & (1<<qsIndex) > 0; //use qsIndex within i
+        const truthOfQSNode = (i & (1<<qsIndex)) > 0; //use qsIndex within i
         if ( truthOfQSNode ) {
           // qs node in question is true
           truthsGivenNodeTrue *= innerMetrics.truthsGivenNodeTrue;
@@ -211,24 +240,32 @@ function impactOfNode(subjectNode, onNode) {
           truthsGivenNodeFalse *= innerMetrics.falsesGivenNodeFalse;
         }
       }
-      metrics.truthsGivenNodeTrue += truthsGivenNodeTrue;
-      metrics.truthsGivenNodeFalse += truthsGivenNodeFalse;
+      impact.truthsGivenNodeTrue += truthsGivenNodeTrue;
+      impact.truthsGivenNodeFalse += truthsGivenNodeFalse;
     }
   }
+
+  //TODO: check impact metrics
+  impact.falsesGivenNodeFalse = impact.combinations - impact.truthsGivenNodeFalse;
+  impact.falsesGivenNodeTrue = impact.combinations - impact.truthsGivenNodeTrue;
+  impact.effected = impact.truthsGivenNodeTrue + impact.falsesGivenNodeFalse - impact.combinations;
+  impact.affect = 100 * impact.effected / impact.combinations;
+  impact.require = 100 * impact.effected / impact.truthsGivenNodeTrue;
+  impact.influence = 100 * impact.effected / impact.falsesGivenNodeFalse;
         
   // Cache it
   if ( cache[idForNode(onNode)] )  {
-    cache[idForNode(onNode)][idForNode(subjectNode)] = metrics;
+    cache[idForNode(onNode)][idForNode(subjectNode)] = impact;
   }
   else {
     let newObject = {};
-    newObject[idForNode(subjectNode)] = metrics;
+    newObject[idForNode(subjectNode)] = impact;
     cache[idForNode(onNode)] = newObject;
   }
-  return metrics
+  return impact;
 }
 
-function idForNode(node) {
+function idForNode(node: any): string {
   if (node.publicKey) {
     return node.publicKey;
   }
@@ -237,7 +274,7 @@ function idForNode(node) {
   }
 }
 
-function binomial(n, k) {
+function binomial(n: number, k: number): number {
   if (k > n) { return 0; }
   let result = 1;
   for ( let i = 0; i < Math.min(k, n-k); i++) {
@@ -246,7 +283,7 @@ function binomial(n, k) {
   return result;
 }
 
-function bitcount(n) {
+function bitcount(n: number): number {
   let tempN = n>>>0;
   let count = 0;
   while ( tempN !== 0 ) {

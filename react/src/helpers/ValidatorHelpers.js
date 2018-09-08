@@ -18,7 +18,7 @@ export type Validator = {
   longitude: ?string,
   name: ?string,
   host: ?string,
-  quorumSet: ?QuorumSet,
+  quorumSet: QuorumSet, // Meh can actually be null i think? but makes things tough
 
   clusterId: number,
   directValidatorSet: Set<string>,

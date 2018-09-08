@@ -1,6 +1,20 @@
+// @flow
 import React, { PureComponent } from 'react';
 import Graph from 'react-graph-vis';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
+
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+
+type State = {
+  network: any
+};
+type Props = {
+  validators: Array<Validator>,
+  validator: ?Validator,
+  selectedQuorumNode: any,
+  onSelectQuorumNode: function
+};
+
 
 const options = {
   physics: { enabled: false },
@@ -44,20 +58,20 @@ const style = {
 
 
 
-class QuorumViewer extends PureComponent {
+class QuorumViewer extends PureComponent<Props,State> {
 
-  selectQuorumNode(event) {
-      const { nodes } = event;
-      if ( !nodes || nodes.length === 0 ) {
-        this.props.onSelectQuorumNode(null);
-      }
-      else if ( this.props.validator.quorumSet ) {
-        const id = nodes[0].slice(this.props.validator.quorumSet.hashKey.length);
-        this.props.onSelectQuorumNode(id);
-      }
+  selectQuorumNode(event: {nodes: ?Array<string>}) {
+    const { nodes } = event;
+    if ( !nodes || nodes.length === 0 ) {
+      this.props.onSelectQuorumNode(null);
+    }
+    else if ( this.props.validator && this.props.validator.quorumSet ) {
+      const id = nodes[0].slice(this.props.validator.quorumSet.hashKey.length);
+      this.props.onSelectQuorumNode(id);
+    }
   }
 
-  quorumGraph(validators, validator) {
+  quorumGraph(validators: Array<Validator>, validator: ?Validator): {nodes: Array<any>, edges: Array<any>}  {
     // TODO: this doesn't recurse -- so if we have depth>2 we need to refactor this.
     // but this would be annoying because we handle root specially
     if (validator == null) {
@@ -128,7 +142,7 @@ class QuorumViewer extends PureComponent {
   componentDidUpdate() {
     this.state.network.fit();
     const selectedNode = this.props.selectedQuorumNode;
-    if ( selectedNode ) {
+    if ( selectedNode && this.props.validator ) {
       const selectedNodeId = selectedNode.publicKey ? selectedNode.publicKey : selectedNode.hashKey;
       this.state.network.selectNodes([this.props.validator.quorumSet.hashKey + selectedNodeId]);
     }

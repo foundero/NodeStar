@@ -1,25 +1,39 @@
+// @flow
 import React, { PureComponent } from 'react';
 import validatorHelpers from '../helpers/ValidatorHelpers.js';
 import ValidatorRow from '../components/ValidatorRow.js';
 import update from 'immutability-helper';
 import { SegmentedControl } from 'segmented-control';
 
-class RelatedValidators extends PureComponent {
-  constructor(props) {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+
+type Props = {
+  validators: Array<Validator>,
+  validator: ?Validator,
+  forCluster: boolean,
+  location: any
+};
+type State = {
+  directToggle: boolean,
+  outgoingToggle: boolean
+};
+
+class RelatedValidators extends PureComponent<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
       directToggle: true,
       outgoingToggle: true
     };
   }
-  directToggle(isDirect) {
+  directToggle(isDirect: boolean) {
     this.setState(
       update(this.state, {
         directToggle: {$set: isDirect}
       })
     );
   }
-  outgoingToggle(isOutgoing) {
+  outgoingToggle(isOutgoing: boolean) {
     this.setState(
       update(this.state, {
         outgoingToggle: {$set: isOutgoing}

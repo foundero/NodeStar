@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import {
   XYPlot,
@@ -8,16 +9,24 @@ import {
   VerticalRectSeries
 } from 'react-vis';
 
-function SummaryGraph(props) {
+import type {Validator} from '../helpers/ValidatorHelpers.js';
+
+type Props = {
+  validators: Array<Validator>,
+  propertyKey: string
+};
+
+function SummaryGraph(props: Props) {
   const {
-    validators
+    validators,
+    propertyKey
   } = props;
   if (!validators || validators.length===0) { return '...'; }
 
   let data = {}
   for (let i=0; i<validators.length; i++) {
     const v = validators[i];
-    const propertyValue = v[props.propertyKey].size;
+    const propertyValue = v[propertyKey].size;
     if ( propertyValue in data ) {
       data[propertyValue] = data[propertyValue] + 1;
     }
