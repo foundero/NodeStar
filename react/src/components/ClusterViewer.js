@@ -8,7 +8,7 @@ type State = {
 type Props = {
   clusters: any,
   selectedClusterId: ?string,
-  onSelectClusterNode: function // TODO: function(string)
+  onSelectClusterNode: (?string)=>void
 };
 
 const options = {

@@ -12,7 +12,7 @@ type Props = {
   validators: Array<Validator>,
   validator: ?Validator,
   selectedQuorumNode: any,
-  onSelectQuorumNode: function
+  onSelectQuorumNode: (?string)=>void
 };
 
 

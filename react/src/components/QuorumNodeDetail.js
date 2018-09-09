@@ -162,9 +162,9 @@ function impactOfNode(subjectNode: any, onNode: any): Impact {
       falsesGivenNodeFalse: 1,
       falsesGivenNodeTrue: 0,
       effected: 1,
-      affect: 1,
-      require: 0,
-      influence: 1
+      affect: 100,
+      require: 100,
+      influence: 100
     }
   }
         
@@ -245,7 +245,6 @@ function impactOfNode(subjectNode: any, onNode: any): Impact {
     }
   }
 
-  //TODO: check impact metrics
   impact.falsesGivenNodeFalse = impact.combinations - impact.truthsGivenNodeFalse;
   impact.falsesGivenNodeTrue = impact.combinations - impact.truthsGivenNodeTrue;
   impact.effected = impact.truthsGivenNodeTrue + impact.falsesGivenNodeFalse - impact.combinations;
