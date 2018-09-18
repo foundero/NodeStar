@@ -10,13 +10,35 @@ import Foundation
 
 
 class QuorumManager {
-    static var validators: [Validator] = [] {
+    
+    // Statics
+    static var datasourceIsQuorumexplorer: Bool = true;
+    static var current: QuorumManager {
+        if datasourceIsQuorumExplorer {
+            return qeQuorumManager;
+        }
+        return sbQuorumManager;
+    }
+    static var qeQuorumManager = QuorumManager();
+    static var sbQuorumManager = QuorumManager();
+    
+    
+    
+    // Convenience static accessors
+    //static var validators: [Validator] {
+    //    return current.validators;
+    //}
+    
+    
+    
+    // Instance vars / methods
+    var validators: [Validator] = [] {
         didSet {
             validators = sortedValidators(validatorsToSort: validators)
         }
     }
-    static var clusters: [Cluster] = []
-    static func validatorForId(id: String) -> Validator? {
+    var clusters: [Cluster] = []
+    func validatorForId(id: String) -> Validator? {
         for v in validators {
             if v.publicKey == id {
                 return v
@@ -24,7 +46,7 @@ class QuorumManager {
         }
         return nil
     }
-    static func handleForNodeId(id: String) -> String {
+    func handleForNodeId(id: String) -> String {
         for (index, validator) in validators.enumerated() {
             if validator.publicKey == id {
                 return "\(index+1)"
@@ -32,7 +54,7 @@ class QuorumManager {
         }
         return "?"
     }
-    static func sortedValidators(validatorsToSort: [Validator]) -> [Validator] {
+    func sortedValidators(validatorsToSort: [Validator]) -> [Validator] {
         return validatorsToSort.sorted {
             if $0.uniqueEventualDependents.count != $1.uniqueEventualDependents.count {
                 return $0.uniqueEventualDependents.count > $1.uniqueEventualDependents.count
@@ -54,7 +76,7 @@ class QuorumManager {
             }
         }
     }
-    static func orderedValidatorsForPublicKeySet(set: Set<String>) -> ([Validator]) {
+    func orderedValidatorsForPublicKeySet(set: Set<String>) -> ([Validator]) {
         var validators: [Validator] = []
         var unknownValidators: [Validator] = []
         for publicKey in set {

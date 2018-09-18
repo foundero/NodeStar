@@ -11,9 +11,11 @@ import Charts
 
 class HomeVC: UITableViewController, ChartViewDelegate {
     
-    let stellarbeatURLPath: String = "https://stellarbeat.io/nodes/raw"
-    var validators: [Validator] = []
-    var clusters: [Cluster] = []
+    let stellarbeatURLPath: String = "https://uk2bk82620.execute-api.us-east-2.amazonaws.com/prod/stellarbeat"
+    let quorumexplorerURLPath: String = "https://uk2bk82620.execute-api.us-east-2.amazonaws.com/prod/quorumexplorer"
+
+    var validators: [Validator] { return QuorumManager.current.validators }
+    var clusters: [Cluster] { return QuorumManager.current.clusters }
     
     // Charts
     @IBOutlet var nodesChart: BarChartView!
@@ -370,14 +372,20 @@ class HomeVC: UITableViewController, ChartViewDelegate {
     // MARK: Network Load Data
     // TODO: decouple this from the VC
     func reloadDataFromStellarBeat() {
-        let url: URL = URL(string: stellarbeatURLPath)!
-        print("Updating \(stellarbeatURLPath)")
+        let tempDatasrouceIsQuorumexplorer = QuorumManager.datasourceIsQuorumexplorer;
+        var url: URL = URL(string: stellarbeatURLPath)!
+        if tempDatasrouceIsQuorumexplorer {
+            url = URL(string: stellarbeatURLPath)!
+        }
+        let path = url.absoluteString;
+        
+        print("Updating \(url.absoluteString)")
         URLSession.shared.dataTask(with: url) { (a, n, c) in
         
         }
-        URLSession.shared.dataTask(with: url) { [stellarbeatURLPath] (data, urlResponse, error) in
+        URLSession.shared.dataTask(with: url) { [path] (data, urlResponse, error) in
             if error != nil {
-                print("Updating \(stellarbeatURLPath) Request Fail: \(error!.localizedDescription)")
+                print("Updating \(path) Request Fail: \(error!.localizedDescription)")
                 self.showNetworkError()
             }
             else {
@@ -385,29 +393,34 @@ class HomeVC: UITableViewController, ChartViewDelegate {
                     if let jsonNodes: [[String: AnyObject]] =
                         try JSONSerialization.jsonObject(with: data!,options: []) as? [[String: AnyObject]] {
                         
-                        print("Updating \(stellarbeatURLPath) Got JSON")
+                        print("Updating \(path) Got JSON")
                         var tempNodes: [Validator] = []
                         for jsonNode in jsonNodes {
+                            //TODO: depends on datasource
                             let node: Validator? = Validator.nodeFromDictionary(dict: jsonNode)
                             if node != nil { tempNodes.append(node!) }
                         }
                         print("Parsed Validator Nodes: \(tempNodes.count)")
-                        // Sort them
-                        QuorumManager.validators = tempNodes
-                        self.validators = QuorumManager.validators
-                        self.clusters = Cluster.buildClusters()
-                        QuorumManager.clusters = self.clusters
-                        DispatchQueue.main.async{
-                            self.updateTableView()
-                            self.refreshControl?.endRefreshing()
+                        var qm = QuorumManager.sbQuorumManager;
+                        if tempDatasrouceIsQuorumexplorer {
+                            qm = QuorumManager.qeQuorumManager;
+                        }
+                        qm.validators = tempNodes
+                        qm.clusters = Cluster.buildClusters() //TODO: context of qm
+                        
+                        if tempDatasrouceIsQuorumexplorer == QuorumManager.datasourceIsQuorumexplorer {
+                            DispatchQueue.main.async{
+                                self.updateTableView()
+                                self.refreshControl?.endRefreshing()
+                            }
                         }
                     }
                     else {
-                        print("Updating \(stellarbeatURLPath) Parsing Fail: Expecting an array")
+                        print("Updating \(path) Parsing Fail: Expecting an array")
                         self.showParsingError()
                     }
                 } catch let error as NSError {
-                    print("Updating \(stellarbeatURLPath) Parsing Fail: \(error.localizedDescription)")
+                    print("Updating \(path) Parsing Fail: \(error.localizedDescription)")
                     self.showParsingError()
                 }
             }
@@ -467,7 +480,7 @@ class HomeVC: UITableViewController, ChartViewDelegate {
             // Validators
             let vc = ValidatorsVC.newVC()
             vc.title = "All Validators"
-            vc.validators = QuorumManager.validators
+            vc.validators = validators
             navigationController?.pushViewController(vc, animated: true)
         }
         if cell == clustersCell {
